@@ -2,6 +2,8 @@
 // jointed body (hips, chest, head, arms, legs) posed in code each frame and drawn as one InstancedMesh per body part, so
 // thirty seven people cost sixteen draws. No faces and no real players: home whites against road reds, numbers only.
 // The game runs itself: inbound, bring it up, swing it, shoot, rebound, the other way. The scoreboard reads its clock.
+// With opts.replay (a timeline from sim/garden_sim.py, see replay.js) the same bodies play that game instead: positions,
+// moves, the ball and the clock all come from the file, the players wear the two kits and carry MLow's flower heads.
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -49,9 +51,10 @@ const legH = (t, k) => 0.47 * Math.cos(t) + 0.46 * Math.cos(t + k) + 0.095;
 const SKIN = ['#f0cfb4', '#d9a882', '#b97d56', '#8d5a3b', '#6b4129', '#4a2c1b', '#c48c66', '#5e3a24'];
 const HAIR = ['#120e0c', '#1c140f', '#2a1c12', '#3b2a1d', '#0d0b0a'];
 const pick = (a) => a[(Math.random() * a.length) | 0];
+const rnd = () => Math.random();
 
 export function buildGame(parent, tex, opts = {}) {
-  const phone = !!opts.phone, figs = [];
+  const phone = !!opts.phone, figs = [], R = opts.replay || null;
   const mk = (kind, team, col, num, scale) => { const f = { kind, team, col, num, b: rig(), pos: V(), vel: V(), tgt: V(), yaw: 0, look: null, ph: Math.random() * 6, crouch: 0, jumpY: 0, act: 'run', actT: 0, maxSp: 6.8, s: scale };
     f.b.root.scale.setScalar(scale); figs.push(f); return f; };
   const HOME = { jersey: '#f2f4f8', shorts: '#f2f4f8', thigh: '#f2f4f8', sock: '#f2f4f8', shoe: '#1b1d24', num: '#1d428a', edge: '#f58426' };
@@ -166,7 +169,15 @@ export function buildGame(parent, tex, opts = {}) {
     if (act === 'shoot') { const k = f.actT; crouch = k < 0.28 ? 0.38 * Math.sin(k / 0.28 * Math.PI / 2) : Math.max(0, 0.38 - (k - 0.28) * 3);
       jump = k > 0.28 && k < 0.9 ? 0.5 * Math.sin((k - 0.28) / 0.62 * Math.PI) : 0; const up = clamp((k - 0.12) / 0.3, 0, 1);
       aR = -0.7 - up * 2.2; eR = -1.0 - up * 0.7 + clamp((k - 0.5) / 0.12, 0, 1) * 1.5; aL = -0.7 - up * 2.0; eL = -1.2; zL = -0.25 * up; zR = 0.05; lean = 0.02; headX = -0.25 * up;
-      if (k > 0.5 && !f.released) { f.released = true; release(f); } if (k > 1.3) { f.act = 'run'; f.released = false; } }
+      if (k > 0.5 && !f.released) { f.released = true; if (!R) release(f); } if (k > 1.3) { f.act = 'run'; f.released = false; } }
+    if (act === 'ftshoot') { const k = f.actT; crouch = k < 0.3 ? 0.3 * Math.sin(k / 0.3 * Math.PI / 2) : Math.max(0, 0.3 - (k - 0.3) * 2.5); jump = k > 0.3 && k < 0.7 ? 0.07 * Math.sin((k - 0.3) / 0.4 * Math.PI) : 0;
+      const up = clamp((k - 0.1) / 0.32, 0, 1); aR = -0.7 - up * 2.2; eR = -1.0 - up * 0.7 + clamp((k - 0.48) / 0.12, 0, 1) * 1.5; aL = -0.7 - up * 1.9; eL = -1.2; zL = -0.25 * up; lean = 0.02; headX = -0.2 * up; }
+    if (act === 'layup') { const k = f.actT; jump = k > 0.12 && k < 0.95 ? 0.62 * Math.sin((k - 0.12) / 0.83 * Math.PI) : 0; const up = clamp((k - 0.05) / 0.35, 0, 1);
+      aR = -0.6 - up * 2.5; eR = -0.6 + up * 0.45; aL = -0.5 - up * 0.9; eL = -0.9; tL = -1.1 * up; kL = 1.5 * up; crouch = k < 0.12 ? 0.3 : 0; lean = 0.05; headX = -0.3 * up; }
+    if (act === 'dunk') { const k = f.actT; jump = k > 0.1 && k < 1.05 ? 0.9 * Math.sin((k - 0.1) / 0.95 * Math.PI) : 0; const up = clamp((k - 0.02) / 0.3, 0, 1), slam = clamp((k - 0.42) / 0.12, 0, 1);
+      aR = -0.6 - up * 2.5 + slam * 1.1; eR = -0.3 + slam * 0.3; aL = -0.6 - up * 2.3 + slam * 0.6; eL = -0.3; tL = tR = -0.5 * up; kL = kR = 0.9 * up; crouch = k < 0.1 ? 0.4 : 0; lean = -0.05 + slam * 0.2; headX = -0.25 * up; }
+    if (act === 'contest') { const k = f.actT; jump = k < 0.7 ? 0.42 * Math.sin(k / 0.7 * Math.PI) : 0; aL = -2.9; aR = -2.8; eL = eR = -0.1; zL = 0.15; zR = -0.15; crouch = k < 0.08 ? 0.3 : 0; lean = -0.05; }
+    if (act === 'signal') { aL = aR = -2.85; eL = eR = -0.15; zL = 0.25; zR = -0.25; crouch = 0.02; lean = -0.04; }
     if (act === 'jump') { const k = f.actT; jump = k < 0.8 ? 0.62 * Math.sin(k / 0.8 * Math.PI) : 0; aL = -2.9; aR = -3.0; eL = eR = -0.15; crouch = k < 0.1 ? 0.3 : 0; if (k > 0.95) f.act = 'run'; }
     if (act === 'pass') { const k = f.actT; aL = aR = -1.1 + Math.min(1, k / 0.18) * -0.3; eL = eR = -0.9 + Math.min(1, k / 0.18) * 0.8; zL = -0.1; zR = 0.1; if (k > 0.35) f.act = 'run'; }
     if (act === 'sit') { hipY = 0.56; tL = tR = -1.52 + Math.sin(f.ph) * 0.03; kL = kR = 1.45; lean = -0.05; aL = aR = -0.45; eL = eR = -0.95; zL = 0.1; zR = -0.1;
@@ -188,7 +199,9 @@ export function buildGame(parent, tex, opts = {}) {
 
   function update(dt, t) {
     if (!g.parent || !g.parent.visible) return;
-    dt = Math.min(dt, 0.05); G.t += dt; G.cheerT = Math.max(0, G.cheerT - dt);
+    dt = Math.min(dt, 0.05);
+    if (R) return replayUpdate(dt, t);
+    G.t += dt; G.cheerT = Math.max(0, G.cheerT - dt);
     if (!G.final) { G.clock -= dt; G.shot = Math.max(0, G.shot - (G.phase === 'tip' ? 0 : dt)); if (G.clock <= 0) { if (G.q < 4) { G.q++; G.clock = 720; if (opts.sound) opts.sound.horn(); } else { G.final = 8; G.clock = 0; if (opts.sound) opts.sound.horn(); } } }
     else { G.final -= dt; if (G.final <= 0) { G.final = 0; G.score = [0, 0]; G.q = 1; G.clock = 720; tip(); } }
     const off = T[G.off], def = T[1 - G.off], bk = basket(G.off);
@@ -222,9 +235,7 @@ export function buildGame(parent, tex, opts = {}) {
     separate();
     const look = G.holder ? G.holder.pos : ball.position;
     for (const f of T[0].concat(T[1], refs)) { if (f.act === 'defend' || f.kind === 'ref') face(f, dt, look); else face(f, dt, G.holder === f ? bk : look); if (f.act === 'run' && f === G.holder) f.act = 'dribble'; if (f.act === 'dribble' && f !== G.holder) f.act = 'run'; if (f.act === 'defend' && f.team === G.off) f.act = 'run'; }
-    for (const f of coaches) { f.tgt.set(f.home.x + Math.sin(t * 0.17 + f.ph) * 1.2, 0, f.home.z); steer(f, dt); f.maxSp = 0.8; face(f, dt, ball.position); }
-    for (const f of figs) if (f.kind === 'fan') { const w = Math.atan2(ball.position.x - f.pos.x, ball.position.z - f.pos.z); let d = w - f.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); f.b.head.rotation.y = clamp(d, -1.1, 1.1) * 0.9; }
-    for (const f of photo) { if (Math.random() < dt * 0.3) f.yaw += (Math.random() - 0.5) * 0.3; }
+    sideline(dt, t);
     figs.forEach((f) => pose(f, dt, t));
     // the ball
     if (G.flight) { const F = G.flight; F.t += dt; const k = Math.min(1, F.t / F.T); ball.position.lerpVectors(F.p0, F.p1, k); ball.position.y += 4 * F.h * k * (1 - k); ball.rotation.x -= dt * 8;
@@ -234,16 +245,109 @@ export function buildGame(parent, tex, opts = {}) {
       else if (h.act === 'shoot' && !h.released) { b.handR.getWorldPosition(tmp); ball.position.set(tmp.x + Math.sin(h.yaw) * 0.06, tmp.y + 0.12, tmp.z + Math.cos(h.yaw) * 0.06); }
       else { b.chest.getWorldPosition(tmp); ball.position.set(tmp.x + Math.sin(h.yaw) * 0.34 * h.s, tmp.y + 0.28 * h.s, tmp.z + Math.cos(h.yaw) * 0.34 * h.s); } }
     else if (G.loose) { const L = G.loose; if (L.mode === 'bounce') { L.vy -= 9.8 * dt; L.p.addScaledVector(L.v, dt); L.p.y += L.vy * dt; if (L.p.y < 0.12) { L.p.y = 0.12; L.vy = Math.abs(L.vy) * 0.62; L.v.multiplyScalar(0.8); if (L.vy < 0.4) { L.vy = 0; L.mode = 'roll'; } } } else L.p.addScaledVector(L.v, dt), L.v.multiplyScalar(0.97); ball.position.copy(L.p); }
-    // write the instances
+    writeInstances();
+  }
+  function sideline(dt, t) { // the coaches pace, the front row follows the ball, the photographers shift
+    for (const f of coaches) { f.tgt.set(f.home.x + Math.sin(t * 0.17 + f.ph) * 1.2, 0, f.home.z); steer(f, dt); f.maxSp = 0.8; face(f, dt, ball.position); }
+    for (const f of figs) if (f.kind === 'fan') { const w = Math.atan2(ball.position.x - f.pos.x, ball.position.z - f.pos.z); let d = w - f.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); f.b.head.rotation.y = clamp(d, -1.1, 1.1) * 0.9; }
+    for (const f of photo) { if (rnd() < dt * 0.3) f.yaw += (rnd() - 0.5) * 0.3; }
+  }
+  function writeInstances() {
     meshes.forEach((m) => { const { bone, paired } = m.userData;
       figs.forEach((f, i) => { if (paired) { m.setMatrixAt(i * 2, f.b[bone + 'L'].matrixWorld); m.setMatrixAt(i * 2 + 1, f.b[bone + 'R'].matrixWorld); } else m.setMatrixAt(i, f.b[bone].matrixWorld); });
       m.instanceMatrix.needsUpdate = true; });
     figs.forEach((f, i) => { if (!f.num) { numbers.setMatrixAt(i * 2, zero); numbers.setMatrixAt(i * 2 + 1, zero); return; } m4.multiplyMatrices(f.b.chest.matrixWorld, nf); numbers.setMatrixAt(i * 2, m4); m4.multiplyMatrices(f.b.chest.matrixWorld, nb); numbers.setMatrixAt(i * 2 + 1, m4); });
     numbers.instanceMatrix.needsUpdate = true;
     photo.forEach((f, i) => cams.setMatrixAt(i, f.b.head.matrixWorld)); cams.instanceMatrix.needsUpdate = true;
+    if (flowers) writeFlowers();
   }
+  // ---------- the replay: a game from sim/garden_sim.py drives the same bodies
+  let flowers = null;
+  const RS = { tau: opts.t0 || 0, speed: 1, manual: false, last: -1, seg: -1, off: V(), prev: V(), slots: [] };
+  const playersOf = (a) => (a < 5 ? T[0][a] : a < 10 ? T[1][a - 5] : refs[a - 10]);
+  function paint(f, i) { const c = new THREE.Color(); meshes.forEach((m) => { const { key, paired } = m.userData; c.set(f.col[key]).convertSRGBToLinear(); if (paired) { m.setColorAt(i * 2, c); m.setColorAt(i * 2 + 1, c); } else m.setColorAt(i, c); m.instanceColor.needsUpdate = true; }); }
+  function setNum(i, cell) { const A = numGeo.attributes.aOff, a = A.array; a.set([cell[0], cell[1]], i * 4); a.set([cell[0], cell[1]], i * 4 + 2); A.needsUpdate = true; }
+  function setupReplay() {
+    const D = R.D, kits = D.teams.map((tm) => tm.kit), cellOf = {};
+    G.names = D.teams.map((tm) => tm.name); G.kits = kits; G.ids = D.teams.map((tm) => tm.id);
+    // one atlas cell per roster number of both sides, then the referees
+    ax.clearRect(0, 0, 1024, 512); let n = 0;
+    const draw = (txt, fill, edge) => { const cx = (n % 8) * 128, cy = ((n / 8) | 0) * 128; ax.font = '96px Anton, Impact, sans-serif'; ax.textAlign = 'center'; ax.textBaseline = 'middle'; ax.lineJoin = 'round'; ax.lineWidth = 10; ax.strokeStyle = edge; ax.strokeText(txt, cx + 64, cy + 70); ax.fillStyle = fill; ax.fillText(txt, cx + 64, cy + 70); const c = [(n % 8) / 8, 1 - (((n / 8) | 0) + 1) / 4]; n++; return c; };
+    D.teams.forEach((tm, ti) => tm.roster.forEach((p) => { cellOf[p.id] = draw(String(p.number), tm.kit.num, tm.kit.trim); }));
+    refs.forEach((f, i) => setNum(figs.indexOf(f), draw(f.num, '#111', '#e8e8e8')));
+    at.needsUpdate = true; RS.cellOf = cellOf;
+    // the benches in warm up tops of their side
+    bench.forEach((f) => { const k = kits[f.team]; f.col = { ...f.col, jersey: k.warm, arm: k.warm, shorts: k.shorts, thigh: k.shorts, sock: k.sock, shoe: k.shoe }; paint(f, figs.indexOf(f)); });
+    // flower heads: eight petals round an eye that follows the ball (astra D: separate eye and flower controls)
+    const petal = [], cast = D.cast || [];
+    for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; petal.push(new THREE.SphereGeometry(1, 10, 6).scale(0.075, 0.13, 0.035).translate(0, 0.165, 0).rotateZ(a)); }
+    for (let k = 0; k < 8; k++) { const a = (k + 0.5) / 8 * Math.PI * 2; petal.push(new THREE.SphereGeometry(1, 8, 5).scale(0.06, 0.1, 0.03).translate(0, 0.13, -0.02).rotateZ(a)); }
+    const pg = mergeGeometries(petal.map((q) => q.toNonIndexed()));
+    const eyeC = document.createElement('canvas'); eyeC.width = 256; eyeC.height = 128; const ex = eyeC.getContext('2d');
+    ex.fillStyle = '#f6f8fc'; ex.fillRect(0, 0, 256, 128); ex.fillStyle = '#2962ff'; ex.beginPath(); ex.ellipse(64, 64, 20, 22, 0, 0, 7); ex.fill();
+    ex.fillStyle = '#05060f'; ex.beginPath(); ex.ellipse(64, 64, 9, 10, 0, 0, 7); ex.fill(); ex.fillStyle = '#fff'; ex.beginPath(); ex.arc(59, 58, 3.5, 0, 7); ex.fill();
+    const et = new THREE.CanvasTexture(eyeC); et.colorSpace = THREE.SRGBColorSpace;
+    const who = figs.filter((f) => f.kind === 'player' || f.kind === 'bench');
+    const pm = new THREE.InstancedMesh(pg, new THREE.MeshStandardMaterial({ roughness: 0.55, emissive: 0xffffff, emissiveIntensity: 0.06 }), who.length);
+    const em = new THREE.InstancedMesh(new THREE.SphereGeometry(0.1, 20, 14), new THREE.MeshStandardMaterial({ map: et, roughness: 0.25 }), who.length);
+    pm.frustumCulled = em.frustumCulled = false; pm.castShadow = true; g.add(pm, em);
+    const c = new THREE.Color(); who.forEach((f, i) => { const pc = cast.length ? cast[(i * 7 + 3) % cast.length].flower : '#ff4fa3'; f.flower = pc; c.set(pc).convertSRGBToLinear(); pm.setColorAt(i, c); });
+    pm.instanceColor.needsUpdate = true;
+    flowers = { who, pm, em, head: meshes.find((m) => m.userData.bone === 'head' && m.geometry.attributes.position.count > 200), hair: meshes[PARTS.findIndex((p) => p[0] === 'hair')] };
+    G.score = [0, 0]; G.final = 0;
+  }
+  const fm = new THREE.Matrix4(), fo = new THREE.Matrix4().makeTranslation(0, 0.17, 0.03), inv = new THREE.Matrix4(), lv = V(), eq = new THREE.Quaternion(), ee = new THREE.Euler();
+  function writeFlowers() {
+    const { who, pm, em } = flowers, headM = meshes[PARTS.findIndex((p) => p[0] === 'head')], hairM = meshes[PARTS.findIndex((p) => p[0] === 'hair')];
+    who.forEach((f, i) => { const fi = figs.indexOf(f); headM.setMatrixAt(fi, zero); hairM.setMatrixAt(fi, zero);
+      fm.multiplyMatrices(f.b.head.matrixWorld, fo); pm.setMatrixAt(i, fm);
+      // the eye turns toward the ball inside the flower, at most about 35 degrees
+      inv.copy(fm).invert(); lv.copy(ball.position).applyMatrix4(inv);
+      ee.set(clamp(-Math.atan2(lv.y, Math.hypot(lv.x, lv.z)), -0.6, 0.6), clamp(Math.atan2(lv.x, lv.z), -0.6, 0.6), 0, 'YXZ'); eq.setFromEuler(ee);
+      m4.compose(V(0, 0, 0.02), eq, V(1, 1, 1)); m4.premultiply(fm); em.setMatrixAt(i, m4); });
+    pm.instanceMatrix.needsUpdate = true; em.instanceMatrix.needsUpdate = true;
+  }
+  const _a = [0, 0, 0], _v = [0, 0], _b = [0, 0, 0];
+  const SHOOTS = new Set(['shoot', 'layup', 'dunk', 'ftshoot']), ONE = new Set(['shoot', 'layup', 'dunk', 'ftshoot', 'jump', 'contest', 'pass', 'signal']);
+  function replayUpdate(dt, t) {
+    if (!RS.manual) RS.tau += dt * RS.speed;
+    const tau = RS.tau, jump = Math.abs(tau - RS.last) > 0.5 || RS.last < 0, gdt = jump ? 1 / 60 : Math.max(0, tau - RS.last);
+    // who is on the floor
+    const L = R.lineupAt(tau);
+    for (let a = 0; a < 10; a++) { const pid = L[a < 5 ? 0 : 1][a % 5]; if (RS.slots[a] === pid) continue; RS.slots[a] = pid;
+      const f = playersOf(a), p = R.P[pid], k = R.D.teams[p.team].kit, fi = figs.indexOf(f);
+      f.pid = pid; f.col = { jersey: k.jersey, shorts: k.shorts, thigh: k.shorts, sock: k.sock, shoe: k.shoe, skin: p.skin, arm: p.skin, shin: p.skin, hair: '#111', num: k.num, edge: k.trim };
+      f.s = p.height / 1.95; f.b.root.scale.setScalar(f.s); paint(f, fi); setNum(fi, RS.cellOf[pid]);
+      if (flowers) { const c = new THREE.Color(p.flower).convertSRGBToLinear(); flowers.pm.setColorAt(flowers.who.indexOf(f), c); flowers.pm.instanceColor.needsUpdate = true; } }
+    // everyone on the court from the timeline
+    for (let a = 0; a < 13; a++) { const f = playersOf(a); R.actor(tau, a, _a); R.velocity(tau, a, _v);
+      f.pos.set(_a[0], 0, _a[1]); f.yaw = _a[2]; f.vel.set(_v[0], 0, _v[1]);
+      const [t0, act] = R.actAt(tau, a); f.act = act === 'run' ? 'run' : act; f.actT = ONE.has(act) ? tau - t0 - gdt : 1; f.released = false; }
+    const { seg, i: si } = R.segAt(tau); let holder = null;
+    if (seg.k === 'h') { holder = playersOf(seg.a); if (!SHOOTS.has(holder.act)) holder.act = seg.s === 'hold' || seg.s === 'shoot' ? 'hold' : 'dribble'; }
+    for (let a = 0; a < 10; a++) { const f = playersOf(a); if (f !== holder && f.act === 'run' && f.team !== R.offAt(tau) && Math.hypot(f.vel.x, f.vel.z) < 3.5) { const [t0, act] = R.actAt(tau, a); if (act === 'defend') f.act = 'defend'; } }
+    // the clocks and the score, read from the same record as the scoreboard
+    const c = R.clockAt(tau); G.clock = c.clock; G.q = c.q; G.shot = c.shot < 0 ? 0 : c.shot; G.score = R.scoreAt(tau); G.off = R.offAt(tau); G.final = R.finalAt(tau) ? 1 : 0;
+    const ls = R.lastScore(tau); G.cheerT = ls && tau - ls.t < 2.4 ? 2.4 - (tau - ls.t) : 0; if (ls) G.lastTeam = ls.team;
+    if (!RS.manual && !jump && ls && ls.t > RS.last && ls.t <= tau) { if (opts.sound) opts.sound.swish(); if (opts.onScore) opts.onScore(ls.team, ls.pts); }
+    G.tau = tau;
+    sideline(dt, t);
+    for (const f of figs) { const court = f.kind === 'player' || f.kind === 'ref'; pose(f, court ? gdt : dt, court ? tau : t); }
+    // the ball: in a hand from the rig, otherwise its flight from the file
+    if (seg.k === 'h') { const h = holder, b = h.b;
+      if (h.act === 'dribble') { const bounce = Math.abs(Math.cos((h.dr || 0) / 2)); b.handR.getWorldPosition(tmp); ball.position.set(tmp.x + Math.sin(h.yaw) * 0.12, 0.12 + (tmp.y - 0.2) * bounce, tmp.z + Math.cos(h.yaw) * 0.12); ball.rotation.x += gdt * 6; }
+      else if (SHOOTS.has(h.act)) { b.handR.getWorldPosition(tmp); ball.position.set(tmp.x + Math.sin(h.yaw) * 0.06, tmp.y + 0.12, tmp.z + Math.cos(h.yaw) * 0.06); }
+      else { b.chest.getWorldPosition(tmp); ball.position.set(tmp.x + Math.sin(h.yaw) * 0.34 * h.s, tmp.y + 0.28 * h.s, tmp.z + Math.cos(h.yaw) * 0.34 * h.s); } }
+    else { R.evalSeg(seg, tau, _b); ball.position.set(_b[0], _b[1], _b[2]); if (seg.k === 'f') ball.rotation.x -= gdt * 15; }
+    // no teleports at a catch or a release: carry the old position in and let it fade over a few hundredths
+    if (si !== RS.seg) { if (!jump && RS.seg >= 0) RS.off.copy(RS.prev).sub(ball.position); else RS.off.set(0, 0, 0); RS.seg = si; }
+    RS.off.multiplyScalar(Math.exp(-gdt / 0.06)); ball.position.add(RS.off); RS.prev.copy(ball.position);
+    RS.last = tau;
+    writeInstances();
+  }
+  if (R) setupReplay();
   G.lastTeam = 0; const prevOn = opts.onScore; opts.onScore = (team, pts) => { G.lastTeam = team; if (prevOn) prevOn(team, pts); };
-  return { G, update, group: g, ball };
+  return { G, update, group: g, ball, R, RS, figs, actorFig: playersOf };
 }
 function mergeTwo(a, b) { // two plain geometries with position and normal only, one index
   const ga = a.toNonIndexed(), gb = b.toNonIndexed(); const out = new THREE.BufferGeometry();

@@ -1,0 +1,473 @@
+{
+ "format": "groups",
+ "seed": 3,
+ "rules": "pro5v5-v1",
+ "seeding": [
+  "NYK",
+  "NSH",
+  "BOD",
+  "CAB",
+  "STM",
+  "CNL",
+  "BLK",
+  "TWR"
+ ],
+ "games": [
+  {
+   "stage": "group A",
+   "home": "NYK",
+   "away": "CAB",
+   "seed": 3001,
+   "score": [
+    88,
+    119
+   ],
+   "ot": 0,
+   "winner": "CAB",
+   "top": [
+    "CAB-55",
+    42
+   ]
+  },
+  {
+   "stage": "group A",
+   "home": "STM",
+   "away": "NYK",
+   "seed": 3002,
+   "score": [
+    110,
+    102
+   ],
+   "ot": 0,
+   "winner": "STM",
+   "top": [
+    "STM-32",
+    28
+   ]
+  },
+  {
+   "stage": "group A",
+   "home": "NYK",
+   "away": "TWR",
+   "seed": 3003,
+   "score": [
+    146,
+    114
+   ],
+   "ot": 0,
+   "winner": "NYK",
+   "top": [
+    "TWR-55",
+    38
+   ]
+  },
+  {
+   "stage": "group A",
+   "home": "CAB",
+   "away": "STM",
+   "seed": 3004,
+   "score": [
+    122,
+    102
+   ],
+   "ot": 0,
+   "winner": "CAB",
+   "top": [
+    "CAB-55",
+    35
+   ]
+  },
+  {
+   "stage": "group A",
+   "home": "TWR",
+   "away": "CAB",
+   "seed": 3005,
+   "score": [
+    125,
+    121
+   ],
+   "ot": 0,
+   "winner": "TWR",
+   "top": [
+    "TWR-55",
+    34
+   ]
+  },
+  {
+   "stage": "group A",
+   "home": "STM",
+   "away": "TWR",
+   "seed": 3006,
+   "score": [
+    95,
+    104
+   ],
+   "ot": 0,
+   "winner": "TWR",
+   "top": [
+    "TWR-55",
+    26
+   ]
+  },
+  {
+   "stage": "group B",
+   "home": "NSH",
+   "away": "BOD",
+   "seed": 3007,
+   "score": [
+    102,
+    117
+   ],
+   "ot": 0,
+   "winner": "BOD",
+   "top": [
+    "BOD-55",
+    45
+   ]
+  },
+  {
+   "stage": "group B",
+   "home": "CNL",
+   "away": "NSH",
+   "seed": 3008,
+   "score": [
+    102,
+    116
+   ],
+   "ot": 0,
+   "winner": "NSH",
+   "top": [
+    "NSH-23",
+    33
+   ]
+  },
+  {
+   "stage": "group B",
+   "home": "NSH",
+   "away": "BLK",
+   "seed": 3009,
+   "score": [
+    140,
+    117
+   ],
+   "ot": 0,
+   "winner": "NSH",
+   "top": [
+    "BLK-08",
+    48
+   ]
+  },
+  {
+   "stage": "group B",
+   "home": "BOD",
+   "away": "CNL",
+   "seed": 3010,
+   "score": [
+    107,
+    118
+   ],
+   "ot": 0,
+   "winner": "CNL",
+   "top": [
+    "BOD-55",
+    45
+   ]
+  },
+  {
+   "stage": "group B",
+   "home": "BLK",
+   "away": "BOD",
+   "seed": 3011,
+   "score": [
+    112,
+    94
+   ],
+   "ot": 0,
+   "winner": "BLK",
+   "top": [
+    "BOD-55",
+    30
+   ]
+  },
+  {
+   "stage": "group B",
+   "home": "CNL",
+   "away": "BLK",
+   "seed": 3012,
+   "score": [
+    108,
+    106
+   ],
+   "ot": 0,
+   "winner": "CNL",
+   "top": [
+    "CNL-02",
+    25
+   ]
+  },
+  {
+   "stage": "semifinal",
+   "home": "TWR",
+   "away": "CNL",
+   "seed": 3013,
+   "score": [
+    112,
+    120
+   ],
+   "ot": 0,
+   "winner": "CNL",
+   "top": [
+    "TWR-55",
+    56
+   ]
+  },
+  {
+   "stage": "semifinal",
+   "home": "NSH",
+   "away": "CAB",
+   "seed": 3014,
+   "score": [
+    109,
+    107
+   ],
+   "ot": 0,
+   "winner": "NSH",
+   "top": [
+    "NSH-50",
+    31
+   ]
+  },
+  {
+   "stage": "final",
+   "home": "CNL",
+   "away": "NSH",
+   "seed": 3015,
+   "score": [
+    95,
+    121
+   ],
+   "ot": 0,
+   "winner": "NSH",
+   "top": [
+    "NSH-23",
+    26
+   ]
+  }
+ ],
+ "champion": "NSH",
+ "groups": {
+  "A": [
+   "NYK",
+   "CAB",
+   "STM",
+   "TWR"
+  ],
+  "B": [
+   "NSH",
+   "BOD",
+   "CNL",
+   "BLK"
+  ]
+ },
+ "standings": {
+  "A": [
+   {
+    "team": "TWR",
+    "w": 2,
+    "l": 1,
+    "pf": 343,
+    "pa": 362,
+    "pd_capped": -7,
+    "h2h": 1,
+    "rank": 1
+   },
+   {
+    "team": "CAB",
+    "w": 2,
+    "l": 1,
+    "pf": 362,
+    "pa": 315,
+    "pd_capped": 36,
+    "h2h": 0,
+    "rank": 2
+   },
+   {
+    "team": "STM",
+    "w": 1,
+    "l": 2,
+    "pf": 307,
+    "pa": 328,
+    "pd_capped": -21,
+    "h2h": 1,
+    "rank": 3
+   },
+   {
+    "team": "NYK",
+    "w": 1,
+    "l": 2,
+    "pf": 336,
+    "pa": 343,
+    "pd_capped": -8,
+    "h2h": 0,
+    "rank": 4
+   }
+  ],
+  "B": [
+   {
+    "team": "NSH",
+    "w": 2,
+    "l": 1,
+    "pf": 358,
+    "pa": 336,
+    "pd_capped": 19,
+    "h2h": 1,
+    "rank": 1
+   },
+   {
+    "team": "CNL",
+    "w": 2,
+    "l": 1,
+    "pf": 328,
+    "pa": 329,
+    "pd_capped": -1,
+    "h2h": 0,
+    "rank": 2
+   },
+   {
+    "team": "BLK",
+    "w": 1,
+    "l": 2,
+    "pf": 335,
+    "pa": 342,
+    "pd_capped": -4,
+    "h2h": 1,
+    "rank": 3
+   },
+   {
+    "team": "BOD",
+    "w": 1,
+    "l": 2,
+    "pf": 318,
+    "pa": 332,
+    "pd_capped": -14,
+    "h2h": 0,
+    "rank": 4
+   }
+  ]
+ },
+ "bracket": {
+  "semifinals": [
+   [
+    "TWR",
+    "CNL"
+   ],
+   [
+    "NSH",
+    "CAB"
+   ]
+  ],
+  "final": [
+   "CNL",
+   "NSH"
+  ]
+ },
+ "tiebreaks": [
+  "wins",
+  "head to head",
+  "point differential capped at 20 per game",
+  "points scored",
+  "seeded draw"
+ ],
+ "names": {
+  "NYK": "NEW YORKERS",
+  "NSH": "NIGHT SHIFT",
+  "BOD": "BODEGA CATS",
+  "CAB": "YELLOW CABS",
+  "STM": "STEAM PIPES",
+  "TWR": "WATER TOWERS",
+  "CNL": "CANAL STREET",
+  "BLK": "BLACKOUT"
+ },
+ "kits": {
+  "NYK": {
+   "jersey": "#E8E5DC",
+   "num": "#173B99",
+   "trim": "#2962FF",
+   "accent": "#12213A",
+   "shorts": "#E8E5DC",
+   "sock": "#E8E5DC",
+   "shoe": "#12213A",
+   "warm": "#173B99"
+  },
+  "NSH": {
+   "jersey": "#151D2C",
+   "num": "#F0EDE5",
+   "trim": "#2962FF",
+   "accent": "#D8B574",
+   "shorts": "#151D2C",
+   "sock": "#151D2C",
+   "shoe": "#F0EDE5",
+   "warm": "#0c111b"
+  },
+  "BOD": {
+   "jersey": "#1F5A3D",
+   "num": "#F4EBD0",
+   "trim": "#E8433A",
+   "accent": "#F4EBD0",
+   "shorts": "#1F5A3D",
+   "sock": "#F4EBD0",
+   "shoe": "#101410",
+   "warm": "#163f2b"
+  },
+  "CAB": {
+   "jersey": "#F6C21B",
+   "num": "#121212",
+   "trim": "#121212",
+   "accent": "#FFFFFF",
+   "shorts": "#121212",
+   "sock": "#F6C21B",
+   "shoe": "#121212",
+   "warm": "#121212"
+  },
+  "STM": {
+   "jersey": "#E25A26",
+   "num": "#FFFFFF",
+   "trim": "#FFFFFF",
+   "accent": "#3A3A3A",
+   "shorts": "#E25A26",
+   "sock": "#FFFFFF",
+   "shoe": "#2b2b2b",
+   "warm": "#3A3A3A"
+  },
+  "TWR": {
+   "jersey": "#6E4B33",
+   "num": "#F2E6D0",
+   "trim": "#9FB8C8",
+   "accent": "#F2E6D0",
+   "shorts": "#6E4B33",
+   "sock": "#F2E6D0",
+   "shoe": "#2a1d14",
+   "warm": "#4a3222"
+  },
+  "CNL": {
+   "jersey": "#B3122E",
+   "num": "#FFFFFF",
+   "trim": "#FFFFFF",
+   "accent": "#1A1A1A",
+   "shorts": "#B3122E",
+   "sock": "#1A1A1A",
+   "shoe": "#FFFFFF",
+   "warm": "#7a0c1f"
+  },
+  "BLK": {
+   "jersey": "#0B0B0E",
+   "num": "#FFE7A3",
+   "trim": "#FFE7A3",
+   "accent": "#5B5B66",
+   "shorts": "#0B0B0E",
+   "sock": "#0B0B0E",
+   "shoe": "#FFE7A3",
+   "warm": "#0B0B0E"
+  }
+ }
+}

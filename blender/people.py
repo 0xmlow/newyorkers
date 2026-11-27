@@ -54,11 +54,17 @@ POSES = {
     'stand':     dict(hip=(0.0, 0.05), knee=(0.05, 0.08), shy=(0.3, 0.32), shx=(0.05, -0.1), el=(-0.2, -0.35), lean=0.02),
     'stand_cheer': dict(hip=(0.0, 0.0), knee=(0.0, 0.0), shy=(-0.2, -0.2), shx=(-2.9, -2.8), el=(-0.3, -0.4), lean=-0.05),
     # the players
-    'ready':     dict(hip=(-0.55, -0.5), knee=(0.95, 0.9), shy=(0.0, 0.05), shx=(-0.9, -0.8), el=(-0.7, -0.8), lean=0.4),
-    'run':       dict(hip=(-0.85, 0.45), knee=(0.55, 1.5), shy=(0.25, 0.3), shx=(0.7, -0.9), el=(-1.4, -1.6), lean=0.22),
-    'run2':      dict(hip=(0.4, -0.75), knee=(1.4, 0.4), shy=(0.25, 0.3), shx=(-0.9, 0.6), el=(-1.6, -1.3), lean=0.2),
-    'shoot':     dict(hip=(-0.08, -0.25), knee=(0.12, 0.45), shy=(0.15, -0.3), shx=(-2.55, -2.9), el=(-1.4, -0.6), lean=-0.05, ankle=0.6),
-    'defend':    dict(hip=(-0.7, -0.7), knee=(1.2, 1.2), shy=(-0.75, -0.8), shx=(-0.5, -0.3), el=(-0.4, -0.3), lean=0.45),
+    'ready':     dict(hip=(-0.6, -0.35), knee=(1.0, 0.75), shy=(0.1, 0.0), shx=(-0.95, -0.6), el=(-0.8, -1.0), lean=0.36, twist=0.1),
+    'run':       dict(hip=(-0.95, 0.5), knee=(0.6, 1.6), shy=(0.25, 0.3), shx=(0.75, -0.95), el=(-1.45, -1.65), lean=0.26, twist=0.14),
+    'run2':      dict(hip=(0.5, -0.9), knee=(1.55, 0.5), shy=(0.25, 0.3), shx=(-0.95, 0.7), el=(-1.6, -1.35), lean=0.24, twist=-0.14),
+    'shoot':     dict(hip=(-0.05, -0.32), knee=(0.1, 0.55), shy=(0.35, -0.25), shx=(-2.35, -2.95), el=(-1.7, -0.35), lean=-0.08, ankle=0.7, twist=0.18),
+    'defend':    dict(hip=(-0.75, -0.55), knee=(1.25, 1.0), shy=(-0.4, -1.1), shx=(-0.9, -2.3), el=(-0.5, -0.2), lean=0.38, twist=-0.15),
+    'gather':    dict(hip=(-0.75, -0.2), knee=(1.15, 0.55), shy=(0.15, -0.15), shx=(-1.0, -1.15), el=(-1.2, -1.1), lean=0.42, twist=0.12),
+    'contest':   dict(hip=(-0.1, -0.35), knee=(0.2, 0.6), shy=(0.25, -0.1), shx=(-0.4, -2.95), el=(-0.5, -0.1), lean=0.05, twist=-0.1, ankle=0.5),
+    'closeout':  dict(hip=(-0.45, 0.25), knee=(0.85, 0.65), shy=(0.0, -0.2), shx=(-0.3, -2.4), el=(-0.6, -0.15), lean=0.3, twist=0.08),
+    'boxout':    dict(hip=(-0.8, -0.65), knee=(1.3, 1.1), shy=(-0.95, -0.95), shx=(-0.3, -0.3), el=(-1.0, -1.0), lean=0.5),
+    'cut':       dict(hip=(-1.05, 0.6), knee=(0.7, 1.75), shy=(0.2, 0.25), shx=(0.9, -1.1), el=(-1.5, -1.6), lean=0.34, twist=0.2),
+    'rebound':   dict(hip=(-0.15, -0.3), knee=(0.3, 0.55), shy=(0.1, -0.1), shx=(-2.85, -2.75), el=(-0.25, -0.3), lean=-0.02, ankle=0.6),
     'dribble':   dict(hip=(-0.55, 0.15), knee=(0.85, 0.7), shy=(0.25, 0.15), shx=(-0.6, -0.55), el=(-0.6, -0.9), lean=0.35),
 }
 
@@ -78,6 +84,7 @@ def pose(v, j, R, P):
         v = rot(v, we, rx(P['el'][side]), El); v = rot(v, wa, rx(P['shx'][side]) @ ry(sgn * P['shy'][side]), Sh)
     # the torso leans from the waist, arms and head with it; the head turns a little
     wt = np.where(R['arm'], 1.0, ss(0.92, 1.12, z))
+    if P.get('twist'): v = rot(v, wt, rz(P['twist']), (0, 0, 0.98))
     v = rot(v, wt, rx(-P['lean']), (0, 0, 0.98))
     if P.get('head'): v = rot(v, ss(j['neck'] - 0.03, j['neck'] + 0.05, z) * (~R['arm']), rx(-P['head']), (0, 0, j['neck']))
     return v
@@ -85,7 +92,7 @@ def pose(v, j, R, P):
 DRESS = {  # sleeves: 'long' covers to the wrist, 'short' to mid upper arm, 'none' a vest; legs: 'long' or 'shorts'
     'winter': dict(sleeve='long', legs='long', smooth_top=30, push=0.016),
     'tee': dict(sleeve='short', legs='long', smooth_top=12, push=0.008),
-    'jersey': dict(sleeve='none', legs='shorts', smooth_top=10, push=0.01),
+    'jersey': dict(sleeve='none', legs='shorts', smooth_top=14, push=0.02),
     'suit': dict(sleeve='long', legs='long', smooth_top=24, push=0.012),
 }
 def dress(v, j, R, D):
@@ -99,6 +106,12 @@ def dress(v, j, R, D):
     part[legs & (z >= lo)] = 2; part[(z < j['crotch'] + 0.06) & (z > j['crotch'] - 0.1) & ~R['arm']] = 2
     part[z < 0.095] = 3
     if D['legs'] == 'shorts': part[R['leg'] & (z >= 0.095) & (z < 0.21)] = 5   # socks
+    if D['sleeve'] == 'none':
+        # bindings: jersey verts next to bare skin are the collar and armhole trim; the shorts' hems and outer side stripe
+        E_ = D['_E']; top = part == 1; nb = np.zeros(n, bool); np.logical_or.at(nb, E_[:, 0], (part[E_[:, 1]] == 0)); part[top & nb] = 7
+        bot = part == 2; nb2 = np.zeros(n, bool); np.logical_or.at(nb2, E_[:, 0], (part[E_[:, 1]] == 0)); part[bot & nb2] = 8
+        lx = np.abs(j['knee'][0]) ; part[bot & (np.abs(v[:, 0]) > np.abs(j['hip'][0]) + 0.075) & (v[:, 1] > -0.03) & (v[:, 1] < 0.04)] = 8
+    part[(part == 3) & (z < 0.016)] = 9
     head = z > j['neck'] + 0.07; hair = head & ((v[:, 1] > -0.02) | (z > j['H'] - 0.07))
     part[hair] = 4
     return part
@@ -107,20 +120,27 @@ def bake():
     out = []
     plan = [('sit', 'winter'), ('sit', 'tee'), ('sit_hands', 'winter'), ('sit_phone', 'winter'), ('sit_cheer', 'tee'), ('sit_lean', 'winter'), ('sit_hands', 'tee'), ('sit_cheer', 'winter'),
             ('stand', 'suit'), ('stand_cheer', 'winter'), ('sit', 'suit'),
-            ('ready', 'jersey'), ('run', 'jersey'), ('run2', 'jersey'), ('shoot', 'jersey'), ('defend', 'jersey'), ('dribble', 'jersey'), ('stand', 'jersey'), ('sit', 'jersey')]
+            ('ready', 'jersey'), ('gather', 'jersey'), ('contest', 'jersey'), ('closeout', 'jersey'), ('boxout', 'jersey'), ('cut', 'jersey'), ('rebound', 'jersey'), ('run', 'jersey'), ('run2', 'jersey'), ('shoot', 'jersey'), ('defend', 'jersey'), ('dribble', 'jersey'), ('stand', 'jersey'), ('sit', 'jersey')]
     for body in ('male_realistic', 'female_realistic'):
         v0, lens, flat = load(body); j = J[body]; R = regions(v0, j); E = adjacency(len(v0), lens, flat)
         for pname, dname in plan:
             if body == 'female_realistic' and dname in ('jersey',): continue
-            D = DRESS[dname]; part = dress(v0, j, R, D)
+            D = dict(DRESS[dname], _E=E); part = dress(v0, j, R, D)
             # clothes: smooth the anatomy away in the rest pose, then push out by the cloth's thickness
             v = v0.copy(); cl = (part == 1) | (part == 2); v = smooth(v, E, (part == 1).astype(float), D['smooth_top']); v = smooth(v, E, (part == 2).astype(float), 8)
             v = smooth(v, E, (part == 3).astype(float), 20)
-            nr = normals(v, lens, flat); v = v + nr * (cl * D['push'] + (part == 3) * 0.01 + (part == 4) * 0.006)[:, None]
-            v = pose(v, j, R, POSES[pname])
+            nr = normals(v, lens, flat); v = v + nr * (cl * D['push'] + (part == 7) * (D['push'] + 0.008) + (part == 8) * (D['push'] + 0.004) + (part == 3) * 0.016 + (part == 9) * 0.02 + (part == 5) * 0.004 + (part == 4) * 0.006)[:, None]
+            # the head comes off: a NEW YORKERS flower head goes on in Blender at the neck, so keep where the neck went
+            neck = (np.abs(v0[:, 2] - (j['neck'] + 0.0)) < 0.025) & ~R['arm']
+            v = pose(v, j, R, POSES[pname]); neck_p = v[neck].mean(0)
+            cut = v0[:, 2] > j['neck'] + 0.035; keep_f = []; i0 = 0; nl, nf = [], []
+            for L in lens:
+                f = flat[i0:i0 + L]; i0 += L
+                if not cut[f].any(): nl.append(L); nf.extend(f)
+            lens_o, flat_o = np.array(nl), np.array(nf)
             if pname.startswith('sit'): v[:, 2] -= 0.0      # seat at the origin height is set in Blender
-            else: v[:, 2] -= v[:, 2].min()                 # feet on the floor (a jump is set in Blender)
-            name = f'pose_{body[0]}_{pname}_{dname}'; np.savez(os.path.join(W, name + '.npz'), v=v.astype(np.float32), part=part.astype(np.int8), lens=lens, flat=flat); out.append(name)
+            else: dz = v[:, 2].min(); v[:, 2] -= dz; neck_p = neck_p - [0, 0, dz]
+            name = f'pose_{body[0]}_{pname}_{dname}'; np.savez(os.path.join(W, name + '.npz'), v=v.astype(np.float32), rest=v0.astype(np.float32), part=part.astype(np.int8), lens=lens_o, flat=flat_o, neck=neck_p.astype(np.float32) - [0, 0, 0 if not pname.startswith('sit') else 0]); out.append(name)
     print(len(out), 'poses'); return out
 
 if __name__ == '__main__': bake()

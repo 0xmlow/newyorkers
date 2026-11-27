@@ -68,18 +68,26 @@ def court():
             for zz in (-2.44, 2.44): d.line([X(s * L - s * dd), Z(zz), X(s * L - s * dd), Z(zz + math.copysign(0.15, zz))], fill=line, width=lw)
         for zz in (-W, W): d.line([X(s * (L - 8.53)), Z(zz), X(s * (L - 8.53)), Z(zz + math.copysign(0.9, zz))], fill=line, width=lw)
     d.rectangle([X(-L), Z(-W), X(L), Z(W)], outline=line, width=lw); d.line([X(0), Z(-W), X(0), Z(W)], fill=line, width=lw)
-    # centre circle: the Firefly centre art inside, orange ring
-    cc = Image.open(os.path.join(FF, 'court_center.webp')).convert('RGB'); r = int(1.83 * PX); cc = cc.resize((2 * r, 2 * r))
-    m = Image.new('L', (2 * r, 2 * r), 0); ImageDraw.Draw(m).ellipse([0, 0, 2 * r, 2 * r], fill=242); im.paste(cc, (int(X(0)) - r, int(Z(0)) - r), m)
-    d = ImageDraw.Draw(im); arc(0, 0, 1.97, 0, 2 * math.pi, orange, int(0.14 * PX)); arc(0, 0, 1.83, 0, 2 * math.pi); arc(0, 0, 0.61, 0, 2 * math.pi)
+    d = ImageDraw.Draw(im); arc(0, 0, 1.83, 0, 2 * math.pi); arc(0, 0, 0.61, 0, 2 * math.pi)
     def word(t, x, z, size, col, rot=0, f=SKY):
         fn = font(f, int(size * PX)); bb = fn.getbbox(t); tw, th = bb[2] - bb[0], bb[3] - bb[1]
         lay = Image.new('L', (tw + 40, th + 40), 0); ImageDraw.Draw(lay).text((20 - bb[0], 20 - bb[1]), t, font=fn, fill=235)
         lay = lay.rotate(rot, expand=True); col_im = Image.new('RGB', lay.size, col)
         im.paste(col_im, (int(X(x) - lay.size[0] / 2), int(Z(z) - lay.size[1] / 2)), lay)
-    word('THE GARDEN', -L - 1.3, 0, 1.15, line, -90); word('THE GARDEN', L + 1.3, 0, 1.15, line, 90)
+    # the N3W YORKERS stacked skyline logo, MLow's pick: huge over centre court, white in both keys and all round the apron
+    LB, LW = Image.open(os.path.join(OUT, 'logo_black.png')), Image.open(os.path.join(OUT, 'logo_white.png'))
+    def logo(L_, x, z, size, rot=0, alpha=1.0):
+        g = L_.resize((int(size * PX), int(size * PX)), Image.LANCZOS).rotate(rot, expand=True)
+        if alpha < 1: g.putalpha(g.getchannel('A').point(lambda v: int(v * alpha)))
+        im.paste(g, (int(X(x) - g.size[0] / 2), int(Z(z) - g.size[1] / 2)), g)
+    logo(LB, 0, 0, 7.4, 0, 0.93)
+    for sx in (-1, 1): logo(LW, sx * (L - 2.9), 0, 3.6, -90 * sx, 0.9)
+    for xx in (-12, -6, 6, 12):
+        logo(LW, xx, 8.9, 1.6, 0); logo(LW, xx, -8.9, 1.6, 180)
+    for sx in (-1, 1):
+        for zz in (-5.6, 5.6): logo(LW, sx * (L + 1.5), zz, 1.9, -90 * sx)
+    word('THE GARDEN', -L - 1.3, 0, 1.1, line, -90); word('THE GARDEN', L + 1.3, 0, 1.1, line, 90)
     word('NEW YORK', 0, 8.8, 0.9, orange); word('NEW YORK', 0, -8.8, 0.9, orange, 180)
-    word('N3W YORKERS', -7.4, 8.8, 0.5, line); word('BY MLOW', 7.4, 8.8, 0.5, line)
     im.save(os.path.join(OUT, 'court.jpg'), quality=92); print('court', im.size)
 
 # ---------------- banners (512 x 1024 design, drawn at 1024 x 2048)
@@ -126,33 +134,72 @@ def banners():
     print('banners', len(names))
 
 # ---------------- the scoreboard: long faces show MLow's New Yorkers (a 3 x 1 strip), ends the score
+def artgrid(w, h, n, seed, logo_every=0, pad=12):
+    """a strip of MLow's New Yorkers, n across, with the stacked logo every logo_every panels on deep blue"""
+    arts = sorted(os.listdir(ART)); rnd = random.Random(seed); rnd.shuffle(arts)
+    im = Image.new('RGB', (w, h), (4, 6, 18)); pw = (w - pad) // n; LW_ = Image.open(os.path.join(OUT, 'logo_white.png'))
+    k = 0
+    for i in range(n):
+        x0 = pad + i * pw
+        if logo_every and i % logo_every == logo_every // 2:
+            tile = Image.new('RGB', (pw - pad, h - 2 * pad), (13, 26, 90)); g = LW_.copy(); g.thumbnail((pw - pad - 40, h - 2 * pad - 40)); tile.paste(g, ((tile.size[0] - g.size[0]) // 2, (tile.size[1] - g.size[1]) // 2), g)
+        else:
+            tile = ImageOps.fit(Image.open(os.path.join(ART, arts[k % len(arts)])).convert('RGB'), (pw - pad, h - 2 * pad)); k += 1
+        im.paste(tile, (x0, pad))
+    return im
 def scoreboard():
-    arts = sorted(os.listdir(ART)); random.shuffle(arts)
-    for k in range(2):
-        im = Image.new('RGB', (2400, 1200), (4, 5, 12)); d = ImageDraw.Draw(im)
-        for i in range(3):
-            a = Image.open(os.path.join(ART, arts[k * 3 + i])).convert('RGB'); a = ImageOps.fit(a, (780, 1000)); im.paste(a, (15 + i * 795, 30))
-        d.rectangle([0, 1040, 2400, 1200], fill=(13, 26, 90)); centered_w(d, im.size[0], 'N3W YORKERS · BY MLOW · LIVE AT THE GARDEN', 1120, font(SKY, 96), (240, 244, 248))
-        im.save(os.path.join(OUT, f'sb_long{k}.jpg'), quality=90)
-    im = Image.new('RGB', (1600, 1200), (4, 5, 12)); d = ImageDraw.Draw(im)
-    d.rectangle([0, 0, 796, 180], fill=(29, 66, 138)); d.rectangle([804, 0, 1600, 180], fill=(163, 32, 43))
-    centered_w(d, 800, 'NEW YORK', 92, font(SKY, 110), (246, 243, 234)); cx(d, 1200, 'VISITORS', 92, font(SKY, 110), (246, 243, 234))
-    cx(d, 400, '98', 480, font(ANTON, 440), (245, 132, 38)); cx(d, 1200, '94', 480, font(ANTON, 440), (246, 243, 234))
-    cx(d, 800, '2:31', 870, font(MONO, 200), (255, 210, 58)); cx(d, 250, 'QTR 4', 870, font(MONO, 80), (138, 147, 176)); cx(d, 1350, 'SHOT 14', 870, font(MONO, 80), (255, 42, 26))
-    cx(d, 800, 'THE GARDEN · SEVENTH AVENUE', 1080, font(SKY, 90), (34, 211, 238)); im.save(os.path.join(OUT, 'sb_end.jpg'), quality=90)
+    # the long faces of the centre hung board: three New Yorkers and the logo, 24 x 11 m
+    for k in range(2): artgrid(2640, 1210, 4, 40 + k, logo_every=4).save(os.path.join(OUT, f'sb_long{k}.jpg'), quality=90)
+    # the ends: the score beside the logo, 16 x 11 m
+    im = Image.new('RGB', (1760, 1210), (4, 5, 12)); d = ImageDraw.Draw(im)
+    d.rectangle([0, 0, 876, 190], fill=(29, 66, 138)); d.rectangle([884, 0, 1760, 190], fill=(163, 32, 43))
+    cx(d, 438, 'NEW YORK', 98, font(SKY, 118), (246, 243, 234)); cx(d, 1322, 'VISITORS', 98, font(SKY, 118), (246, 243, 234))
+    cx(d, 438, '98', 470, font(ANTON, 430), (245, 132, 38)); cx(d, 1322, '94', 470, font(ANTON, 430), (246, 243, 234))
+    cx(d, 880, '2:31', 820, font(MONO, 200), (255, 210, 58)); cx(d, 260, 'QTR 4', 820, font(MONO, 80), (138, 147, 176)); cx(d, 1500, 'SHOT 14', 820, font(MONO, 80), (255, 42, 26))
+    g = Image.open(os.path.join(OUT, 'logo_white.png')); g.thumbnail((300, 300)); im.paste(g, (730, 900), g)
+    cx(d, 380, 'N3W YORKERS', 1050, font(SKY, 90), (240, 244, 248)); cx(d, 1380, 'BY MLOW', 1050, font(SKY, 90), (240, 244, 248))
+    im.save(os.path.join(OUT, 'sb_end.jpg'), quality=90)
+    # the belly: the round screen under the board, the logo looking down at the court
+    im = Image.new('RGB', (2048, 2048), (16, 20, 28)); g = Image.open(os.path.join(OUT, 'logo_white.png')).resize((1100, 1100)); im.paste(g, (474, 474), g); im.save(os.path.join(OUT, 'sb_belly.jpg'), quality=90)
+    # the big wall screens: two long ones over the sides, two curved over the ends
+    artgrid(4800, 1200, 5, 7, logo_every=5).save(os.path.join(OUT, 'wall_side0.jpg'), quality=90)
+    artgrid(4800, 1200, 5, 8, logo_every=5).save(os.path.join(OUT, 'wall_side1.jpg'), quality=90)
+    artgrid(8192, 1024, 9, 9, logo_every=3).save(os.path.join(OUT, 'wall_end.jpg'), quality=90)
 def cx(d, x, t, y, f, col): bb = d.textbbox((0, 0), t, font=f); d.text((x - (bb[2] - bb[0]) / 2 - bb[0], y - (bb[3] - bb[1]) / 2 - bb[1]), t, font=f, fill=col)
 def centered_w(d, w, t, y, f, col): cx(d, w / 2, t, y, f, col)
 
 # ---------------- the ribbon: the Firefly fascia band with the house words between
 def ribbon():
-    f = Image.open(os.path.join(FF, 'fascia.webp')).convert('RGB'); f = ImageOps.fit(f, (4096, 256))
-    d = ImageDraw.Draw(f);
-    for i, t in enumerate(['N3W YORKERS', 'THE GARDEN', 'BY MLOW', 'NEW YORK']):
-        d.rectangle([i * 1024 + 300, 40, i * 1024 + 760, 216], fill=(6, 8, 20)); cx(d, i * 1024 + 530, t, 128, font(SKY, 110), (240, 244, 248))
+    """the LED ribbon round the bowl: the Firefly fascia, the white logo and the house words, in turns"""
+    f = Image.open(os.path.join(FF, 'fascia.webp')).convert('RGB'); f = ImageOps.fit(f, (4096, 256)); d = ImageDraw.Draw(f)
+    g = Image.open(os.path.join(OUT, 'logo_white.png')); g.thumbnail((236, 236))
+    for i, t in enumerate(['N3W YORKERS', 'BY MLOW', 'THE GARDEN', 'NEW YORK']):
+        d.rectangle([i * 1024 + 150, 0, i * 1024 + 900, 256], fill=(13, 26, 90)); f.paste(g, (i * 1024 + 170, 10), g); cx(d, i * 1024 + 620, t, 128, font(SKY, 104), (240, 244, 248))
     f.save(os.path.join(OUT, 'ribbon.jpg'), quality=90)
-    b = Image.new('RGB', (2048, 128), (240, 244, 248)); d = ImageDraw.Draw(b); d.rectangle([0, 108, 2048, 128], fill=(41, 98, 255))
-    for i, t in enumerate(['N3W YORKERS', 'THE GARDEN', 'BY MLOW', 'OPEN EYE']): d.text((40 + i * 512, 18), t, font=font(SKY, 76), fill=(13, 13, 13) if i % 2 == 0 else (255, 79, 163))
+    b = Image.new('RGB', (2048, 128), (13, 26, 90)); d = ImageDraw.Draw(b); g = Image.open(os.path.join(OUT, 'logo_white.png')); g.thumbnail((120, 120))
+    for i, t in enumerate(['N3W YORKERS', 'BY MLOW', 'N3W YORKERS', 'OPEN EYE']):
+        b.paste(g, (i * 512 + 10, 4), g); d.text((i * 512 + 140, 22), t, font=font(SKY, 70), fill=(240, 244, 248) if i % 2 == 0 else (255, 79, 163))
     b.save(os.path.join(OUT, 'boards.jpg'), quality=90)
+    # the stanchion pad decal
+    p = Image.new('RGBA', (1024, 1024), (0, 0, 0, 0)); g = Image.open(os.path.join(OUT, 'logo_white.png')).resize((1024, 1024)); p.alpha_composite(g); p.save(os.path.join(OUT, 'pad_logo.png'))
+
+# ---------------- jerseys: one 1024 x 512 sheet per player, front on the left half, back on the right (mirrored in u by the shader)
+KITS = {'home': dict(word='N3W YORKERS', letter=(23, 59, 153), edge=(41, 98, 255), nums=['3', '5', '11', '23', '30', '8', '13', '1', '20', '44', '6', '15']),
+        'away': dict(word='NIGHT SHIFT', letter=(240, 237, 229), edge=(41, 98, 255), nums=['0', '7', '12', '21', '34', '2', '9', '17', '24', '33', '4', '10'])}
+def jerseys():
+    for team, K in KITS.items():
+        for i, n in enumerate(K['nums']):
+            im = Image.new('RGBA', (1024, 512), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+            def put(t, cxp, cyp, size, f, stroke):
+                fn = font(f, size); bb = d.textbbox((0, 0), t, font=fn, stroke_width=stroke); d.text((cxp - (bb[2] - bb[0]) / 2 - bb[0], cyp - (bb[3] - bb[1]) / 2 - bb[1]), t, font=fn, fill=K['letter'] + (255,), stroke_width=stroke, stroke_fill=K['edge'] + (255,))
+            # front: the wordmark across the chest, the number under it (v = (z - 0.80) / 0.70 from the floor of the rest pose)
+            put(K['word'], 256, 512 - 0.74 * 512, 54, ANTON, 4); put(n, 256, 512 - 0.53 * 512, 120, ANTON, 7)
+            # back: a small N3W over a big number
+            put('N3W' if team == 'home' else 'NIGHT', 768, 512 - 0.83 * 512, 36, ANTON, 3); put(n, 768, 512 - 0.58 * 512, 178, ANTON, 8)
+            im.save(os.path.join(OUT, f'jersey_{team}_{i}.png'))
+    print('jerseys', sum(len(K['nums']) for K in KITS.values()))
 
 if __name__ == '__main__':
-    court(); banners(); scoreboard(); ribbon()
+    import sys
+    if 'jerseys' in sys.argv: jerseys()
+    else: court(); banners(); scoreboard(); ribbon(); jerseys()

@@ -18,9 +18,16 @@ import { buildWorld, buildModeSets, put } from './world.js';
 import * as S from './sound.js';
 import { buildGame } from './players.js';
 import { buildBanners } from './banners.js';
+import { loadReplay } from './replay.js';
+import { makeBroadcast } from './broadcast.js';
 
 const $ = (s) => document.querySelector(s);
 const Q = new URLSearchParams(location.search);
+// a simulated game (sim/garden_sim.py) instead of the self playing one: ?replay=sim/game_7.json&t=3150
+// broadcast cameras: &cam=main|baseline|backboard|bridge|crowd|handheld ; frame by frame capture for _build/reel.py: &capture
+const REPLAY = Q.get('replay'), CAPTURE = Q.has('capture'), BCAM = Q.get('cam');
+if (CAPTURE) { let s = 1126; Math.random = () => (s = (s * 16807) % 2147483647) / 2147483647; }
+if (CAPTURE || BCAM) document.body.classList.add('capture');
 const PHONE = matchMedia('(pointer:coarse)').matches;
 const renderer = new THREE.WebGLRenderer({ antialias: !PHONE, powerPreference: 'high-performance' });
 renderer.setPixelRatio(Math.min(devicePixelRatio, PHONE ? 1.25 : 1.5)); renderer.setSize(innerWidth, innerHeight);
@@ -107,7 +114,8 @@ async function build() {
   const penn = ff('penn_wall', null); if (penn) tex.pennWall = penn;
   // the floors, drawn on canvases with the Firefly centre art
   const [cc, ic, cr] = await Promise.all(['court_center', 'ice_center', 'circus_ring'].map((n) => loadImg(FF.has(n) ? `assets/ff/${n}.webp` : null)));
-  U.floors = { court: cvTex(drawCourt(cc)), ice: cvTex(drawIce(ic)), stage: cvTex(drawStage()), ring: cvTex(drawRing()), circus: cvTex(drawCircus(cr)) };
+  const ci = await loadImg('assets/tex/court_full.jpg');   // the court from the Cycles build (blender/textures.py): the stacked logo at centre, in the keys and round the apron
+  U.floors = { court: ci ? cvTex(ci) : cvTex(drawCourt(cc)), ice: cvTex(drawIce(ic)), stage: cvTex(drawStage()), ring: cvTex(drawRing()), circus: cvTex(drawCircus(cr)) };
   for (const k in U.floors) { U.floors[k].wrapS = U.floors[k].wrapT = THREE.ClampToEdgeWrapping; U.floors[k].repeat.set(1, 1); }
   U.rough = { court: 0.34, ice: 0.18, stage: 0.5, ring: 0.85, circus: 0.95 }; U.coat = { court: 0.75, ice: 1, stage: 0.3, ring: 0, circus: 0 };
   // the environment: the night sky over Midtown for reflections
@@ -139,7 +147,9 @@ async function build() {
   await loadModels(tex);
   hangAndPieces(tex);
   standingCrowd(tex);
-  U.game = buildGame(U.sets.court, tex, { fans: U.courtFans, phone: PHONE, sound: S, onScore: (team, pts) => { S.cheer(team === 0 ? (pts === 3 ? 1.1 : 0.7) : 0.25, team === 0 ? 2.4 : 1.2); if (team === 0 && pts === 3 && zoneOf(player.pos) !== 'concourse' && started) egg('downtown', 'From downtown', 'A home three, and fourteen thousand people on their feet. The game on this floor plays itself: watch it from courtside, the bridges or the top row.'); } });
+  if (REPLAY) U.replay = await loadReplay(REPLAY);
+  U.game = buildGame(U.sets.court, tex, { replay: U.replay, t0: +Q.get('t') || 0, fans: U.courtFans, phone: PHONE, sound: S, onScore: (team, pts) => { S.cheer(team === 0 ? (pts === 3 ? 1.1 : 0.7) : 0.25, team === 0 ? 2.4 : 1.2); if (team === 0 && pts === 3 && zoneOf(player.pos) !== 'concourse' && started) egg('downtown', 'From downtown', 'A home three, and fourteen thousand people on their feet. The game on this floor plays itself: watch it from courtside, the bridges or the top row.'); } });
+  if (U.replay) { U.bc = makeBroadcast({ camera, replay: U.replay, game: U.game }); if (BCAM) U.bc.cam(BCAM); if (!(BCAM || CAPTURE)) U.bc.root.style.display = 'none'; }
   // the floor takes shadows; the furniture on it casts them
   U.flip.mesh.receiveShadow = true; base.receiveShadow = true;
   for (const k in U.sets) U.sets[k].traverse((o) => { if (o.isMesh && !o.isInstancedMesh) o.castShadow = true; if (o.isInstancedMesh) o.castShadow = true; });
@@ -295,12 +305,13 @@ function drawScore() {
   x.textAlign = 'center'; x.textBaseline = 'middle';
   if (m === 'court' && G) {
     const mm = Math.floor(G.clock / 60), ss = Math.floor(G.clock % 60), clk = G.clock < 60 ? G.clock.toFixed(1) : mm + ':' + String(ss).padStart(2, '0');
-    x.fillStyle = '#1d428a'; x.fillRect(0, 0, w / 2 - 4, 92); x.fillStyle = '#a3202b'; x.fillRect(w / 2 + 4, 0, w / 2 - 4, 92);
-    x.font = '58px "N3W Skyline", Anton'; x.fillStyle = '#f6f3ea'; x.fillText('NEW YORK', w / 4, 50); x.fillText('VISITORS', w * 3 / 4, 50);
-    x.font = '210px Anton'; x.fillStyle = '#f58426'; x.fillText(String(G.score[0]), w / 4, 230); x.fillStyle = '#f6f3ea'; x.fillText(String(G.score[1]), w * 3 / 4, 230);
+    const K = G.kits, NM = G.names || ['NEW YORK', 'VISITORS'];
+    x.fillStyle = K ? K[0].jersey : '#1d428a'; x.fillRect(0, 0, w / 2 - 4, 92); x.fillStyle = K ? K[1].jersey : '#a3202b'; x.fillRect(w / 2 + 4, 0, w / 2 - 4, 92);
+    x.font = '58px "N3W Skyline", Anton'; x.fillStyle = K ? K[0].num : '#f6f3ea'; x.fillText(NM[0], w / 4, 50); x.fillStyle = K ? K[1].num : '#f6f3ea'; x.fillText(NM[1], w * 3 / 4, 50);
+    x.font = '210px Anton'; x.fillStyle = K ? '#f2efe8' : '#f58426'; x.fillText(String(G.score[0]), w / 4, 230); x.fillStyle = '#f6f3ea'; x.fillText(String(G.score[1]), w * 3 / 4, 230);
     x.fillStyle = '#ffd23a'; x.font = '84px "JetBrains Mono"'; x.fillText(G.final ? 'FINAL' : clk, w / 2, 380);
     x.font = '36px "JetBrains Mono"'; x.fillStyle = '#8a93b0'; x.fillText('QTR ' + G.q, w / 2 - 300, 380); x.fillStyle = '#ff2a1a'; x.fillText('SHOT ' + Math.ceil(G.shot), w / 2 + 300, 380);
-    x.fillStyle = '#22d3ee'; x.font = '32px "JetBrains Mono"'; x.fillText('POSS ' + (G.off === 0 ? '◀ NEW YORK' : 'VISITORS ▶') + (shots ? '   ·   YOU ' + score + ' PTS ON ' + shots : ''), w / 2, 462);
+    x.fillStyle = '#22d3ee'; x.font = '32px "JetBrains Mono"'; x.fillText('POSS ' + (G.off === 0 ? '◀ ' + NM[0] : NM[1] + ' ▶') + (shots ? '   ·   YOU ' + score + ' PTS ON ' + shots : ''), w / 2, 462);
   } else {
     x.fillStyle = '#2962ff'; x.fillRect(0, 0, w, 86); x.fillStyle = '#eef2f8'; x.font = '62px "N3W Skyline", Anton'; x.fillText('THE GARDEN', w / 2, 46);
     x.font = '40px "JetBrains Mono"'; x.fillStyle = '#22d3ee'; x.fillText('TONIGHT · ' + MODE_INFO[m][0], w / 2, 140);
@@ -445,10 +456,16 @@ function zoneTick() {
 const clock = new THREE.Clock(); let frame = 0, camSeen = 0;
 function loop() {
   requestAnimationFrame(loop); if (document.hidden) return;
-  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime; frame++;
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  if (CAPTURE) return;   // capture renders only when _build/reel.py asks, through __garden.step
+  tick(dt, t);
+}
+function tick(dt, t) {
+  frame++;
   if (!U.ready) return;
   if (started && !Q.get('view')) move(dt);
   camera.position.set(player.pos.x, player.pos.y + 1.65, player.pos.z); camera.rotation.set(player.pitch, player.yaw, 0);
+  if (U.bc && (BCAM || CAPTURE)) U.bc.apply(U.game.RS.tau, innerWidth / innerHeight);
   if (zoom) { zoom.t -= dt; camera.lookAt(zoom.target); camera.fov = THREE.MathUtils.lerp(camera.fov, zoom.t > 0.6 ? 14 : 68, 0.08); camera.updateProjectionMatrix(); if (zoom.t <= 0) { zoom = null; camera.fov = 68; camera.updateProjectionMatrix(); } }
   // the flip
   if (flipping) { flipping.t += dt; const k = flipping.t / 3.4; U.flip.U.uProg.value = Math.min(1, k);
@@ -467,7 +484,8 @@ function loop() {
   if (wave) { wave.t += dt; U.wave.uWaveOn.value = Math.min(1, wave.t * 2, Math.max(0, (11 - wave.t) * 2)); U.wave.uWave.value = -wave.t * 1.25; if (wave.t > 11.5) { wave = null; U.wave.uWaveOn.value = 0; } }
   if (U.taxis) U.taxis.forEach((c, i) => { c.position.z += dt * (9 + (i % 3) * 2); if (c.position.z > 200) c.position.z = -200; });
   stepBalls(dt);
-  if (U.game) U.game.update(dt, t); if (U.bannerT) U.bannerT.value = t; if (frame % 20 === 7 && U.scoreCanvas && U.game && mode === 'court') drawScore();
+  if (U.game) U.game.update(dt, t); if (U.bannerT) U.bannerT.value = t; if ((CAPTURE || frame % 20 === 7) && U.scoreCanvas && U.game && mode === 'court') drawScore();
+  if (U.bc && (BCAM || CAPTURE)) U.bc.update(U.game.RS.tau);
   // the hang loads as you come near
   if (U.frames && frame % 20 === 0) for (const F of U.frames) if (!F.loaded && F.g.position.distanceTo(camera.position) < 30) { F.loaded = true; TL.load('assets/art/' + F.p.f, (tt) => { tt.colorSpace = THREE.SRGBColorSpace; tt.anisotropy = 4; F.pic.material = new THREE.MeshBasicMaterial({ map: tt, toneMapped: true }); const a = tt.image.width / tt.image.height; if (a > 0) { const h = 1.9, w = Math.min(1.5, h * a); F.pic.scale.set(w / 1.5, (w / a) / 1.9, 1); } }); }
   // the scoreboard clock and the eye cam
@@ -487,6 +505,8 @@ const go = $('#go');
 build().then(() => { U.ready = true; drawScore(); drawCamFrame(false); go.disabled = false; go.textContent = 'Walk in'; $('#lp').style.width = '100%'; renderer.compile(scene, camera);
   try { JSON.parse(localStorage.getItem('garden-eggs') || '[]').forEach((e) => eggs.add(e)); $('#eggn').textContent = eggs.size; } catch (e) {}
   const view = Q.get('view'); if (view) { begin(true); teleport(view); const m = Q.get('mode'); if (m && m !== 'court') window.__garden.flipNow(m); }
+  else if (REPLAY) { begin(true); teleport(BCAM || CAPTURE ? 'game' : 'courtside'); }
+  U.capReady = true;
 }).catch((e) => { console.error(e); go.textContent = 'Something broke'; window.__err = String(e && e.stack || e); });
 function begin(quiet) { if (started) return; started = true; $('#intro').classList.add('off'); if (!quiet) { S.startSound(); lock(); toast('Go in under the name. Escalators up to the concourse, then a tunnel into the bowl.', 'SEVENTH AVENUE'); } }
 go.addEventListener('click', () => begin(false));
@@ -498,4 +518,7 @@ const VIEWS = {
   game: [-3, 0, 8.6, -1.15, -0.06], baseline: [17.2, 0, 3.8, 1.35, 0.02], rafters: [-4, 0.5, 0, 1.5708, 0.5], east: [4, 0.5, 0, -1.5708, 0.45], bowl: [0, 24, 47, 0, -0.42], crowd: [4, 2.5, -21.5, -0.9, -0.12], courtside: [-6, 0, 7.5, -2.2, 0.02], court: [-21, 0.4, 9, -1.15, 0.0], ring: [6, 0, 9.5, 0.55, 0.02], circus: [9, 0, 10.5, 0.7, 0.0], stage: [24, 3.2, 9, 1.25, 0.02], ice: [36, 4.2, 6, 1.4, -0.16], floor: [-24, 0, 6, -1.35, 0.02], roof: [0, 0.2, 0, 0, 1.45], bridge: [-30, BRIDGE.y, -BRIDGE.z, -1.5708, -0.38], top: [44, 17, 0, 1.5708, -0.38],
 };
 function teleport(v) { const V = VIEWS[v]; if (!V) return; player.pos.set(V[0], V[1], V[2]); player.yaw = V[3]; player.pitch = V[4]; zone = ''; }
-window.__garden = { teleport, setMode: (m) => { setMode(m, new THREE.Vector2()); }, flipNow: (m) => { setMode(m, new THREE.Vector2()); if (flipping) { flipping.t = 3.39; } }, wave: startWave, house: setHouse, shoot, U, scene, camera, renderer, player, eggs, VIEWS };
+let capT = 0;
+// capture: set game time, advance the page by dt and render one frame, all on the caller's clock (see _build/reel.py)
+function step(tau, dt = 1 / 30) { if (!U.ready || !U.game || !U.game.RS) return false; U.game.RS.manual = true; U.game.RS.tau = tau; capT += dt; tick(dt, capT); return true; }
+window.__garden = { step, get bc() { return U.bc; }, get replay() { return U.replay; }, teleport, setMode: (m) => { setMode(m, new THREE.Vector2()); }, flipNow: (m) => { setMode(m, new THREE.Vector2()); if (flipping) { flipping.t = 3.39; } }, wave: startWave, house: setHouse, shoot, U, scene, camera, renderer, player, eggs, VIEWS };

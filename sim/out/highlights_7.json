@@ -1,0 +1,936 @@
+{
+ "game": "game_7",
+ "seed": 7,
+ "selected": [
+  {
+   "event": "E1646",
+   "t": 3092.966,
+   "q": 4,
+   "clock": 64.35,
+   "score": 64.2,
+   "components": {
+    "difficulty": 12.2,
+    "late": 17.8,
+    "impact": 17,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 5.2
+   },
+   "kind": "jumper",
+   "actor": "NYK-08",
+   "team": 0,
+   "zone": "ab3",
+   "made": true,
+   "rank": 2,
+   "camera_sequence": [
+    "main",
+    "backboard",
+    "crowd"
+   ],
+   "replay_speed": 0.4,
+   "window": [
+    3088.47,
+    3095.47
+   ]
+  },
+  {
+   "event": "E1677",
+   "t": 3155.015,
+   "q": 4,
+   "clock": 17.82,
+   "score": 71.7,
+   "components": {
+    "difficulty": 12.5,
+    "late": 21.3,
+    "impact": 20,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 5.9
+   },
+   "kind": "jumper",
+   "actor": "NYK-05",
+   "team": 0,
+   "zone": "c3",
+   "made": true,
+   "rank": 1,
+   "camera_sequence": [
+    "main",
+    "backboard",
+    "crowd"
+   ],
+   "replay_speed": 0.4,
+   "window": [
+    3150.51,
+    3157.51
+   ]
+  },
+  {
+   "event": "E1683",
+   "t": 3173.6,
+   "q": 4,
+   "clock": 1.0,
+   "score": 60.5,
+   "components": {
+    "difficulty": 10,
+    "late": 20.4,
+    "impact": 6,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 8.1
+   },
+   "kind": "block",
+   "actor": "NYK-22",
+   "team": 0,
+   "zone": null,
+   "made": null,
+   "rank": 3,
+   "camera_sequence": [
+    "main",
+    "backboard",
+    "crowd"
+   ],
+   "replay_speed": 0.4,
+   "window": [
+    3169.1,
+    3176.1
+   ]
+  }
+ ],
+ "candidates": [
+  {
+   "event": "E1677",
+   "t": 3155.015,
+   "q": 4,
+   "clock": 17.82,
+   "score": 71.7,
+   "components": {
+    "difficulty": 12.5,
+    "late": 21.3,
+    "impact": 20,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 5.9
+   },
+   "kind": "jumper",
+   "actor": "NYK-05",
+   "team": 0,
+   "zone": "c3",
+   "made": true,
+   "rank": 1,
+   "camera_sequence": [
+    "main",
+    "backboard",
+    "crowd"
+   ],
+   "replay_speed": 0.4,
+   "window": [
+    3150.51,
+    3157.51
+   ]
+  },
+  {
+   "event": "E1646",
+   "t": 3092.966,
+   "q": 4,
+   "clock": 64.35,
+   "score": 64.2,
+   "components": {
+    "difficulty": 12.2,
+    "late": 17.8,
+    "impact": 17,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 5.2
+   },
+   "kind": "jumper",
+   "actor": "NYK-08",
+   "team": 0,
+   "zone": "ab3",
+   "made": true,
+   "rank": 2,
+   "camera_sequence": [
+    "main",
+    "backboard",
+    "crowd"
+   ],
+   "replay_speed": 0.4,
+   "window": [
+    3088.47,
+    3095.47
+   ]
+  },
+  {
+   "event": "E1683",
+   "t": 3173.6,
+   "q": 4,
+   "clock": 1.0,
+   "score": 60.5,
+   "components": {
+    "difficulty": 10,
+    "late": 20.4,
+    "impact": 6,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 8.1
+   },
+   "kind": "block",
+   "actor": "NYK-22",
+   "team": 0,
+   "zone": null,
+   "made": null,
+   "rank": 3,
+   "camera_sequence": [
+    "main",
+    "backboard",
+    "crowd"
+   ],
+   "replay_speed": 0.4,
+   "window": [
+    3169.1,
+    3176.1
+   ]
+  },
+  {
+   "event": "E1669",
+   "t": 3137.94,
+   "q": 4,
+   "clock": 32.98,
+   "score": 59.2,
+   "components": {
+    "difficulty": 4.4,
+    "late": 20.1,
+    "impact": 20,
+    "spectacle": 4,
+    "context": 7,
+    "crowd": 3.7
+   },
+   "kind": "layup",
+   "actor": "NSH-50",
+   "team": 1,
+   "zone": "rim",
+   "made": true
+  },
+  {
+   "event": "E1642",
+   "t": 3087.405,
+   "q": 4,
+   "clock": 67.7,
+   "score": 59.0,
+   "components": {
+    "difficulty": 8.9,
+    "late": 17.5,
+    "impact": 17,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 3.6
+   },
+   "kind": "jumper",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": "c3",
+   "made": true
+  },
+  {
+   "event": "E1661",
+   "t": 3120.049,
+   "q": 4,
+   "clock": 49.18,
+   "score": 56.0,
+   "components": {
+    "difficulty": 5.3,
+    "late": 18.9,
+    "impact": 20,
+    "spectacle": 3,
+    "context": 4,
+    "crowd": 4.8
+   },
+   "kind": "jumper",
+   "actor": "NYK-22",
+   "team": 0,
+   "zone": "mid",
+   "made": true
+  },
+  {
+   "event": "E1589",
+   "t": 2978.595,
+   "q": 4,
+   "clock": 167.5,
+   "score": 53.6,
+   "components": {
+    "difficulty": 12.7,
+    "late": 11.0,
+    "impact": 14,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 3.9
+   },
+   "kind": "jumper",
+   "actor": "NYK-42",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1618",
+   "t": 3038.32,
+   "q": 4,
+   "clock": 115.18,
+   "score": 51.9,
+   "components": {
+    "difficulty": 11.2,
+    "late": 13.9,
+    "impact": 13,
+    "spectacle": 3,
+    "context": 7,
+    "crowd": 3.8
+   },
+   "kind": "jumper",
+   "actor": "NYK-05",
+   "team": 0,
+   "zone": "short",
+   "made": true
+  },
+  {
+   "event": "E1611",
+   "t": 3023.744,
+   "q": 4,
+   "clock": 129.75,
+   "score": 51.4,
+   "components": {
+    "difficulty": 10,
+    "late": 12.8,
+    "impact": 6,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 6.6
+   },
+   "kind": "block",
+   "actor": "NYK-42",
+   "team": 0,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E1437",
+   "t": 2687.451,
+   "q": 4,
+   "clock": 423.61,
+   "score": 49.9,
+   "components": {
+    "difficulty": 16.9,
+    "late": 0.0,
+    "impact": 17,
+    "spectacle": 9,
+    "context": 4,
+    "crowd": 3.0
+   },
+   "kind": "jumper",
+   "actor": "NYK-33",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1265",
+   "t": 2371.885,
+   "q": 4,
+   "clock": 703.87,
+   "score": 46.4,
+   "components": {
+    "difficulty": 15.4,
+    "late": 0.0,
+    "impact": 9,
+    "spectacle": 9,
+    "context": 10,
+    "crowd": 3.0
+   },
+   "kind": "jumper",
+   "actor": "NYK-22",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1430",
+   "t": 2671.372,
+   "q": 4,
+   "clock": 439.69,
+   "score": 45.8,
+   "components": {
+    "difficulty": 12.6,
+    "late": 0.0,
+    "impact": 20,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.2
+   },
+   "kind": "jumper",
+   "actor": "NSH-13",
+   "team": 1,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0219",
+   "t": 404.656,
+   "q": 1,
+   "clock": 346.79,
+   "score": 45.7,
+   "components": {
+    "difficulty": 15.0,
+    "late": 0.0,
+    "impact": 14,
+    "spectacle": 5,
+    "context": 10,
+    "crowd": 1.7
+   },
+   "kind": "jumper",
+   "actor": "NYK-22",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1249",
+   "t": 2342.943,
+   "q": 3,
+   "clock": 1.69,
+   "score": 44.0,
+   "components": {
+    "difficulty": 13.3,
+    "late": 0.0,
+    "impact": 17,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.7
+   },
+   "kind": "jumper",
+   "actor": "NYK-05",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1583",
+   "t": 2971.282,
+   "q": 4,
+   "clock": 171.98,
+   "score": 43.8,
+   "components": {
+    "difficulty": 10,
+    "late": 7.9,
+    "impact": 6,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 3.9
+   },
+   "kind": "block",
+   "actor": "NSH-13",
+   "team": 1,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E0204",
+   "t": 374.885,
+   "q": 1,
+   "clock": 371.91,
+   "score": 42.5,
+   "components": {
+    "difficulty": 0,
+    "late": 0.0,
+    "impact": 17,
+    "spectacle": 15,
+    "context": 7,
+    "crowd": 3.5
+   },
+   "kind": "dunk",
+   "actor": "NSH-50",
+   "team": 1,
+   "zone": "rim",
+   "made": true
+  },
+  {
+   "event": "E0129",
+   "t": 235.556,
+   "q": 1,
+   "clock": 508.9,
+   "score": 42.2,
+   "components": {
+    "difficulty": 12.0,
+    "late": 0.0,
+    "impact": 17,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.2
+   },
+   "kind": "jumper",
+   "actor": "NSH-13",
+   "team": 1,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1035",
+   "t": 1930.194,
+   "q": 3,
+   "clock": 404.8,
+   "score": 41.1,
+   "components": {
+    "difficulty": 16.1,
+    "late": 0.0,
+    "impact": 9,
+    "spectacle": 9,
+    "context": 4,
+    "crowd": 3.0
+   },
+   "kind": "jumper",
+   "actor": "NYK-25",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0077",
+   "t": 140.596,
+   "q": 1,
+   "clock": 592.79,
+   "score": 37.5,
+   "components": {
+    "difficulty": 14.4,
+    "late": 0.0,
+    "impact": 8,
+    "spectacle": 9,
+    "context": 4,
+    "crowd": 2.1
+   },
+   "kind": "jumper",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0479",
+   "t": 883.618,
+   "q": 2,
+   "clock": 649.27,
+   "score": 37.3,
+   "components": {
+    "difficulty": 6,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 13,
+    "context": 4,
+    "crowd": 4.3
+   },
+   "kind": "steal",
+   "actor": "NYK-10",
+   "team": 0,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E1156",
+   "t": 2142.398,
+   "q": 3,
+   "clock": 202.23,
+   "score": 37.3,
+   "components": {
+    "difficulty": 6,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 13,
+    "context": 4,
+    "crowd": 4.3
+   },
+   "kind": "steal",
+   "actor": "NYK-08",
+   "team": 0,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E0254",
+   "t": 480.6,
+   "q": 1,
+   "clock": 278.24,
+   "score": 36.2,
+   "components": {
+    "difficulty": 17.1,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 9,
+    "context": 4,
+    "crowd": 2.1
+   },
+   "kind": "jumper",
+   "actor": "NSH-23",
+   "team": 1,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0124",
+   "t": 230.96,
+   "q": 1,
+   "clock": 513.5,
+   "score": 36.0,
+   "components": {
+    "difficulty": 6,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 13,
+    "context": 4,
+    "crowd": 3.0
+   },
+   "kind": "steal",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E0638",
+   "t": 1169.583,
+   "q": 2,
+   "clock": 380.25,
+   "score": 36.0,
+   "components": {
+    "difficulty": 6,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 13,
+    "context": 4,
+    "crowd": 3.0
+   },
+   "kind": "steal",
+   "actor": "NSH-13",
+   "team": 1,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E1124",
+   "t": 2081.909,
+   "q": 3,
+   "clock": 262.72,
+   "score": 36.0,
+   "components": {
+    "difficulty": 6,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 13,
+    "context": 4,
+    "crowd": 3.0
+   },
+   "kind": "steal",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E0546",
+   "t": 1002.147,
+   "q": 2,
+   "clock": 537.99,
+   "score": 35.7,
+   "components": {
+    "difficulty": 13.6,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 9,
+    "context": 7,
+    "crowd": 2.1
+   },
+   "kind": "jumper",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": "c3",
+   "made": true
+  },
+  {
+   "event": "E0189",
+   "t": 348.567,
+   "q": 1,
+   "clock": 398.23,
+   "score": 35.5,
+   "components": {
+    "difficulty": 0,
+    "late": 0.0,
+    "impact": 13,
+    "spectacle": 15,
+    "context": 4,
+    "crowd": 3.5
+   },
+   "kind": "dunk",
+   "actor": "NSH-50",
+   "team": 1,
+   "zone": "rim",
+   "made": true
+  },
+  {
+   "event": "E1596",
+   "t": 2993.475,
+   "q": 4,
+   "clock": 152.62,
+   "score": 35.2,
+   "components": {
+    "difficulty": 10.5,
+    "late": 12.3,
+    "impact": 0,
+    "spectacle": 3,
+    "context": 7,
+    "crowd": 2.4
+   },
+   "kind": "jumper",
+   "actor": "NSH-23",
+   "team": 1,
+   "zone": "short",
+   "made": true
+  },
+  {
+   "event": "E1311",
+   "t": 2457.288,
+   "q": 4,
+   "clock": 633.58,
+   "score": 34.2,
+   "components": {
+    "difficulty": 13.5,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 5,
+    "context": 10,
+    "crowd": 1.7
+   },
+   "kind": "jumper",
+   "actor": "NYK-22",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0846",
+   "t": 1585.976,
+   "q": 2,
+   "clock": 0.7,
+   "score": 33.9,
+   "components": {
+    "difficulty": 0.5,
+    "late": 11.2,
+    "impact": 0,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 6.2
+   },
+   "kind": "dunk",
+   "actor": "NYK-07",
+   "team": 0,
+   "zone": "rim",
+   "made": true
+  },
+  {
+   "event": "E1194",
+   "t": 2224.144,
+   "q": 3,
+   "clock": 120.48,
+   "score": 33.5,
+   "components": {
+    "difficulty": 12.5,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 3,
+    "context": 7,
+    "crowd": 1.0
+   },
+   "kind": "jumper",
+   "actor": "NYK-07",
+   "team": 0,
+   "zone": "short",
+   "made": true
+  },
+  {
+   "event": "E1090",
+   "t": 2025.815,
+   "q": 3,
+   "clock": 316.43,
+   "score": 32.8,
+   "components": {
+    "difficulty": 15.1,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.7
+   },
+   "kind": "jumper",
+   "actor": "NYK-05",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0047",
+   "t": 75.567,
+   "q": 1,
+   "clock": 653.01,
+   "score": 32.5,
+   "components": {
+    "difficulty": 0,
+    "late": 0.0,
+    "impact": 10,
+    "spectacle": 15,
+    "context": 4,
+    "crowd": 3.5
+   },
+   "kind": "dunk",
+   "actor": "NSH-50",
+   "team": 1,
+   "zone": "rim",
+   "made": true
+  },
+  {
+   "event": "E1229",
+   "t": 2293.69,
+   "q": 3,
+   "clock": 50.94,
+   "score": 32.2,
+   "components": {
+    "difficulty": 12.0,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 5,
+    "context": 10,
+    "crowd": 1.2
+   },
+   "kind": "jumper",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1026",
+   "t": 1912.445,
+   "q": 3,
+   "clock": 422.55,
+   "score": 32.0,
+   "components": {
+    "difficulty": 10,
+    "late": 0.0,
+    "impact": 2,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 4.0
+   },
+   "kind": "block",
+   "actor": "NYK-10",
+   "team": 0,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E0794",
+   "t": 1486.777,
+   "q": 2,
+   "clock": 95.1,
+   "score": 31.9,
+   "components": {
+    "difficulty": 14.7,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.2
+   },
+   "kind": "jumper",
+   "actor": "NSH-01",
+   "team": 1,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1338",
+   "t": 2514.612,
+   "q": 4,
+   "clock": 579.36,
+   "score": 31.8,
+   "components": {
+    "difficulty": 14.1,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.7
+   },
+   "kind": "jumper",
+   "actor": "NYK-08",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E1452",
+   "t": 2717.682,
+   "q": 4,
+   "clock": 393.38,
+   "score": 31.5,
+   "components": {
+    "difficulty": 13.8,
+    "late": 0.0,
+    "impact": 4,
+    "spectacle": 5,
+    "context": 7,
+    "crowd": 1.7
+   },
+   "kind": "jumper",
+   "actor": "NYK-10",
+   "team": 0,
+   "zone": "ab3",
+   "made": true
+  },
+  {
+   "event": "E0611",
+   "t": 1123.995,
+   "q": 2,
+   "clock": 416.14,
+   "score": 30.8,
+   "components": {
+    "difficulty": 10,
+    "late": 0.0,
+    "impact": 2,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 2.8
+   },
+   "kind": "block",
+   "actor": "NSH-04",
+   "team": 1,
+   "zone": null,
+   "made": null
+  },
+  {
+   "event": "E0999",
+   "t": 1866.604,
+   "q": 3,
+   "clock": 468.39,
+   "score": 30.8,
+   "components": {
+    "difficulty": 10,
+    "late": 0.0,
+    "impact": 2,
+    "spectacle": 12,
+    "context": 4,
+    "crowd": 2.8
+   },
+   "kind": "block",
+   "actor": "NSH-22",
+   "team": 1,
+   "zone": null,
+   "made": null
+  }
+ ],
+ "threshold": 65,
+ "fallback_top3": true
+}

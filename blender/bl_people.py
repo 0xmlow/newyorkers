@@ -6,4 +6,5 @@ def person_mesh(path, name=None):
     me.loops.add(len(flat)); me.loops.foreach_set('vertex_index', flat); me.polygons.add(len(lens))
     starts = np.concatenate([[0], np.cumsum(lens)[:-1]]); me.polygons.foreach_set('loop_start', starts); me.update()
     a = me.attributes.new('part', 'FLOAT', 'POINT'); a.data.foreach_set('value', part.astype(np.float32))
+    if 'rest' in d.files: r = me.attributes.new('rest', 'FLOAT_VECTOR', 'POINT'); r.data.foreach_set('vector', d['rest'].astype(np.float32).ravel())
     me.shade_smooth(); return me

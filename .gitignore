@@ -6,3 +6,10 @@ blender/work/
 blender/renders/*_qa.png
 blender/renders/qa_sheet.jpg
 blender/__pycache__/
+# full resolution PNGs and old rounds stay local; the JPGs and sheets are committed
+blender/renders/*.png
+blender/renders/v2_realistic/
+blender/renders/v3_flowers/
+blender/renders/v4/
+reels/**/*.mp4
+work/v6/

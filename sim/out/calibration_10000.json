@@ -1,0 +1,57 @@
+{
+ "games": 10000,
+ "seconds": 130.6,
+ "points_per_team": 115.9,
+ "possessions_per_team": 101.6,
+ "offensive_rating": 114.1,
+ "fg_pct": 0.477,
+ "three_pct": 0.363,
+ "ft_pct": 0.785,
+ "three_rate": 0.444,
+ "ft_rate": 0.222,
+ "fga_per_team": 89.9,
+ "tov_per_team": 13.0,
+ "oreb_pct": 0.226,
+ "ast_per_team": 22.2,
+ "overtime_rate": 0.022,
+ "fg_by_zone": {
+  "rim": {
+   "pct": 0.663,
+   "share": 0.321
+  },
+  "short": {
+   "pct": 0.447,
+   "share": 0.119
+  },
+  "mid": {
+   "pct": 0.431,
+   "share": 0.116
+  },
+  "c3": {
+   "pct": 0.398,
+   "share": 0.096
+  },
+  "ab3": {
+   "pct": 0.355,
+   "share": 0.346
+  },
+  "heave": {
+   "pct": 0.014,
+   "share": 0.002
+  }
+ },
+ "minutes_by_rank": [
+  34.2,
+  33.0,
+  31.9,
+  31.1,
+  28.9,
+  20.0,
+  18.2,
+  17.1,
+  15.3,
+  10.7,
+  0.6,
+  0.0
+ ]
+}
