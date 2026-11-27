@@ -115,9 +115,12 @@ async function build() {
   // the floors, drawn on canvases with the Firefly centre art
   const [cc, ic, cr] = await Promise.all(['court_center', 'ice_center', 'circus_ring'].map((n) => loadImg(FF.has(n) ? `assets/ff/${n}.webp` : null)));
   const ci = await loadImg('assets/tex/court_full.jpg');   // the court from the Cycles build (blender/textures.py): the stacked logo at centre, in the keys and round the apron
-  U.floors = { court: ci ? cvTex(ci) : cvTex(drawCourt(cc)), ice: cvTex(drawIce(ic)), stage: cvTex(drawStage()), ring: cvTex(drawRing()), circus: cvTex(drawCircus(cr)) };
+  // the other floors from the same Cycles build (2026-11-27): ice with snow and skate marks, the GA tiles, the fight floor, sawdust
+  const [ii, si, ri, xi, cv] = await Promise.all(['ice_full', 'stage_full', 'ring_full', 'circus_full', 'canvas'].map((n) => loadImg(`assets/tex/${n}.jpg`)));
+  if (cv) tex.ringCanvas = cvTex(cv);
+  U.floors = { court: ci ? cvTex(ci) : cvTex(drawCourt(cc)), ice: ii ? cvTex(ii) : cvTex(drawIce(ic)), stage: si ? cvTex(si) : cvTex(drawStage()), ring: ri ? cvTex(ri) : cvTex(drawRing()), circus: xi ? cvTex(xi) : cvTex(drawCircus(cr)) };
   for (const k in U.floors) { U.floors[k].wrapS = U.floors[k].wrapT = THREE.ClampToEdgeWrapping; U.floors[k].repeat.set(1, 1); }
-  U.rough = { court: 0.34, ice: 0.18, stage: 0.5, ring: 0.85, circus: 0.95 }; U.coat = { court: 0.75, ice: 1, stage: 0.3, ring: 0, circus: 0 };
+  U.rough = { court: 0.34, ice: 0.26, stage: 0.5, ring: 0.85, circus: 0.95 }; U.coat = { court: 0.75, ice: 1, stage: 0.3, ring: 0, circus: 0 };
   // the environment: the night sky over Midtown for reflections
   { const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose(); scene.environmentIntensity = 0.45; }
   // lights: one hemisphere, a house light, a cone from the scoreboard, a moon outside

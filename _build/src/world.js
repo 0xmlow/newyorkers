@@ -324,9 +324,11 @@ export function buildModeSets(scene, tex, U, models) {
     const can = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 7.2), new THREE.MeshStandardMaterial({ map: tex.ringCanvas, roughness: 0.9 })); can.rotation.x = -Math.PI / 2; can.position.y = 1.21; g.add(can);
     const skirt = new THREE.Mesh(new THREE.BoxGeometry(7.5, 1.1, 7.5), new THREE.MeshStandardMaterial({ map: tex.skirt, roughness: 0.8 })); skirt.position.y = 0.55; g.add(skirt);
     for (const [x, z] of [[-3.2, -3.2], [3.2, -3.2], [3.2, 3.2], [-3.2, 3.2]]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1.5), steel); p.position.set(x, 1.95, z); g.add(p);
-      const pad = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.2, 0.28), new THREE.MeshStandardMaterial({ color: x * z > 0 ? 0xff4fa3 : 0x2962ff })); pad.position.set(x * 0.97, 1.95, z * 0.97); g.add(pad); }
-    const ropes = []; for (const y of [1.7, 2.1, 2.5]) for (let i = 0; i < 4; i++) { const r = new THREE.CylinderGeometry(0.028, 0.028, 6.4, 6); r.rotateZ(Math.PI / 2); if (i % 2) r.rotateY(Math.PI / 2); const off = 3.2 * (i < 2 ? -1 : 1); r.translate(i % 2 ? off : 0, y, i % 2 ? 0 : off); ropes.push(r); }
-    g.add(new THREE.Mesh(mergeGeometries(ropes), new THREE.MeshStandardMaterial({ color: 0xeef2f8, roughness: 0.5 })));
+      const pad = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.2, 0.28), new THREE.MeshStandardMaterial({ color: x > 0 && z < 0 ? 0xb3101a : x < 0 && z > 0 ? 0x1540d8 : 0xf2f2f2, roughness: 0.55 })); pad.position.set(x * 0.97, 1.95, z * 0.97); g.add(pad); }
+    // four ropes at the real heights over the canvas, red, white, blue, white (as the Cycles ring)
+    [0x9a0d16, 0xeef2f8, 0x1540d8, 0xeef2f8].forEach((col, k) => { const y = 1.21 + [0.46, 0.81, 1.17, 1.52][k]; const ropes = [];
+      for (let i = 0; i < 4; i++) { const r = new THREE.CylinderGeometry(0.026, 0.026, 6.4, 8); r.rotateZ(Math.PI / 2); if (i % 2) r.rotateY(Math.PI / 2); const off = 3.2 * (i < 2 ? -1 : 1); r.translate(i % 2 ? off : 0, y, i % 2 ? 0 : off); ropes.push(r); }
+      g.add(new THREE.Mesh(mergeGeometries(ropes), new THREE.MeshStandardMaterial({ color: col, roughness: 0.45 }))); });
     const rig = new THREE.Mesh(new THREE.BoxGeometry(9, 0.4, 9), steel); rig.position.y = 9; g.add(rig);
     const rigL = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.22, 0.3, 0.3, 12), new THREE.MeshBasicMaterial({ color: 0xfff6e8, toneMapped: false }), 16);
     for (let i = 0; i < 16; i++) { const x = -4 + (i % 4) * 2.66, z = -4 + Math.floor(i / 4) * 2.66; m4.makeTranslation(x, 8.7, z); rigL.setMatrixAt(i, m4); } g.add(rigL);

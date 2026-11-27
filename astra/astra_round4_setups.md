@@ -1,0 +1,87 @@
+The strongest mismatch is **event behavior and equipment**: the arena feels large and populated, but the action often reads as flower characters arranged on an event surface. I’m treating the cast, branding, and giant board as intentional, and accounting for your changes after these frames.
+
+Dimensions below are in metres; light powers are starting values for scene-scale Blender area lights. These fixes favor geometry, poses, and existing lights. **The four-minute render target still needs a hardware benchmark**—avoid adding volumetric samples, transparent crowd layers, or dozens of shadow-casting fixtures.
+
+## Hockey — five biggest fixes
+
+1. **The skaters have upright, raised-arm poses that read as celebration or dancing during live play.**  
+   Repose the active skaters with **25–40° hip flexion, 35–60° knee flexion, and 15–25° forward torso lean**. Keep most elbows below shoulder height and stick blades within **0.03 m of the ice**. Give the puck carrier an asymmetric stride: one knee under the torso, the other leg extended back **0.5–0.8 m**. Reserve raised sticks for one clearly celebrating player, if that is the intended moment.
+
+2. **The bodies lack the bulky, distinctive hockey silhouette.**  
+   Add rigid equipment attached to the existing body segments: shoulder shells extending **0.07–0.10 m** beyond each shoulder, padded shorts, shin shells approximately **0.40 m** long, and **0.16 × 0.12 × 0.11 m** gloves. Add black skate boots with visible silver runners **0.28–0.32 m** long, elevated **0.04 m** below the soles. Preserve the flower heads; the equipment below them should immediately identify the sport.
+
+3. **The players appear distributed across the rink rather than involved in one readable possession.**  
+   Stage a specific **five-on-five attacking play**, with five skaters and one goalie per side. Put the puck carrier at a faceoff circle, one teammate near the crease, two at the points, and the fifth on the weak side. Place defenders between those threats and the goal, generally **1.5–3 m** from their assignments. Add a black puck **0.076 m diameter × 0.025 m high**, **0.15–0.35 m** ahead of the carrier’s blade. Aim the nearest players’ torsos and sticks toward it.
+
+4. **The net-cam view lacks a strong goal-and-goaltender identity.**  
+   Make the goal unmistakable: **1.83 m internal width × 1.22 m height**, approximately **1.1 m depth**, red posts **0.05 m diameter**, and a white net with roughly **0.04 m openings**. Give the goalie broad leg pads, blocker, and catching glove; use a low set stance or butterfly. Position the camera **0.35–0.55 m above the ice**, just outside and behind a post, with a **24–28 mm lens**. Include a post and some net in the foreground while keeping the puck-side action visible.
+
+5. **The rink reads as a shiny generic floor before it reads as regulated ice.**  
+   Lock the rink to **60.96 × 25.91 m**, with **8.53 m corner radii**. Use **0.30 m blue lines** at **±7.62 m from center**, goal lines at **±27.13 m**, and **4.57 m-radius faceoff circles**. Put paint beneath a thin ice surface; use roughness **0.22–0.30**, with restrained roughness variation and submillimetre bump. Reduce the broad looping scratch pattern: concentrate short, intersecting skate cuts around the creases and faceoff areas. Keep boards **1.07 m high** and protective glass visibly supported above them.
+
+## Concert — five biggest fixes
+
+1. **The stage reads as a presentation platform with scattered characters, rather than a functioning live act.**  
+   Establish a five-person performance layout: lead vocalist downstage center, guitarist and bassist **3–4 m** either side, drummer upstage center on a **3 × 2 × 0.6 m riser**, and keys upstage left. Give each a recognizable instrument silhouette. Place the vocalist’s microphone at mouth/flower-base height, with a planted forward stance and bent elbow. Instrument straps and static hand-contact meshes can conceal the rig’s missing wrist articulation.
+
+2. **There is almost no visible sound-system infrastructure for an arena show.**  
+   Hang two line-array stacks, each **10–12 cabinets**, approximately **0.9 m wide × 0.3 m high per cabinet**, at stage left and right, **7–10 m above the floor**. Curve the lower four cabinets toward the floor audience. Add **8–12 black subwoofer boxes** across the stage front or in two side clusters. Instance one cabinet mesh; use charcoal **#15171B**, roughness **0.65**. Their silhouettes will contribute more credibility than another decorative screen.
+
+3. **Even with visible beams, the lighting needs a readable fixture plot and a clear subject.**  
+   Put **three trusses** over a roughly **20 × 12 m stage**, at **9–11 m height**, with **six fixture housings per truss**. Make your emissive cones originate from those housings. Use only **six to eight actual lights**: two warm-neutral front keys at **4,000–6,000 W each**, four cyan/magenta rear or side spots at **2,000–4,000 W**, **18–25° cone angles**, and soft edges. Keep the lead performer brighter than nearby performers. Do not add a separate volume to every beam.
+
+4. **The crowd looks seated for an arena event rather than concentrated around a concert stage.**  
+   Build a standing floor audience between stage and mix position, at roughly **one person per 0.7–1.0 m²**. Leave a **1.5–2 m security pit** behind a front barricade, plus two **1.8 m aisles**. Face bodies toward the vocalist; use about **15% raised-arm poses** and a small minority of phone screens. Keep those screens dim enough that they punctuate the crowd rather than light it.
+
+5. **The stage lacks the small working details that establish scale and purpose.**  
+   Add **six wedge monitors**, about **0.6 × 0.4 × 0.3 m**, three microphone stands, two side access stairs, black stage skirting, and **8–12 cable curves** with **0.008–0.012 m radius**. At your new mix-position camera, include the edge of a **4 × 3 m FOH enclosure**, console, and operator in the lower foreground. Use a **35–50 mm lens**, camera height **1.7–2.0 m**, aimed toward the performer rather than the board.
+
+## Boxing — five biggest fixes
+
+1. **The fighters look posed together rather than engaged in an exchange.**  
+   Put them **0.9–1.2 m apart**, in opposing staggered stances with feet **0.45–0.60 m apart**, knees bent **15–25°**, and torsos turned **25–40°**. Stage one simple jab: lead shoulder forward, elbow nearly extended, glove approaching the opponent’s guard; keep the rear glove high. Give the opponent a **10–15° backward or lateral lean**. Use glove meshes aligned to the forearms so no wrist rig is necessary.
+
+2. **The referee crowds the center of the action.**  
+   In the corner view, the referee becomes a foreground participant in the exchange. Move them **1.8–2.5 m** from the fighters, offset **60–90° from their attack axis**, with a slight forward lean and hands near waist height. For the hero camera, keep the referee outside the space between the two fighters’ heads and gloves.
+
+3. **The ropes and corners need the taut construction of a working ring.**  
+   Use a **6.1 × 6.1 m fighting area**, with four ropes at approximately **0.46, 0.76, 1.07, and 1.37 m** above the canvas. Rope diameter: **0.035–0.04 m**. Limit midspan sag to **0.02–0.04 m** and add **two vertical rope spacers per side**. Add padded turnbuckles and distinguish red, blue, and two neutral corners. Keep posts outside the fighting area, connected through visible turnbuckle assemblies.
+
+4. **The boxing-specific clothing and contact details are too slight.**  
+   Give gloves a consistent padded silhouette around **0.24 × 0.15 × 0.14 m**, with clear cuffs. Add high-waisted trunks, contrasting waistbands **0.08–0.10 m** tall, and boots extending **0.20–0.28 m** above the ankle. Seat each supporting sole directly on the canvas; a small hover or intersecting toe is particularly conspicuous in ringside views. Add subtle sweat through skin roughness variation, approximately **0.30–0.45**, without making the entire body glossy.
+
+5. **The ring feels isolated inside a crowd texture rather than surrounded by a boxing operation.**  
+   Add a **1–1.5 m apron** outside the ropes, stairs at two corners, and three judges seated at separate sides with narrow tables. Include a timekeeper’s table and **six to eight photographers** below apron level. For ringside, place the camera **0.2–0.4 m above canvas height**, outside the ropes, using **50–70 mm**. Keep the fighters’ faces clear of a foreground rope. Your canvas and lighting corrections should help; these additions supply the missing event context.
+
+## Circus — five biggest fixes
+
+1. **The ring contains people on plinths, but no immediately recognizable act.**  
+   Make the ring image show a specific balance routine: one performer on a **0.45 m-diameter rolling globe**, one on a **1.2 m pedestal** preparing a hoop, and one balancing on a low **0.35 m rola-bola board**. Shift hips over each support and give arms distinct balancing positions. Use three clearly different silhouette heights. Static geometry and the existing hip, knee, shoulder, and elbow controls are enough.
+
+2. **The circular platform reads as a decorative display base.**  
+   Use a traditional ring approximately **13 m in diameter**, with a curb only **0.15–0.25 m high** and **0.30–0.40 m wide**. The current chunky blue-and-white perimeter visually competes with the performers. Keep that palette, but reduce its vertical mass. Use a matte tan performance floor, roughness around **0.8**, and lower the central artwork’s contrast so feet and apparatus remain readable.
+
+3. **The high-wire image does not clearly show a tensioned apparatus and a balancing action.**  
+   Build two visible landing platforms, roughly **1.2 × 1.2 m**, with the wire spanning **12–18 m** at **7–9 m height**. Use a **0.025–0.03 m-diameter steel cable**, with only **0.08–0.15 m sag** across the span. Put the performer’s lead foot directly on it, rear foot following, hips centered above the cable, and add a **4–5 m balancing pole** held across the body. Add visible anchor and guy cables.
+
+4. **The safety net needs to read as part of the act, even now that it is real mesh.**  
+   Put it **3–4 m below the wire**, extending at least **3 m to either side** and beyond the main crossing. Give it **0.4–0.7 m central sag**, a substantial perimeter rope, and visible supports. Openings around **0.12–0.18 m**, with **0.004–0.006 m strands**, should read in closer views. Use opaque rope geometry rather than alpha transparency. Let the camera see the net obliquely so its depth and suspension are evident.
+
+5. **The lighting and camera emphasize the enormous building instead of the act’s height and risk.**  
+   Light the ring with **four warm-neutral spots**, initially **2,000–3,000 W each**, at **10–12 m height**, using **35–45° cones**. Give the aerial performer a separate **1,500–2,500 W** side key and weaker opposing rim. For the wire hero, use a **50–70 mm lens**, camera approximately **1 m below wire height**, looking diagonally along the crossing. Include one landing platform, the net below, and distant spectators as scale references.
+
+## Three cross-night fixes with the most impact
+
+1. **Make the crowd respond to the actual focal point.**  
+   Across basketball, hockey, boxing, concert, and circus, generate **8–12 reusable body poses**, modest scale variation of **±7%**, and event-specific orientations. Turn heads toward the puck, ball, fighters, vocalist, or aerialist; vary adjacent rows rather than repeating one pose distribution everywhere. Keep aisles and entrances visibly clear. Preserve the flower cast while breaking the wallpaper effect.
+
+2. **Separate performance light from audience light.**  
+   Make the active surface roughly **2–3 stops brighter than the middle bowl**, with the upper bowl another **0.5–1 stop lower**, while retaining exit and aisle visibility. Establish that relationship with light groups or existing fixture powers; do not blindly reduce your already-corrected boxing lights again. Keep board artwork below clipping and avoid using broad arena fill to expose both performers and spectators equally.
+
+3. **Standardize physical contact and material response.**  
+   Run a generator pass that seats feet, skates, stools, instruments, and apparatus on their actual support surfaces. Use deliberate material families: canvas **0.75–0.9 roughness**, fabric **0.65–0.85**, rubber **0.65–0.8**, painted metal **0.3–0.45**, and ice **0.22–0.30**. Use bevels of **0.002–0.008 m** on nearby hard props. Spend geometry on foreground contact and recognizable equipment; instance distant detail.
+
+**Hockey:** Upright, raised-arm skaters without convincing hockey equipment or puck-centered action.  
+**Concert:** A large illuminated art backdrop with too little visible band, audio system, and stage operation.  
+**Boxing:** Two posed figures and a nearby referee, rather than fighters caught in a credible exchange.  
+**Circus:** Performers displayed on platforms instead of visibly executing a legible circus act.

@@ -253,8 +253,131 @@ def court_wear():
         x, y = zone(); r = rnd.uniform(0.1, 0.5) * ppm; cxp, cyp = P(x, y); d.ellipse([cxp - r, cyp - r * 0.6, cxp + r, cyp + r * 0.6], fill=rnd.randint(10, 30))
     im = im.filter(ImageFilter.GaussianBlur(1.2)); im.save(os.path.join(OUT, 'court_wear.png')); print('court wear')
 
+# ---------------- the other floors (2026-11-27): ice, the concert floor, the fight floor and canvas, the circus, all at
+# 66 px a metre over the same 62 x 30 m rectangle as the court, so the walk and Cycles use one image per setup
+FPX = 66; FW_, FH_ = 62 * FPX, 30 * FPX
+def FX(x): return (x + 31) * FPX
+def FZ(y): return (15 - y) * FPX      # image top is plan +y, as the court
+def _noise(w, h, scale, seed):
+    r = random.Random(seed); sm = Image.new('L', (max(1, w // scale), max(1, h // scale))); sm.putdata([r.randint(0, 255) for _ in range(sm.width * sm.height)])
+    return sm.resize((w, h), Image.BICUBIC)
+def _logo(kind, size):
+    g = Image.open(os.path.join(OUT, f'logo_{kind}.png')).convert('RGBA'); g.thumbnail((size, size)); return g
+def _rink_mask(H=30.5, W=13.0, R=8.5, inset=0.0):
+    m = Image.new('L', (FW_, FH_), 0); d = ImageDraw.Draw(m); H -= inset; W -= inset; R -= inset
+    d.rounded_rectangle([FX(-H), FZ(W), FX(H), FZ(-W)], radius=int(R * FPX), fill=255); return m
+def ice():
+    rnd = random.Random(7); H, W = 30.5, 13.0
+    base = Image.new('RGB', (FW_, FH_), (18, 20, 26))
+    ice_ = Image.merge('RGB', [_noise(FW_, FH_, 40, 1).point(lambda v: 226 + v // 24), _noise(FW_, FH_, 40, 1).point(lambda v: 234 + v // 28), _noise(FW_, FH_, 40, 1).point(lambda v: 242 + v // 40)])
+    d = ImageDraw.Draw(ice_)
+    # skate marks: long shallow arcs, greyer, densest in the slot and along the boards
+    for k in range(5200):
+        zone = rnd.random()
+        if zone < 0.35: x, y = rnd.choice((-1, 1)) * rnd.uniform(18, 27), rnd.gauss(0, 4)
+        elif zone < 0.55: x, y = rnd.uniform(-29, 29), rnd.choice((-1, 1)) * rnd.uniform(9.5, 12.6)
+        else: x, y = rnd.uniform(-29, 29), rnd.uniform(-12, 12)
+        a = rnd.uniform(0, math.tau); L = rnd.uniform(0.4, 3.2); bend = rnd.uniform(-0.6, 0.6); pts = []
+        for i in range(9):
+            t = i / 8; aa = a + bend * t; pts.append((FX(x + math.cos(aa) * L * t), FZ(y + math.sin(aa) * L * t)))
+        c = rnd.randint(196, 222); d.line(pts, fill=(c, c + 6, c + 12), width=rnd.choice((1, 1, 2)))
+    # snow along the boards and in the corners
+    snow = ImageChops.subtract(_rink_mask(), _rink_mask(inset=0.9)).filter(ImageFilter.GaussianBlur(26))
+    ice_ = Image.composite(Image.new('RGB', (FW_, FH_), (247, 249, 252)), ice_, snow.point(lambda v: int(v * 0.8)))
+    d = ImageDraw.Draw(ice_); RED, BLU, CRE = (196, 28, 48), (30, 86, 214), (120, 170, 235)
+    lw = int(0.3 * FPX); gl = int(0.05 * FPX)
+    # centre ice: the logo under the ice, a little milky
+    g = _logo('black', int(6.4 * FPX)); g.putalpha(g.getchannel('A').point(lambda v: int(v * 0.82))); ice_.paste(g, (int(FX(0) - g.width / 2), int(FZ(0) - g.height / 2)), g)
+    d.rectangle([FX(-0.15), FZ(W), FX(0.15), FZ(-W)], fill=RED)
+    for s in (-1, 1):
+        d.rectangle([FX(s * 4.27 - 0.15), FZ(W), FX(s * 4.27 + 0.15), FZ(-W)], fill=BLU)
+        gx = s * 27.13; d.rectangle([FX(gx) - gl / 2, FZ(W - 1.3), FX(gx) + gl / 2, FZ(-W + 1.3)], fill=RED)
+        # the crease and the trapezoid
+        d.pieslice([FX(gx - 1.83), FZ(1.83), FX(gx + 1.83), FZ(-1.83)], 90 if s > 0 else -90, 270 if s > 0 else 90, fill=CRE, outline=RED, width=gl)
+        for sy in (-1, 1): d.line([FX(gx), FZ(sy * 3.35), FX(s * 30.45), FZ(sy * 4.27)], fill=RED, width=gl)
+        for yc in (-6.71, 6.71):
+            cx_ = s * 21.03; d.ellipse([FX(cx_ - 4.57), FZ(yc + 4.57), FX(cx_ + 4.57), FZ(yc - 4.57)], outline=RED, width=gl)
+            d.ellipse([FX(cx_ - 0.3), FZ(yc + 0.3), FX(cx_ + 0.3), FZ(yc - 0.3)], fill=RED)
+            for hx in (-0.9, 0.9):
+                for hy in (-1, 1): d.line([FX(cx_ + hx), FZ(yc + hy * 4.57), FX(cx_ + hx), FZ(yc + hy * 5.18)], fill=RED, width=gl)
+            nx = s * 5.79; d.ellipse([FX(nx - 0.3), FZ(yc + 0.3), FX(nx + 0.3), FZ(yc - 0.3)], fill=RED)
+        # the house words in the neutral zone, faint under the ice
+        t = Image.new('RGBA', (int(9 * FPX), int(2 * FPX)), (0, 0, 0, 0)); td = ImageDraw.Draw(t)
+        f = font(SKY, int(1.3 * FPX)); bb = td.textbbox((0, 0), 'N3W YORKERS', font=f); td.text(((t.width - bb[2]) / 2, (t.height - bb[3]) / 2 - bb[1] / 2), 'N3W YORKERS', font=f, fill=(30, 86, 214, 120))
+        t = t.rotate(90 * s, expand=True); ice_.paste(t, (int(FX(s * 12.5) - t.width / 2), int(FZ(0) - t.height / 2)), t)
+    d.ellipse([FX(-4.57), FZ(4.57), FX(4.57), FZ(-4.57)], outline=BLU, width=gl); d.ellipse([FX(-0.15), FZ(0.15), FX(0.15), FZ(-0.15)], fill=BLU)
+    out = Image.composite(ice_, base, _rink_mask()); out.save(os.path.join(OUT, 'ice_full.jpg'), quality=90); print('ice')
+def stage_floor():
+    rnd = random.Random(8); im = Image.merge('RGB', [_noise(FW_, FH_, 6, 3).point(lambda v: 14 + v // 20)] * 3); d = ImageDraw.Draw(im)
+    # the GA floor: black protection tiles a metre square, worn grey at the edges, gaffer tape and cable ramps
+    for gx in range(-31, 31):
+        for gy in range(-15, 15):
+            c = rnd.randint(16, 26); d.rectangle([FX(gx) + 2, FZ(gy + 1) + 2, FX(gx + 1) - 2, FZ(gy) - 2], fill=(c, c, c + 2))
+            d.line([FX(gx), FZ(gy), FX(gx + 1), FZ(gy)], fill=(40, 40, 44), width=2); d.line([FX(gx), FZ(gy), FX(gx), FZ(gy + 1)], fill=(40, 40, 44), width=2)
+    for k in range(60):
+        x, y = rnd.uniform(-14, 26), rnd.uniform(-12, 12); a = rnd.choice((0, math.pi / 2)) + rnd.uniform(-0.1, 0.1); L = rnd.uniform(0.3, 1.2)
+        d.line([FX(x), FZ(y), FX(x + math.cos(a) * L), FZ(y + math.sin(a) * L)], fill=rnd.choice([(220, 222, 226), (41, 98, 255), (240, 200, 40)]), width=int(0.048 * FPX))
+    for y in (-6.0, 6.5):
+        d.rectangle([FX(-16), FZ(y + 0.25), FX(10), FZ(y - 0.25)], fill=(34, 34, 30))
+        for x in range(-16, 10): d.line([FX(x), FZ(y + 0.25), FX(x), FZ(y - 0.25)], fill=(220, 190, 30), width=3)
+    im.save(os.path.join(OUT, 'stage_full.jpg'), quality=90); print('stage floor')
+def ring_floor():
+    rnd = random.Random(9); im = Image.merge('RGB', [_noise(FW_, FH_, 3, 4).point(lambda v: 12 + v // 28), _noise(FW_, FH_, 3, 4).point(lambda v: 13 + v // 28), _noise(FW_, FH_, 3, 4).point(lambda v: 18 + v // 26)])
+    d = ImageDraw.Draw(im)
+    # blue carpet aisles from both tunnels to the ring, the logo at the foot of each
+    for s in (-1, 1):
+        d.rectangle([FX(s * 4.6) if s > 0 else FX(-30), FZ(1.1), FX(30) if s > 0 else FX(-4.6), FZ(-1.1)], fill=(18, 42, 120))
+        g = _logo('white', int(1.8 * FPX)); im.paste(g, (int(FX(s * 7.2) - g.width / 2), int(FZ(0) - g.height / 2)), g)
+    for r in range(1, 12):   # row tape round the ring
+        for s in (-1, 1): d.line([FX(-4.6 - r * 1.1), FZ(s * (4.6 + r * 0.95)), FX(4.6 + r * 1.1), FZ(s * (4.6 + r * 0.95))], fill=(60, 62, 70), width=2)
+    im.save(os.path.join(OUT, 'ring_full.jpg'), quality=90)
+    # the canvas: 7.3 m square (20 ft inside the ropes plus the apron), light, the stacked logo, the corners
+    C = 2048; c = Image.merge('RGB', [_noise(C, C, 2, 5).point(lambda v: 226 + v // 20), _noise(C, C, 2, 5).point(lambda v: 230 + v // 20), _noise(C, C, 2, 5).point(lambda v: 238 + v // 24)])
+    cd = ImageDraw.Draw(c); ppm = C / 7.3
+    for k in range(140):   # scuffs and old marks, faint
+        x, y = rnd.uniform(0.8, 6.5) * ppm, rnd.uniform(0.8, 6.5) * ppm; r = rnd.uniform(0.02, 0.08) * ppm; v_ = rnd.randint(214, 224); cd.ellipse([x - r, y - r * 0.6, x + r, y + r * 0.6], fill=(v_, v_ + 2, v_ + 6))
+    c = c.filter(ImageFilter.GaussianBlur(1.5)); cd = ImageDraw.Draw(c)
+    g = _logo('black', int(3.6 * ppm)); c.paste(g, (C // 2 - g.width // 2, C // 2 - g.height // 2), g)
+    ap = int(0.6 * ppm); cd.rectangle([0, 0, C, ap], fill=(20, 40, 110)); cd.rectangle([0, C - ap, C, C], fill=(20, 40, 110)); cd.rectangle([0, 0, ap, C], fill=(20, 40, 110)); cd.rectangle([C - ap, 0, C, C], fill=(20, 40, 110))
+    f = font(SKY, int(0.38 * ppm))
+    for i, t in enumerate(['N3W YORKERS', 'BY MLOW', 'N3W YORKERS', 'THE GARDEN']):
+        tt = Image.new('RGBA', (C, ap), (0, 0, 0, 0)); td = ImageDraw.Draw(tt); bb = td.textbbox((0, 0), t, font=f); td.text(((C - bb[2]) / 2, (ap - bb[3]) / 2 - bb[1] / 2), t, font=f, fill=(240, 244, 248, 255))
+        tt = tt.rotate(90 * i, expand=True); pos = [(0, C - ap), (C - ap, 0), (0, 0), (0, 0)][i]; c.paste(tt, pos, tt)
+    c.save(os.path.join(OUT, 'canvas.jpg'), quality=90); print('ring floor + canvas')
+def circus_floor():
+    rnd = random.Random(10); im = Image.merge('RGB', [_noise(FW_, FH_, 2, 6).point(lambda v: 96 + v // 5), _noise(FW_, FH_, 2, 6).point(lambda v: 66 + v // 6), _noise(FW_, FH_, 2, 6).point(lambda v: 38 + v // 8)])
+    im = ImageChops.multiply(im, Image.merge('RGB', [_noise(FW_, FH_, 60, 11).point(lambda v: 200 + v // 5)] * 3))
+    try:
+        art = Image.open(os.path.join(FF, 'circus_ring.webp')).convert('RGB').resize((int(12.8 * FPX), int(12.8 * FPX)))
+        box_ = (int(FX(-6.4)), int(FZ(6.4)), int(FX(-6.4)) + art.width, int(FZ(6.4)) + art.height); art = Image.blend(im.crop(box_), art, 0.42)   # low contrast so feet and apparatus read
+        mk = Image.new('L', art.size, 0); ImageDraw.Draw(mk).ellipse([0, 0, art.width, art.height], fill=255); im.paste(art, box_[:2], mk)
+    except Exception as e: print('no circus art', e)
+    im.save(os.path.join(OUT, 'circus_full.jpg'), quality=90); print('circus floor')
+
+def sb_ends():
+    """the end faces of the board for the other nights: hockey score, the fight card, the concert and circus feeds"""
+    W_, H_ = 1760, 1210; logo = Image.open(os.path.join(OUT, 'logo_white.png'))
+    def base(): im = Image.new('RGB', (W_, H_), (4, 5, 12)); return im, ImageDraw.Draw(im)
+    im, d = base(); d.rectangle([0, 0, 876, 190], fill=(29, 66, 138)); d.rectangle([884, 0, W_, 190], fill=(200, 200, 205))
+    cx(d, 438, 'N3W YORKERS', 98, font(SKY, 100), (246, 243, 234)); cx(d, 1322, 'NIGHT SHIFT', 98, font(SKY, 100), (12, 14, 22))
+    cx(d, 438, '3', 470, font(ANTON, 430), (245, 132, 38)); cx(d, 1322, '2', 470, font(ANTON, 430), (246, 243, 234))
+    cx(d, 880, '14:22', 820, font(MONO, 200), (255, 210, 58)); cx(d, 240, 'PERIOD 3', 820, font(MONO, 70), (138, 147, 176)); cx(d, 1520, 'SOG 31 24', 820, font(MONO, 70), (138, 147, 176))
+    g = logo.copy(); g.thumbnail((300, 300)); im.paste(g, (730, 900), g); cx(d, 380, 'POWER PLAY', 1050, font(SKY, 80), (255, 79, 163)); cx(d, 1380, 'BY MLOW', 1050, font(SKY, 90), (240, 244, 248))
+    im.save(os.path.join(OUT, 'sb_end_hockey.jpg'), quality=90)
+    im, d = base(); d.rectangle([0, 0, W_, 200], fill=(20, 40, 110)); cx(d, W_ // 2, 'ROUND 7', 100, font(ANTON, 150), (246, 243, 234))
+    cx(d, 880, '2:14', 470, font(MONO, 330), (255, 210, 58))
+    d.rectangle([0, 700, 860, 900], fill=(29, 66, 138)); d.rectangle([900, 700, W_, 900], fill=(163, 32, 43))
+    cx(d, 430, 'THE CABBIE', 800, font(SKY, 96), (246, 243, 234)); cx(d, 1330, 'THE HUSTLER', 800, font(SKY, 96), (246, 243, 234))
+    g = logo.copy(); g.thumbnail((240, 240)); im.paste(g, (760, 940), g); cx(d, 380, 'MIDDLEWEIGHT', 1060, font(MONO, 60), (138, 147, 176)); cx(d, 1380, '12 ROUNDS', 1060, font(MONO, 60), (138, 147, 176))
+    im.save(os.path.join(OUT, 'sb_end_boxing.jpg'), quality=90)
+    for k, (tag, word) in enumerate((('concert', 'LIVE AT THE GARDEN'), ('circus', 'THE GREATEST NIGHT'))):
+        im = artgrid(W_, H_, 2, 60 + k, logo_every=2); d = ImageDraw.Draw(im); d.rectangle([0, H_ - 170, W_, H_], fill=(4, 5, 12)); cx(d, W_ // 2, word, H_ - 85, font(SKY, 100), (240, 244, 248))
+        im.save(os.path.join(OUT, f'sb_end_{tag}.jpg'), quality=90)
+    print('sb ends')
+
 if __name__ == '__main__':
     import sys
     if 'jerseys' in sys.argv: jerseys()
     elif 'round3' in sys.argv: ribbon3(); court_wear()
+    elif 'floors' in sys.argv: ice(); stage_floor(); ring_floor(); circus_floor(); sb_ends()
     else: court(); banners(); scoreboard(); ribbon(); jerseys()

@@ -65,6 +65,13 @@ POSES = {
     'boxout':    dict(hip=(-0.8, -0.65), knee=(1.3, 1.1), shy=(-0.95, -0.95), shx=(-0.3, -0.3), el=(-1.0, -1.0), lean=0.5),
     'cut':       dict(hip=(-1.05, 0.6), knee=(0.7, 1.75), shy=(0.2, 0.25), shx=(0.9, -1.1), el=(-1.5, -1.6), lean=0.34, twist=0.2),
     'rebound':   dict(hip=(-0.15, -0.3), knee=(0.3, 0.55), shy=(0.1, -0.1), shx=(-2.85, -2.75), el=(-0.25, -0.3), lean=-0.02, ankle=0.6),
+    # hockey (2026-11-27): low on the skates, the stick hands low and in front
+    'skate':     dict(hip=(-0.95, 0.4), knee=(1.35, 0.3), shy=(0.2, 0.35), shx=(-0.75, -0.45), el=(-0.95, -1.25), lean=0.55, twist=0.22),
+    'skate2':    dict(hip=(0.4, -0.95), knee=(0.3, 1.35), shy=(0.35, 0.2), shx=(-0.45, -0.8), el=(-1.25, -0.9), lean=0.55, twist=-0.22),
+    'hready':    dict(hip=(-0.7, -0.6), knee=(1.15, 1.05), shy=(0.25, 0.3), shx=(-0.8, -0.5), el=(-0.7, -1.1), lean=0.6, twist=0.1),
+    # boxing: the guard (fists at the chin) and the jab (the lead hand out at shoulder height)
+    'guard':     dict(hip=(-0.3, 0.12), knee=(0.42, 0.32), shy=(0.5, 0.5), shx=(-0.8, -0.65), el=(-2.15, -2.25), lean=0.16, twist=0.3),
+    'jab':       dict(hip=(-0.35, 0.15), knee=(0.5, 0.35), shy=(0.12, 0.5), shx=(-1.5, -0.65), el=(-0.12, -2.2), lean=0.22, twist=0.4),
     'dribble':   dict(hip=(-0.55, 0.15), knee=(0.85, 0.7), shy=(0.25, 0.15), shx=(-0.6, -0.55), el=(-0.6, -0.9), lean=0.35),
 }
 
@@ -93,6 +100,7 @@ DRESS = {  # sleeves: 'long' covers to the wrist, 'short' to mid upper arm, 'non
     'winter': dict(sleeve='long', legs='long', smooth_top=30, push=0.016),
     'tee': dict(sleeve='short', legs='long', smooth_top=12, push=0.008),
     'jersey': dict(sleeve='none', legs='shorts', smooth_top=14, push=0.02),
+    'hockey': dict(sleeve='long', legs='shorts', smooth_top=24, push=0.03),
     'suit': dict(sleeve='long', legs='long', smooth_top=24, push=0.012),
 }
 def dress(v, j, R, D):
@@ -120,11 +128,12 @@ def bake():
     out = []
     plan = [('sit', 'winter'), ('sit', 'tee'), ('sit_hands', 'winter'), ('sit_phone', 'winter'), ('sit_cheer', 'tee'), ('sit_lean', 'winter'), ('sit_hands', 'tee'), ('sit_cheer', 'winter'),
             ('stand', 'suit'), ('stand_cheer', 'winter'), ('sit', 'suit'),
-            ('ready', 'jersey'), ('gather', 'jersey'), ('contest', 'jersey'), ('closeout', 'jersey'), ('boxout', 'jersey'), ('cut', 'jersey'), ('rebound', 'jersey'), ('run', 'jersey'), ('run2', 'jersey'), ('shoot', 'jersey'), ('defend', 'jersey'), ('dribble', 'jersey'), ('stand', 'jersey'), ('sit', 'jersey')]
+            ('ready', 'jersey'), ('gather', 'jersey'), ('contest', 'jersey'), ('closeout', 'jersey'), ('boxout', 'jersey'), ('cut', 'jersey'), ('rebound', 'jersey'), ('run', 'jersey'), ('run2', 'jersey'), ('shoot', 'jersey'), ('defend', 'jersey'), ('dribble', 'jersey'), ('stand', 'jersey'), ('sit', 'jersey'),
+            ('skate', 'hockey'), ('skate2', 'hockey'), ('hready', 'hockey'), ('guard', 'jersey'), ('jab', 'jersey')]
     for body in ('male_realistic', 'female_realistic'):
         v0, lens, flat = load(body); j = J[body]; R = regions(v0, j); E = adjacency(len(v0), lens, flat)
         for pname, dname in plan:
-            if body == 'female_realistic' and dname in ('jersey',): continue
+            if body == 'female_realistic' and dname in ('jersey', 'hockey'): continue
             D = dict(DRESS[dname], _E=E); part = dress(v0, j, R, D)
             # clothes: smooth the anatomy away in the rest pose, then push out by the cloth's thickness
             v = v0.copy(); cl = (part == 1) | (part == 2); v = smooth(v, E, (part == 1).astype(float), D['smooth_top']); v = smooth(v, E, (part == 2).astype(float), 8)

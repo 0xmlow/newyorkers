@@ -1,0 +1,8 @@
+Do not run any commands or edit any files. Answer in markdown only.
+
+THE GARDEN now renders five nights from one Blender generator: basketball (you reviewed it), and new: hockey, concert, boxing, circus. Attached setups_qa.jpg, 3 columns, 64 spp qa renders:
+row 1: hockey glass-level, hockey net cam, hockey upper bowl; row 2: hockey wide, boxing corner, boxing overhead; row 3: boxing ringside, boxing wide, concert bowl; row 4: concert floor, concert stage, concert wide; row 5: circus ring, circus wide, circus high wire.
+Already changed after these qa frames: concert beams are now soft emissive cones in the haze (they were invisible), concert floor camera moved to the mix position and bowl camera off the scoreboard, boxing canvas darkened and ring lights cut 70%, overhead camera moved under the board, circus net is a real mesh, scoreboard end faces now show tonight's score (hockey P3 3-2, fight card ROUND 7, art feeds for concert and circus).
+Fixed by design: MLow's flower headed cast as crowd and performers, his logo everywhere, the huge board. Players and fighters are CC0 bodies posed by a numpy vertex rig (hip, knee, shoulder, elbow, lean, twist only; no fingers, no wrists), flower heads.
+
+For each of the four new nights give the 5 biggest things that make it read fake or wrong for that event (what a hockey fan, a concert LD, a boxing fan, a circus person would notice first), each with an exact fix doable in Python in Blender 5.1 Cycles under 4 min per 2560x1440 still (dimensions, counts, light values, colours, camera placement). Then the 3 cross-night fixes that would lift all five most. Then one line per night: its single biggest tell.

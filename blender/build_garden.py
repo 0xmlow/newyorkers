@@ -11,6 +11,9 @@ TEX = os.path.join(HERE, 'tex'); WK = os.path.join(HERE, 'work'); OUTR = os.path
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else ['qa']
 MODE = argv[0]; VIEWS = argv[1:]
 random.seed(11); np.random.seed(11)
+import zlib, importlib
+setups = importlib.import_module(os.environ.get('GARDEN_SETUPS_MOD', 'setups'))
+SETUP = os.environ.get('GARDEN_SETUP', 'basketball')   # basketball | hockey | concert | boxing | circus (setups.py)
 
 # ---------------- the plan (layout.js)
 FL, FR = 16.0, 15.0
@@ -305,7 +308,9 @@ for s in (-1, 1):
         x = s * (19.6 + r * 0.95); z = 0.12 + r * 0.17
         for y in np.arange(-13, 13.1, 0.55):
             if sd_(x, y) < 1.2: FLOOR_ROWS.append((x, y, z, -s * math.pi / 2, r))
+if SETUP != 'basketball': FLOOR_ROWS = []
 SEATS += [(x, y, z, yaw, False) for (x, y, z, yaw, r) in FLOOR_ROWS]
+SEATS += [(x, y, z, yaw, False) for (x, y, z, yaw, r) in setups.floor_rows(SETUP)]
 # the risers under them
 rv, rf = [], []
 for (x, y, z, yaw, r) in FLOOR_ROWS:
@@ -419,6 +424,7 @@ def _w(n):
 SIT_I = [i for i, n in enumerate(crowd_files) if '_sit' in n]; STD_I = [i for i, n in enumerate(crowd_files) if n.endswith('_stand')]
 SIT_W = np.array([_w(crowd_files[i]) for i in SIT_I]); SIT_W /= SIT_W.sum()
 CHAR = [n.split('_')[1] for n in crowd_files]
+FOCUS = {'basketball': (6.6, 2.0), 'hockey': (21.0, 3.0), 'concert': (-20.0, 0.0), 'boxing': (0.0, 0.0), 'circus': (0.0, 1.0)}[SETUP]
 crng3 = random.Random(33); SEC_OCC = [crng3.uniform(0.95, 0.99) for _ in range(24)]
 crowd, var, scl, grid = [], [], [], {}
 vac_run = std_run = 0
@@ -439,7 +445,10 @@ for p in SEATS:
     v = min(cands, key=lambda c: (near.get(CHAR[c], 0), crng3.random()))
     grid.setdefault(cell, []).append(CHAR[v])
     off = crng3.uniform(-0.05, 0.05) + (0.08 if (int(p[2] / 0.4) % 2) else -0.08) * crng3.random()
-    crowd.append((p[0] + math.cos(p[3]) * off, p[1] + math.sin(p[3]) * off, p[2] + crng3.uniform(-0.02, 0.02), p[3] + crng3.uniform(-0.21, 0.21), p[4]))
+    # Astra round 4: everyone turns toward tonight's focal point (the ball, the puck, the singer, the ring), up to ~32 deg
+    _fx, _fy = FOCUS; _yf = math.atan2(-(_fx - p[0]), (_fy - p[1])) + math.pi; _dy = (_yf - p[3] + math.pi) % math.tau - math.pi
+    _yaw = p[3] + max(-0.55, min(0.55, _dy * 0.6)) + crng3.uniform(-0.15, 0.15)
+    crowd.append((p[0] + math.cos(p[3]) * off, p[1] + math.sin(p[3]) * off, p[2] + crng3.uniform(-0.02, 0.02), _yaw, p[4]))
     var.append(v); scl.append(crng3.uniform(0.94, 1.06))
 co = points_obj('crowd', crowd, coll('crowd'), extra={'var': ('INT', np.array(var, np.int32)), 'sc': ('FLOAT', np.array(scl, np.float32))})
 print('crowd', len(crowd), 'of', len(SEATS), 'seats, standing', sum(1 for v in var if v in STD_I))
@@ -528,7 +537,7 @@ def place(fname, x, y, yaw, cols, z=0.0, scale=1.0, name='p'):
     o.location = (x, y, (0.002 - zmin * scale) if z == 0 else z); o.rotation_euler = (0, 0, yaw); o.scale = (scale,) * 3
     md = o.modifiers.new('sub', 'SUBSURF'); md.levels = 0; md.render_levels = 1
     # a NEW YORKERS flower head on the neck, from the cast
-    neck = Vector(np.load(f)['neck'].tolist()); hd = FLOWER_HEADS[hash(name) % len(FLOWER_HEADS)]
+    neck = Vector(np.load(f)['neck'].tolist()); hd = FLOWER_HEADS[zlib.crc32(name.encode()) % len(FLOWER_HEADS)]
     h = bpy.data.objects.new(name + '_head', hd); link(h, G_FLOORP); h.parent = o; h.location = neck - Vector((0, 0, 0.03)); h.scale = (0.78,) * 3
     bpy.ops.mesh.primitive_torus_add(major_radius=0.06, minor_radius=0.035, major_segments=24, minor_segments=10, location=neck - Vector((0, 0, 0.005))); cx_ = bpy.context.active_object; cx_.name = name + '_calyx'
     [cc.objects.unlink(cx_) for cc in cx_.users_collection]; link(cx_, G_FLOORP); cx_.data.materials.append(CALYX); cx_.data.shade_smooth(); cx_.location = cx_.location; cx_.parent = o; cx_.matrix_parent_inverse = Matrix()
@@ -773,7 +782,7 @@ for k in range(48):
 # 32 service lights on stairs, bridges and structure
 for k in range(32):
     s_ = (k + 0.25) / 32; x, y, _, _ = stadium(s_, 26); spot(f'svc{k}', (x * 0.9, y * 0.9, 30), (x, y, 18), 300 * LP, 70, 0.5, K3700, 0.3)
-KEY = float(os.environ.get('GARDEN_KEY', '1.0'))
+KEY = float(os.environ.get('GARDEN_KEY', '0.4'))
 if KEY > 0:
     _k = area('court_key', (12, 8), (0, -24, 22), 26000 * LP * KEY, K5000); _k.rotation_euler = (Vector((0, 0, 1.2)) - Vector((0, -24, 22))).to_track_quat('-Z', 'Y').to_euler()
     _k.data.spread = math.radians(70); _k.visible_camera = False; _k.visible_glossy = True
@@ -784,6 +793,7 @@ vol = node_mat('haze'); nt = vol.node_tree; nt.nodes.remove(nt.nodes['Principled
 pv.inputs['Anisotropy'].default_value = 0.55; pv.inputs['Color'].default_value = (0.85, 0.88, 0.95, 1); nt.links.new(pv.outputs[0], nt.nodes['Material Output'].inputs['Volume'])
 hz = box('haze', (150, 110, 40), (0, 0, 19.5), vol); hz.visible_shadow = False
 # ---------------- cameras
+SET_CAMS = setups.build(SETUP, globals()) if SETUP != 'basketball' else None
 CAMS = {
     'upper':      ((-22, -38.5, 18.5), (5, 1, 1.0), 32),
     'courtside':  ((-1.0, -8.6, 1.2), (10, 3.0, 2.1), 40),
@@ -801,8 +811,10 @@ CAMS = {
 def add_cam(name, loc, tgt, lens):
     cd = bpy.data.cameras.new(name); cd.lens = lens; cd.clip_end = 900; o = bpy.data.objects.new(name, cd); o.location = loc
     d = Vector(tgt) - Vector(loc); o.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler(); link(o); return o
+if SET_CAMS: CAMS, DOF_SET = SET_CAMS
 for k, (l, t, f) in CAMS.items(): add_cam('cam_' + k, l, t, f)
 DOF = {'courtside': (6.6, 3.6, 2.4, 7.1), 'baseline': (7.0, 3.3, 2.4, 4.0), 'crowdcheck': (0, -14, 5, 8.0), 'baseline85': (6.6, 3.6, 2.3, 4.5), 'broadcast': (7, 1, 1.4, 8.0), 'rimcam': (7.2, 3.3, 1.5, 5.6), 'hero': (6.6, 3.6, 1.9, 7.1)}
+if SET_CAMS: DOF = DOF_SET
 for k, (x, y, z, f) in DOF.items():
     cam = bpy.data.objects['cam_' + k]; cam.data.dof.use_dof = True; cam.data.dof.focus_distance = (Vector((x, y, z)) - cam.location).length; cam.data.dof.aperture_fstop = f
 
@@ -814,6 +826,6 @@ sc.cycles.max_bounces = 6; sc.cycles.diffuse_bounces = 2; sc.cycles.glossy_bounc
 sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Medium High Contrast'; sc.view_settings.exposure = float(os.environ.get('GARDEN_EV', '0.15'))
 sc.render.resolution_x, sc.render.resolution_y = (2560, 1440) if MODE == 'full' else (1280, 720)
 sc.render.image_settings.file_format = 'PNG'
-bpy.ops.wm.save_as_mainfile(filepath=os.path.join(WK, 'garden.blend'))
+bpy.ops.wm.save_as_mainfile(filepath=os.path.join(WK, f'garden_{SETUP}.blend'))
 for v in (VIEWS or list(CAMS)):
-    sc.camera = bpy.data.objects['cam_' + v]; sc.render.filepath = os.path.join(OUTR, f'{v}_{MODE}.png'); bpy.ops.render.render(write_still=True); print('rendered', v)
+    sc.camera = bpy.data.objects['cam_' + v]; sc.render.filepath = os.path.join(OUTR, (f'{SETUP}_' if SETUP != 'basketball' else '') + f'{v}_{MODE}.png'); bpy.ops.render.render(write_still=True); print('rendered', v)
