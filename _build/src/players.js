@@ -260,7 +260,7 @@ export function buildGame(parent, tex, opts = {}) {
       m.instanceMatrix.needsUpdate = true; });
     figs.forEach((f, i) => { if (!f.num) { numbers.setMatrixAt(i * 2, zero); numbers.setMatrixAt(i * 2 + 1, zero); return; } m4.multiplyMatrices(f.b.chest.matrixWorld, nf); numbers.setMatrixAt(i * 2, m4); m4.multiplyMatrices(f.b.chest.matrixWorld, nb); numbers.setMatrixAt(i * 2 + 1, m4); });
     numbers.instanceMatrix.needsUpdate = true;
-    photo.forEach((f, i) => cams.setMatrixAt(i, f.b.head.matrixWorld)); cams.instanceMatrix.needsUpdate = true;
+    if (!UP) { photo.forEach((f, i) => cams.setMatrixAt(i, f.b.head.matrixWorld)); cams.instanceMatrix.needsUpdate = true; }
     if (flowers) writeFlowers();
     if (UP) UP.heads.forEach((h) => { h.userData.list.forEach((f, i) => { m4.multiplyMatrices(f.b.head.matrixWorld, UP.hoff); h.setMatrixAt(i, m4); }); h.instanceMatrix.needsUpdate = true; });
   }
@@ -281,6 +281,8 @@ export function buildGame(parent, tex, opts = {}) {
         m.frustumCulled = false; m.castShadow = true; m.receiveShadow = true; m.userData = { bone: p.bone, key: p.key, paired, list }; g.add(m); nm.push(m);
         const c = new THREE.Color(); list.forEach((f, i) => { c.set(colOf(f, p.key)).convertSRGBToLinear(); if (paired) { m.setColorAt(i * 2, c); m.setColorAt(i * 2 + 1, c); } else m.setColorAt(i, c); }); m.instanceColor.needsUpdate = true; } }
     meshes.forEach((m) => { m.visible = false; m.count = 0; }); meshes = nm;
+    // the photographers' cameras sit at the seated cast's face (Astra 7: no dark blocks left floating on the court)
+    photo.forEach((f, i) => { const fwd = V(Math.sin(f.yaw), 0, Math.cos(f.yaw)); m4.compose(V(f.pos.x + fwd.x * 0.3, 0.5, f.pos.z + fwd.z * 0.3), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, f.yaw, 0)), V(1, 1, 1)); cams.setMatrixAt(i, m4); }); cams.instanceMatrix.needsUpdate = true;
     // a NEW YORKERS flower head on every neck, as in the Cycles build; the old petal heads go
     const who = figs.filter((f) => !seated.has(f.kind)), heads = B.heads.map((geo, k) => { const list = who.filter((f, i) => (i * 5 + 2) % B.heads.length === k);
       const m = new THREE.InstancedMesh(geo, B.headMat, Math.max(1, list.length)); m.count = list.length; m.frustumCulled = false; m.castShadow = true; m.userData.list = list; g.add(m); return m; });

@@ -104,7 +104,7 @@ if 'puck' in movers and O.get('puck'):
     key_path(p, lambda i: p0 + d * min(1.0, (i - 1) / (N * 0.85)) ** 0.8, range(1, N + 1))
 if 'train' in movers:
     # the train pulls in from the far end of the platform and stops: ease out over the whole shot
-    for o in [o for o in O if o.name.startswith('ext_train')]:
+    for o in [o for o in O if o.name.startswith(('ext_train', 'ext_car_c')) and o.parent is None]:
         l0 = Vector(o.location)
         key_path(o, lambda i, l0=l0: l0 + Vector((78.0 * (1 - ease((i - 1) / (N - 1), 'out')) - 8.0, 0, 0)), range(1, N + 1))
 if 'walker' in movers and O.get('walker'):

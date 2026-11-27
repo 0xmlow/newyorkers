@@ -56,7 +56,8 @@ export async function castCrowd(list, { stand = false, near = 22, focus = null, 
     const k = 0.94 + Math.random() * 0.12;
     m4.compose(p.set(s[0], s[1], s[2]), q.setFromEuler(e.set(0, yaw, 0)), sc.set(k, k, k));
     const i = bm.addInstance(id[best].lo); bm.setMatrixAt(i, m4);
-    const b = 0.86 + Math.random() * 0.24; bm.setColorAt(i, col.setRGB(b, b * (0.97 + Math.random() * 0.06), b * (0.97 + Math.random() * 0.06)));
+    // Astra 7: the bowl is a darker mass than the court
+    const b = stand ? 0.8 + Math.random() * 0.22 : 0.66 + Math.random() * 0.26; bm.setColorAt(i, col.setRGB(b, b * (0.97 + Math.random() * 0.06), b * (0.97 + Math.random() * 0.06)));
     inst.push({ i, g: id[best], x: s[0], y: s[1], z: s[2], yaw, k, hi: false, up: 0 });
   }
   let last = -1; const cp = new THREE.Vector3(), n2 = near * near;

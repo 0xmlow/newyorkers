@@ -1171,23 +1171,9 @@ def build_station(M, c):
         for x in np.arange(PX0 + 4, PX1, 24.0):
             boxx('ext_track_plate', x - 0.6, x + 0.6, yw + sgn * 0.01 - 0.01, yw + sgn * 0.01 + 0.01, zp + 3.0, zp + 3.6, M['sign_dark'], c)
             text_obj('ext_track_plate_t', 'TRACK %d' % tno, 0.18, (x, yw + sgn * 0.03, zp + 3.3), face_rot(0, sgn), M['sign_txt'], c, font=FONT_HELV)
-    # a partial train standing on track 6: two and a half silver cars, window bands and 1.25 m doors
-
-    trn = Batch()
-    for k in range(3):
-        x0 = -12.0 + k * 25.9; L = 25.4 if k < 2 else 25.4
-        trn.box(x0 + L / 2, TR[1], zr + 2.35, L, 3.1, 3.7, m=0)
-        trn.box(x0 + L / 2, TR[1] - 1.552, zr + 3.95, L, 0.01, 0.06, m=2)
-        for x in np.arange(x0 + 2.2, x0 + L - 1.5, 1.9):
-            if abs(x - (x0 + 4.0)) < 1.2 or abs(x - (x0 + L - 4.0)) < 1.2: continue
-            trn.box(x, TR[1] - 1.56, zr + 2.95, 1.3, 0.03, 0.85, m=1)
-        for xd in (x0 + 4.0, x0 + L - 4.0):
-            for sgn in (-1, 1): trn.box(xd + sgn * 0.3125, TR[1] - 1.565, zr + 2.15, 0.6, 0.03, 2.0, m=3)
-            trn.box(xd, TR[1] - 1.57, zr + 2.15, 0.02, 0.035, 2.0, m=2)
-            for sgn in (-1, 1): trn.box(xd + sgn * 0.3125, TR[1] - 1.58, zr + 2.65, 0.4, 0.01, 0.55, m=1)
-    trn.box(-12.15, TR[1], zr + 2.35, 0.25, 3.0, 3.6, m=0)                     # the cab end, same skin
-    trn.box(-12.3, TR[1], zr + 2.9, 0.04, 2.2, 0.9, m=1)
-    trn.obj('ext_train', [M['train'], M['train_win'], M['metal'], M['train_door']], c)
+    # the realism pass (penn_real.py): modelled trains, CC0 surfaces, grime and litter; PENN_REAL=0 keeps the old box train
+    if os.environ.get('PENN_REAL', '1') != '0':
+        import importlib, penn_real; importlib.reload(penn_real); penn_real.realize(M, c, ZS, zp, zr, TR, PL, PX0, PX1)
 
 
 # ---------------------------------------------------------------- 5. the city round it
