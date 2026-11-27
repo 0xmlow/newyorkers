@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { loadBodies, castCrowd } from './cast.js';
 
 const HOOP = 12.755, RIMY = 3.05, BASE = 14.33, SIDE = 7.62;
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
@@ -46,7 +47,8 @@ function rig() {
   }
   return b;
 }
-const legH = (t, k) => 0.47 * Math.cos(t) + 0.46 * Math.cos(t + k) + 0.095;
+const LEG = { th: 0.47, sh: 0.46, an: 0.095, off: 0.05 };   // the people pass re-rigs these to the sculpted body
+const legH = (t, k) => LEG.th * Math.cos(t) + LEG.sh * Math.cos(t + k) + LEG.an;
 
 const SKIN = ['#f0cfb4', '#d9a882', '#b97d56', '#8d5a3b', '#6b4129', '#4a2c1b', '#c48c66', '#5e3a24'];
 const HAIR = ['#120e0c', '#1c140f', '#2a1c12', '#3b2a1d', '#0d0b0a'];
@@ -85,7 +87,7 @@ export function buildGame(parent, tex, opts = {}) {
   // ---------- the instanced parts
   const g = new THREE.Group(); parent.add(g); const N = figs.length;
   const mat = new THREE.MeshStandardMaterial({ roughness: 0.62, metalness: 0 });
-  const meshes = PARTS.map(([name, bone, geo, key]) => { const paired = PAIRED.has(bone), m = new THREE.InstancedMesh(geo(), mat, N * (paired ? 2 : 1));
+  let meshes = PARTS.map(([name, bone, geo, key]) => { const paired = PAIRED.has(bone), m = new THREE.InstancedMesh(geo(), mat, N * (paired ? 2 : 1));
     m.frustumCulled = false; m.castShadow = true; m.receiveShadow = true; m.userData = { bone, key, paired }; g.add(m);
     const c = new THREE.Color(); figs.forEach((f, i) => { c.set(f.col[key]).convertSRGBToLinear(); if (paired) { m.setColorAt(i * 2, c); m.setColorAt(i * 2 + 1, c); } else m.setColorAt(i, c); });
     m.instanceColor.needsUpdate = true; return m; });
@@ -192,7 +194,7 @@ export function buildGame(parent, tex, opts = {}) {
     b.shL.rotation.set(aL, 0, zL); b.shR.rotation.set(aR, 0, zR); b.elL.rotation.x = eL; b.elR.rotation.x = eR;
     b.chest.rotation.set(lean, act === 'dribble' ? -0.18 : Math.sin(f.ph) * amp * 0.12, 0); b.head.rotation.x = headX - lean * 0.5;
     const flight = sp > 3.5 ? Math.max(0, -Math.cos(f.ph * 2)) * 0.05 : 0;
-    b.hips.position.y = hipY !== null ? hipY : Math.max(legH(tL, kL), legH(tR, kR)) + 0.05 + flight;
+    b.hips.position.y = hipY !== null ? hipY : Math.max(legH(tL, kL), legH(tR, kR)) + LEG.off + flight;
     f.jumpY = jump * f.s; b.root.position.set(f.pos.x, jump * f.s, f.pos.z); b.root.rotation.y = f.yaw;
     b.root.updateMatrixWorld(true);
   }
@@ -253,19 +255,51 @@ export function buildGame(parent, tex, opts = {}) {
     for (const f of photo) { if (rnd() < dt * 0.3) f.yaw += (rnd() - 0.5) * 0.3; }
   }
   function writeInstances() {
-    meshes.forEach((m) => { const { bone, paired } = m.userData;
-      figs.forEach((f, i) => { if (paired) { m.setMatrixAt(i * 2, f.b[bone + 'L'].matrixWorld); m.setMatrixAt(i * 2 + 1, f.b[bone + 'R'].matrixWorld); } else m.setMatrixAt(i, f.b[bone].matrixWorld); });
+    meshes.forEach((m) => { const { bone, paired, list } = m.userData;
+      (list || figs).forEach((f, i) => { if (paired) { m.setMatrixAt(i * 2, f.b[bone + 'L'].matrixWorld); m.setMatrixAt(i * 2 + 1, f.b[bone + 'R'].matrixWorld); } else m.setMatrixAt(i, f.b[bone].matrixWorld); });
       m.instanceMatrix.needsUpdate = true; });
     figs.forEach((f, i) => { if (!f.num) { numbers.setMatrixAt(i * 2, zero); numbers.setMatrixAt(i * 2 + 1, zero); return; } m4.multiplyMatrices(f.b.chest.matrixWorld, nf); numbers.setMatrixAt(i * 2, m4); m4.multiplyMatrices(f.b.chest.matrixWorld, nb); numbers.setMatrixAt(i * 2 + 1, m4); });
     numbers.instanceMatrix.needsUpdate = true;
     photo.forEach((f, i) => cams.setMatrixAt(i, f.b.head.matrixWorld)); cams.instanceMatrix.needsUpdate = true;
     if (flowers) writeFlowers();
+    if (UP) UP.heads.forEach((h) => { h.userData.list.forEach((f, i) => { m4.multiplyMatrices(f.b.head.matrixWorld, UP.hoff); h.setMatrixAt(i, m4); }); h.instanceMatrix.needsUpdate = true; });
   }
+  // ---------- the people pass: the sculpted bodies and their clothes replace the capsules once loaded (?capsules keeps them)
+  let UP = null;
+  const colOf = (f, k) => f.col[k] || (k === 'edge' ? f.col.jersey : k === 'edge2' ? (f.col.edge || f.col.shorts) : k === 'arm' ? f.col.skin : k === 'shin' ? f.col.skin : f.col.jersey);
+  function upgrade(B) {
+    const r = B.rig;
+    for (const f of figs) { const b = f.b; b.hips.position.set(...r.hips); b.chest.position.set(...r.chest); b.head.position.set(...r.head);
+      for (const [s, k] of [[1, 'L'], [-1, 'R']]) { b['sh' + k].position.set(s * r.sh[0], r.sh[1], r.sh[2]); b['el' + k].position.set(...r.el); b['hand' + k].position.set(...r.hand);
+        b['hip' + k].position.set(s * r.hip[0], r.hip[1], r.hip[2]); b['knee' + k].position.set(...r.knee); b['ankle' + k].position.set(...r.ankle); } }
+    LEG.th = -r.knee[1]; LEG.sh = -r.ankle[1]; LEG.an = 0.107; LEG.off = -r.hip[1];
+    const skinM = new THREE.MeshStandardMaterial({ roughness: 0.5, metalness: 0 }), clothM = new THREE.MeshPhysicalMaterial({ roughness: 0.74, metalness: 0, sheen: 0.25, sheenRoughness: 0.8 });
+    const nm = [], seated = new Set(['fan', 'photo']);
+    for (const set of ['jersey', 'suit']) {
+      const list = figs.filter((f) => !seated.has(f.kind) && ((set === 'suit') === (f.kind === 'ref' || f.kind === 'coach'))); if (!list.length) continue;
+      for (const p of B.sets[set]) { const paired = PAIRED.has(p.bone), m = new THREE.InstancedMesh(p.geo, ['skin', 'arm', 'shin'].includes(p.key) ? skinM : clothM, list.length * (paired ? 2 : 1));
+        m.frustumCulled = false; m.castShadow = true; m.receiveShadow = true; m.userData = { bone: p.bone, key: p.key, paired, list }; g.add(m); nm.push(m);
+        const c = new THREE.Color(); list.forEach((f, i) => { c.set(colOf(f, p.key)).convertSRGBToLinear(); if (paired) { m.setColorAt(i * 2, c); m.setColorAt(i * 2 + 1, c); } else m.setColorAt(i, c); }); m.instanceColor.needsUpdate = true; } }
+    meshes.forEach((m) => { m.visible = false; m.count = 0; }); meshes = nm;
+    // a NEW YORKERS flower head on every neck, as in the Cycles build; the old petal heads go
+    const who = figs.filter((f) => !seated.has(f.kind)), heads = B.heads.map((geo, k) => { const list = who.filter((f, i) => (i * 5 + 2) % B.heads.length === k);
+      const m = new THREE.InstancedMesh(geo, B.headMat, Math.max(1, list.length)); m.count = list.length; m.frustumCulled = false; m.castShadow = true; m.userData.list = list; g.add(m); return m; });
+    if (flowers) { flowers.pm.visible = flowers.em.visible = false; flowers = null; }
+    UP = { heads, hoff: new THREE.Matrix4().makeTranslation(0, -0.02, 0) };
+    // the front row and the photographers: the cast, seated, the same figures as the bowl
+    const fl = figs.filter((f) => f.kind === 'fan').map((f) => [f.pos.x, 0, f.pos.z, f.yaw]);
+    const pl = photo.map((f) => [f.pos.x, -0.36, f.pos.z, f.yaw]);
+    const extras = [];
+    if (fl.length) extras.push(castCrowd(fl, { near: 30 }));
+    if (pl.length) extras.push(castCrowd(pl, { near: 30, poses: ['sit_lean', 'sit_leanL', 'sit_leanR'] }));
+    Promise.all(extras).then((cs) => { cs.forEach((c) => g.add(c.mesh)); if (opts.onCast) cs.forEach((c) => opts.onCast(c)); });
+  }
+  if (!new URLSearchParams(location.search).has('capsules')) loadBodies().then(upgrade).catch((e) => console.warn('bodies', e));
   // ---------- the replay: a game from sim/garden_sim.py drives the same bodies
   let flowers = null;
   const RS = { tau: opts.t0 || 0, speed: 1, manual: false, last: -1, seg: -1, off: V(), prev: V(), slots: [] };
   const playersOf = (a) => (a < 5 ? T[0][a] : a < 10 ? T[1][a - 5] : refs[a - 10]);
-  function paint(f, i) { const c = new THREE.Color(); meshes.forEach((m) => { const { key, paired } = m.userData; c.set(f.col[key]).convertSRGBToLinear(); if (paired) { m.setColorAt(i * 2, c); m.setColorAt(i * 2 + 1, c); } else m.setColorAt(i, c); m.instanceColor.needsUpdate = true; }); }
+  function paint(f, i0) { const c = new THREE.Color(); meshes.forEach((m) => { const { key, paired, list } = m.userData; const i = list ? list.indexOf(f) : i0; if (i < 0) return; c.set(colOf(f, key)).convertSRGBToLinear(); if (paired) { m.setColorAt(i * 2, c); m.setColorAt(i * 2 + 1, c); } else m.setColorAt(i, c); m.instanceColor.needsUpdate = true; }); }
   function setNum(i, cell) { const A = numGeo.attributes.aOff, a = A.array; a.set([cell[0], cell[1]], i * 4); a.set([cell[0], cell[1]], i * 4 + 2); A.needsUpdate = true; }
   function setupReplay() {
     const D = R.D, kits = D.teams.map((tm) => tm.kit), cellOf = {};
@@ -298,6 +332,7 @@ export function buildGame(parent, tex, opts = {}) {
   }
   const fm = new THREE.Matrix4(), fo = new THREE.Matrix4().makeTranslation(0, 0.17, 0.03), inv = new THREE.Matrix4(), lv = V(), eq = new THREE.Quaternion(), ee = new THREE.Euler();
   function writeFlowers() {
+    if (UP) return;
     const { who, pm, em } = flowers, headM = meshes[PARTS.findIndex((p) => p[0] === 'head')], hairM = meshes[PARTS.findIndex((p) => p[0] === 'hair')];
     who.forEach((f, i) => { const fi = figs.indexOf(f); headM.setMatrixAt(fi, zero); hairM.setMatrixAt(fi, zero);
       fm.multiplyMatrices(f.b.head.matrixWorld, fo); pm.setMatrixAt(i, fm);

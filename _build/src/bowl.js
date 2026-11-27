@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { seatedGeometry, peopleMaterial, peopleMesh } from './people.js';
+import { castCrowd } from './cast.js';
 const PHONE = matchMedia('(pointer:coarse)').matches;
 import { LOW, UP, CLUB, BACK, BACK_TOP, stadiumPoint, perimeter, inTunnel, TUN_H, TUNNELS, TUN_W, FL, FR } from './layout.js';
 
@@ -96,7 +97,10 @@ export function buildBowl(scene, tex, U) {
   // the crowd: nine in ten seats taken, seated people coloured as a winter crowd
   const ppl = seatPos.filter(() => Math.random() < (PHONE ? 0.6 : 0.9));
   const waveU = { uWave: { value: 0 }, uWaveOn: { value: 0 }, uT: { value: 0 } };
-  g.add(peopleMesh(seatedGeometry, peopleMaterial(waveU), ppl, { chunks: 48, near: 20 }));
+  const caps = peopleMesh(seatedGeometry, peopleMaterial(waveU), ppl, { chunks: 48, near: 20 }); g.add(caps);
+  // the people pass: the Cycles crowd (MLow's cast) replaces the capsules once it loads; ?capsules keeps the old crowd
+  U.castUpdates ||= [];
+  if (!new URLSearchParams(location.search).has('capsules')) castCrowd(ppl, { near: PHONE ? 10 : 22, focus: [6.6, 2.0], wave: waveU }).then((c) => { g.add(c.mesh); caps.visible = false; U.castCrowd = c; U.castUpdates.push(c.update); }).catch((e) => console.warn('cast crowd', e));
   // 5. phone lights for the concert: one point per person, twinkling, off until the house goes dark
   const pp = new Float32Array(ppl.length * 3), ph = new Float32Array(ppl.length);
   ppl.forEach((s, i) => { pp[i * 3] = s[0] + Math.sin(s[3]) * 0.32; pp[i * 3 + 1] = s[1] + 1.12; pp[i * 3 + 2] = s[2] + Math.cos(s[3]) * 0.32; ph[i] = Math.random() * 6.28; });

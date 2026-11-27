@@ -13,6 +13,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { STREET, DRUM_IN, BACK, LIFTS, BRIDGE, ENTRY, surfaces, zoneOf, sd, stadiumPoint, UP } from './layout.js';
 import { buildBowl } from './bowl.js';
 import { seatedGeometry, standingGeometry, peopleMaterial, peopleMesh } from './people.js';
+import { castCrowd } from './cast.js';
 import { buildFlipFloor, drawCourt, drawIce, drawStage, drawRing, drawCircus } from './floor.js';
 import { buildWorld, buildModeSets, put } from './world.js';
 import * as S from './sound.js';
@@ -151,7 +152,7 @@ async function build() {
   hangAndPieces(tex);
   standingCrowd(tex);
   if (REPLAY) U.replay = await loadReplay(REPLAY);
-  U.game = buildGame(U.sets.court, tex, { replay: U.replay, t0: +Q.get('t') || 0, fans: U.courtFans, phone: PHONE, sound: S, onScore: (team, pts) => { S.cheer(team === 0 ? (pts === 3 ? 1.1 : 0.7) : 0.25, team === 0 ? 2.4 : 1.2); if (team === 0 && pts === 3 && zoneOf(player.pos) !== 'concourse' && started) egg('downtown', 'From downtown', 'A home three, and fourteen thousand people on their feet. The game on this floor plays itself: watch it from courtside, the bridges or the top row.'); } });
+  U.game = buildGame(U.sets.court, tex, { replay: U.replay, t0: +Q.get('t') || 0, fans: U.courtFans, onCast: (c) => (U.castUpdates ||= []).push(c.update), phone: PHONE, sound: S, onScore: (team, pts) => { S.cheer(team === 0 ? (pts === 3 ? 1.1 : 0.7) : 0.25, team === 0 ? 2.4 : 1.2); if (team === 0 && pts === 3 && zoneOf(player.pos) !== 'concourse' && started) egg('downtown', 'From downtown', 'A home three, and fourteen thousand people on their feet. The game on this floor plays itself: watch it from courtside, the bridges or the top row.'); } });
   if (U.replay) { U.bc = makeBroadcast({ camera, replay: U.replay, game: U.game }); if (BCAM) U.bc.cam(BCAM); if (!(BCAM || CAPTURE)) U.bc.root.style.display = 'none'; }
   // the floor takes shadows; the furniture on it casts them
   U.flip.mesh.receiveShadow = true; base.receiveShadow = true;
@@ -271,6 +272,8 @@ function standingCrowd(tex) { // the general admission floor for the concert: 90
   const list = []; while (list.length < (PHONE ? 500 : 900)) { const x = -14 + Math.random() * 30, z = -12.5 + Math.random() * 25; if (Math.abs(z) < 2.2 && x < -0.5) continue; if (sd(x, z) > -1) continue; list.push([x, 0, z, -Math.PI / 2 + (Math.random() - 0.5) * 0.7]); }
   const gu = { uWave: { value: 0 }, uWaveOn: { value: 0 }, uT: U.wave.uT };
   const mesh = peopleMesh(standingGeometry, peopleMaterial(gu, true), list, { jitter: 0.5, lean: 0.03 }); U.sets.stage.add(mesh); U.gaBodies = mesh;
+  U.castUpdates ||= [];
+  if (!Q.has('capsules')) castCrowd(list, { stand: true, near: PHONE ? 10 : 22, focus: [-20, 0] }).then((c) => { U.sets.stage.add(c.mesh); mesh.visible = false; U.gaCast = c; U.castUpdates.push(c.update); }).catch((e) => console.warn('cast floor', e));
   // courtside: the front row on the long sides, in the folding chairs, for the court
   const cs = []; for (const s of [-1, 1]) for (let i = 0; i < 26; i++) if (Math.random() < 0.85 && !(s < 0 && Math.abs(-14 + i * 1.1) < 14)) cs.push([-14 + i * 1.1, 0, s * 9.1, s > 0 ? Math.PI : 0]);
   U.courtFans = cs.map((c) => [c[0], c[2] + (c[2] > 0 ? 0.02 : -0.02), c[3]]);   // drawn by players.js on the jointed rig
@@ -487,6 +490,7 @@ function tick(dt, t) {
   if (wave) { wave.t += dt; U.wave.uWaveOn.value = Math.min(1, wave.t * 2, Math.max(0, (11 - wave.t) * 2)); U.wave.uWave.value = -wave.t * 1.25; if (wave.t > 11.5) { wave = null; U.wave.uWaveOn.value = 0; } }
   if (U.taxis) U.taxis.forEach((c, i) => { c.position.z += dt * (9 + (i % 3) * 2); if (c.position.z > 200) c.position.z = -200; });
   stepBalls(dt);
+  if (U.castUpdates) for (const f of U.castUpdates) f(camera, t);
   if (U.game) U.game.update(dt, t); if (U.bannerT) U.bannerT.value = t; if ((CAPTURE || frame % 20 === 7) && U.scoreCanvas && U.game && mode === 'court') drawScore();
   if (U.bc && (BCAM || CAPTURE)) U.bc.update(U.game.RS.tau);
   // the hang loads as you come near
