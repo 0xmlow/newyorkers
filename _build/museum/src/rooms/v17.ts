@@ -547,6 +547,99 @@ export const lighthouse: RoomDef = {
 
 /* ================================================================== */
 /* ---------------- 170 FOUR FREEDOMS PARK ---------------- */
+/* The little leaf lindens of the allees, built here: a clear trunk, four limbs into the crown, and an upright oval crown of
+   leaf sprays (small heart shaped leaves on twigs, painted once), all 120 trees in two instanced draws, swaying a little. */
+function ffLindens(k: Kit, ctx: C, trees: { x: number; z: number; s: number }[], PY: number) {
+  const rnd = X.mulberry(6101);
+  const parts: T.BufferGeometry[] = [];
+  const trunk = new T.CylinderGeometry(0.11, 0.17, 3.4, 8, 3); trunk.translate(0, 1.7, 0); parts.push(trunk.toNonIndexed());
+  for (let i = 0; i < 4; i++) { const a = (i / 4) * PI * 2 + 0.4, y0 = 2.2 + i * 0.25; parts.push(new T.TubeGeometry(new T.CatmullRomCurve3([v(0, y0, 0), v(Math.cos(a) * 0.5, y0 + 0.9, Math.sin(a) * 0.5), v(Math.cos(a) * 0.9, y0 + 2.0, Math.sin(a) * 0.9)]), 6, 0.06, 4).toNonIndexed()); }
+  const barkM = k.pbr('ffLindenBark', X.bark(0x5e544a), 0.5, { roughness: 0.95 });
+  const turn = trees.map(() => rnd() * PI * 2);
+  const wm = k.instances(mergeGeometries(parts)!, barkM, trees.map((t, i) => new T.Matrix4().compose(v(t.x, PY, t.z), new T.Quaternion().setFromAxisAngle(W9UP, turn[i]), v(t.s, t.s, t.s))));
+  wm.castShadow = true; wm.userData.keepShadow = true;
+  if (!HAS_DOM) return;
+  const tex = paintTex(256, 256, (g, w, h) => {
+    g.clearRect(0, 0, w, h);
+    const r2 = X.mulberry(6102);
+    const heart = (x: number, y: number, s: number, a: number, col: string) => { g.save(); g.translate(x, y); g.rotate(a); g.scale(s, s); g.fillStyle = col; g.beginPath(); g.moveTo(0, 10); g.bezierCurveTo(-11, 2, -9, -9, 0, -5); g.bezierCurveTo(9, -9, 11, 2, 0, 10); g.fill(); g.strokeStyle = 'rgba(30,50,20,0.5)'; g.lineWidth = 0.6 / s; g.beginPath(); g.moveTo(0, 9); g.lineTo(0, -5); g.stroke(); g.restore(); };
+    for (let sp = 0; sp < 3; sp++) {
+      const bx = w * (0.25 + sp * 0.25), by = h * 0.95, tw = (sp - 1) * 0.35;
+      g.strokeStyle = 'rgba(70,58,40,1)'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(bx, by); g.lineTo(bx + Math.sin(tw) * 150, by - Math.cos(tw) * 170); g.stroke();
+      for (let i = 0; i < 13; i++) { const t = 0.15 + (i / 13) * 0.85, x = bx + Math.sin(tw) * 150 * t + (r2() - 0.5) * 60, y = by - Math.cos(tw) * 170 * t + (r2() - 0.5) * 30, l = 0.75 + r2() * 0.45;
+        heart(x, y, 1.1 + r2() * 0.7, r2() * PI * 2, `rgb(${(70 * l) | 0},${(118 * l) | 0},${(48 * l) | 0})`); }
+    }
+  });
+  const leafM = new T.MeshStandardMaterial({ map: tex, alphaTest: 0.45, side: T.DoubleSide, roughness: 0.8, color: 0xffffff, emissive: 0x16240c, emissiveMap: tex, emissiveIntensity: 0.6 });
+  const uT = { value: 0 };
+  leafM.onBeforeCompile = (sh) => {
+    sh.uniforms.uT = uT;
+    sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n#ifdef USE_INSTANCING\n vec3 ip = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);\n float sw = sin(uT * 0.9 + ip.x * 0.5 + ip.z * 0.3) * 0.04 + sin(uT * 2.3 + ip.y * 2.1 + ip.z) * 0.02;\n transformed.x += sw; transformed.z += sw * 0.7;\n#endif');
+  };
+  leafM.customProgramCacheKey = () => 'ffLindenLeaf';
+  const card = new T.PlaneGeometry(0.85, 0.85), mats: T.Matrix4[] = [], cols: number[] = [], q = new T.Quaternion(), e = new T.Euler(), c = new T.Color();
+  for (const t of trees) {
+    for (let n = 0; n < 300; n++) {
+      const a = rnd() * PI * 2, dy = rnd() * 2 - 1, rr = 0.62 + 0.38 * Math.sqrt(rnd()), ring = Math.sqrt(1 - dy * dy);
+      const x = t.x + Math.cos(a) * ring * 1.85 * rr * t.s, y = PY + (3.75 + dy * 1.75 * rr) * t.s, z = t.z + Math.sin(a) * ring * 1.85 * rr * t.s;
+      q.setFromEuler(e.set(-0.5 + rnd() * 1.0, a + (rnd() - 0.5) * 1.2, (rnd() - 0.5) * 0.8, 'YXZ'));
+      const s = (0.85 + rnd() * 0.4) * t.s;
+      mats.push(new T.Matrix4().compose(v(x, y, z), q, v(s, s, s)));
+      cols.push(dy > 0.3 ? 0xf4ffe8 : dy < -0.4 ? 0xb8c8a8 : 0xe0ecd4);
+    }
+  }
+  const lm = k.instances(card, leafM, mats);
+  cols.forEach((h, i) => lm.setColorAt(i, c.set(h)));
+  if (lm.instanceColor) lm.instanceColor.needsUpdate = true;
+  lm.castShadow = false; lm.receiveShadow = false; lm.userData.noShadow = true; lm.frustumCulled = false;
+  k.ticks.push((tt) => { if (lm.receiveShadow || lm.castShadow) lm.castShadow = lm.receiveShadow = false; if (!ctx.reduced) uT.value = tt; });
+}
+/* ---------- 2026-11-25 entrance pass (fourfreedoms only) ----------
+   Clouds over the East River on a low dome inside the sky that thins to nothing at the horizon; each linden stands in a painted
+   pool of dappled shade (their leaves cast none: the crowns are many cards). */
+function ffEntrance(k: Kit, ctx: C, trees: { x: number; z: number }[], PY: number) {
+  if (!HAS_DOM) return;
+  /* shade pools: one instanced quad a tree, a soft dappled disc thrown a little away from the sun */
+  const shade = paintTex(256, 256, (g, w, h) => {
+    g.clearRect(0, 0, w, h);
+    const rg = g.createRadialGradient(w / 2, h / 2, 4, w / 2, h / 2, w / 2);
+    if (rg && rg.addColorStop) { rg.addColorStop(0, 'rgba(0,0,0,0.85)'); rg.addColorStop(0.55, 'rgba(0,0,0,0.6)'); rg.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = rg; g.fillRect(0, 0, w, h); }
+    const rnd = X.mulberry(4242); g.globalCompositeOperation = 'destination-out';
+    for (let i = 0; i < 70; i++) { const r = 3 + rnd() * 9; g.fillStyle = `rgba(0,0,0,${0.35 + rnd() * 0.5})`; g.beginPath(); g.arc(30 + rnd() * 196, 30 + rnd() * 196, r, 0, PI * 2); g.fill(); }
+  });
+  const sm = new T.MeshBasicMaterial({ map: shade, color: 0x000000, transparent: true, opacity: 0.42, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const g = new T.PlaneGeometry(1, 1).rotateX(-PI / 2), q = new T.Quaternion(), rnd = X.mulberry(4243);
+  const pools = k.instances(g, sm, trees.map((t) => new T.Matrix4().compose(v(t.x + 0.7, PY + 0.07, t.z - 0.5), q.setFromAxisAngle(v(0, 1, 0), rnd() * 6), v(5.2, 1, 4.6))));
+  pools.castShadow = pools.receiveShadow = false; pools.userData.noShadow = true; pools.renderOrder = 1;
+  /* the clouds: one big painted sheet high over the river, faded to nothing well before its edges, drifting slowly */
+  /* painted as an opaque grey mask and used as an alpha map: transparent canvas pixels are black, and the small mip levels
+     averaged that black into a dark band along the horizon */
+  const cl = paintTex(1024, 1024, (c, w, h) => {
+    c.fillStyle = '#000'; c.fillRect(0, 0, w, h);
+    const r2 = X.mulberry(4244);
+    for (let i = 0; i < 90; i++) {
+      const cx = r2() * w, cy = r2() * h, s = 18 + r2() * 46, n = 5 + Math.floor(r2() * 8);
+      for (let j = 0; j < n; j++) {
+        const x = cx + (r2() - 0.5) * s * 3.2, y = cy + (r2() - 0.5) * s * 1.1, r = s * (0.5 + r2() * 0.8);
+        const gr = c.createRadialGradient(x, y, 0, x, y, r);
+        if (gr && gr.addColorStop) { gr.addColorStop(0, 'rgba(255,255,255,0.55)'); gr.addColorStop(0.6, 'rgba(248,250,255,0.25)'); gr.addColorStop(1, 'rgba(240,244,252,0)'); c.fillStyle = gr; c.fillRect(x - r, y - r, r * 2, r * 2);
+          /* wrapped across the left and right edges so the dome has no seam */
+          for (const dx of [-w, w]) { c.save(); c.translate(dx, 0); c.fillRect(x - r, y - r, r * 2, r * 2); c.restore(); } }
+      }
+    }
+  }, [], false);
+  const night = Number(k.night) || 0;
+  const cm = new T.MeshBasicMaterial({ alphaMap: cl, color: new T.Color(0xffffff).lerp(new T.Color(0x2a3040), night), transparent: true, opacity: 0.9 - 0.5 * night, depthWrite: false, fog: false, side: T.DoubleSide });
+  /* a low dome inside the sky, its alpha in the vertices: thin at the horizon, full overhead, thin again at the top (a flat
+     sheet drew a hard line where its small mip levels ran out at grazing angles) */
+  cl.wrapS = T.RepeatWrapping; cl.repeat.set(3, 1);
+  const sg = new T.SphereGeometry(640, 48, 14, 0, PI * 2, 0, PI * 0.5), sp = sg.attributes.position, al = new Float32Array(sp.count * 4);
+  const ss = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  for (let i = 0; i < sp.count; i++) { const el = Math.asin(Math.min(1, sp.getY(i) / 640)); al.set([1, 1, 1, ss(0.04, 0.42, el) * (1 - ss(1.15, 1.5, el))], i * 4); }
+  sg.setAttribute('color', new T.BufferAttribute(al, 4)); cm.vertexColors = true; cm.side = T.BackSide;
+  const sheet = k.mesh(sg, cm, 0, -20, -40, true);
+  if (!ctx.reduced) k.ticks.push((t) => { sheet.rotation.y = t * 0.0015; });
+}
 export const fourfreedoms: RoomDef = {
   id: 'fourfreedoms',
   name: 'A room and a garden',
@@ -557,12 +650,13 @@ export const fourfreedoms: RoomDef = {
   description: 'Louis Kahn\'s memorial to Franklin D. Roosevelt at the southern tip of Roosevelt Island: the wide granite stair, the lawn narrowing between two allées of little leaf lindens to the Room at the point, its granite blocks open to the East River, and the bronze head in its niche as a plain form. The United Nations and Midtown stand across the water to the west, Long Island City to the east, the Queensboro Bridge to the north, and the Smallpox Hospital ruin behind you. The Room holds no art. The New Yorkers hang on the stair walls, on granite panels behind the trees, and inside the ruin as an exhibition in the shell.',
   signatures: 'The grand granite stair between its walls, the tapering lawn with 120 lindens in four rows, the gravel walks, the low parapets with the river on both sides, the Room of granite blocks with narrow gaps open to the water at the tip, the head of Roosevelt in the niche wall, the plain band where the words are carved, the Gothic Revival ruin of the Smallpox Hospital with its pointed windows and no roof, the United Nations slab and the Midtown towers across the west channel, Long Island City to the east, the Queensboro Bridge, the ferries, a barge and the gulls.',
   build(k, ctx) {
-    k.sky({ top: 0x5590d4, horizon: 0xdde6ee, ground: 0x505850, fog: 0.0015, sun: { az: 3.9, el: 0.55, color: 0xfff2e0, size: 9 }, env: 0.8 });
+    /* 2026-11-25 entrance pass: a deeper blue sky over the river (the old near white horizon filled half the first view), with clouds below */
+    k.sky({ top: 0x2f6cc0, horizon: 0xaec8e2, ground: 0x505850, fog: 0.0012, sun: { az: 3.9, el: 0.55, color: 0xfff2e0, size: 9 }, env: 0.8 });
     k.hemi(0xd8e6f8, 0x6a6a5e, 0.85);
     k.sun(0xfff0dc, 2.3, -80, 100, 60, true, 150);
     /* 2026-11-24 wave 9: scanned granite blocks, granite paving, lawn, fine gravel, rubble stone and rubble (Poly Haven CC0) */
     const FF = 'fourfreedoms';
-    const granite = sc(k, FF, 'granite', 1.8, () => X.ashlar(0xb8b0a2, 177, 5), { color: 0xf4f0ea, roughness: 0.7 }, 0xb8b0a2),
+    const granite = sc(k, FF, 'granite', 1.8, () => X.ashlar(0xb8b0a2, 177, 5), { color: 0xf0f4f6, roughness: 0.7 }, 0xb8b0a2),
       graniteP = sc(k, FF, 'pave', 2.3, () => X.pavers(0xb4ada0, 178), { color: 0xeae6de, roughness: 0.8 }, 0xb4ada0),
       graniteD = k.flat(0x9a948a, 0, 0.8), band = k.flat(0xcfc8bc, 0, 0.7),
       lawnM = sc(k, FF, 'grass', 2.0, () => X.grass(0x4f7a3c, 179), { color: 0x86c060, roughness: 0.95 }, 0x4f7a3c),
@@ -642,7 +736,9 @@ export const fourfreedoms: RoomDef = {
     /* 2026-10-09: the lindens come from the tree kit (real branches and leaves, instanced, swaying);
        the old instanced trunk and sphere crown stay behind the flag */
     const KIT_TREES = true;
-    if (KIT_TREES) { for (const [n, t] of trees.entries()) { k.tree(t.x, PY, t.z, { h: 4.4 * t.s, r: 2.0 * t.s, species: 'linden', seed: 185 + n }); k.keepOut.push({ x: t.x, z: t.z, r: 0.55 }); } }
+    /* 2026-11-25 entrance pass: the 120 lindens are built for this park (one instanced wood mesh, one instanced crown of leaf
+       sprays): the kit's near trees cost over half a million triangles from the new spawn on the lawn */
+    if (KIT_TREES) { ffLindens(k, ctx, trees, PY); for (const t of trees) k.keepOut.push({ x: t.x, z: t.z, r: 0.55 }); }
     else {
       const trunkG = new T.CylinderGeometry(0.13, 0.2, 5.2, 7); trunkG.translate(0, 2.6, 0);
       k.instances(trunkG, k.pbr('ffBark', X.bark(0x4e4234), 0.7, { roughness: 1 }), trees.map((t) => new T.Matrix4().compose(v(t.x, PY, t.z), new T.Quaternion(), v(t.s, t.s, t.s))));
@@ -684,10 +780,15 @@ export const fourfreedoms: RoomDef = {
     for (const s of [-1, 1]) for (let i = 0; i < 2; i++) { const x = s * (5.4 + (i + 0.5) * BW); k.box(BW - GAP, 3.66, BW - GAP, x, PY + 1.83, RZ0 - BW / 2, granite); }
     for (const s of [-1, 1]) k.block(s > 0 ? 5.4 : -9, s > 0 ? 9 : -5.4, RZ0 - BW, RZ0);
     /* the niche wall between the garden and the Room, the head before it, a plain band on the Room side */
-    k.box(6.2, 3.66, 1.2, 0, PY + 1.83, RZ0 - 0.6, granite); k.block(-3.1, 3.1, RZ0 - 1.2, RZ0);
-    k.box(2.6, 2.4, 0.2, 0, PY + 1.6, RZ0 + 0.1, graniteD);
-    k.box(1.3, 1.5, 1.1, 0, PY + 0.75, RZ0 + 1.2, granite); k.keepOut.push({ x: 0, z: RZ0 + 1.2, r: 1.2 });
-    k.lathe([[0, 0], [0.26, 0], [0.32, 0.16], [0.3, 0.36], [0.42, 0.56], [0.47, 0.82], [0.41, 1.06], [0.22, 1.22], [0, 1.28]], 0, PY + 1.5, RZ0 + 1.2, bronze, 24);
+    /* 2026-11-25 entrance pass: the niche is cut into the wall now (two piers, a lintel, a recessed back), and the bronze, still a
+       plain form with no face, is colossal as Davidson's is, in a soft bronze with no sharp highlights */
+    for (const sd of [-1, 1]) k.box(1.8, 3.66, 1.2, sd * 2.2, PY + 1.83, RZ0 - 0.6, granite);
+    k.box(2.6, 0.62, 1.2, 0, PY + 3.35, RZ0 - 0.6, granite); k.box(2.6, 0.5, 1.2, 0, PY + 0.25, RZ0 - 0.6, granite);
+    k.box(2.6, 2.6, 0.5, 0, PY + 1.8, RZ0 - 0.95, graniteD); k.block(-3.1, 3.1, RZ0 - 1.2, RZ0);
+    for (const sd of [-1, 1]) k.box(0.08, 2.6, 0.7, sd * 1.27, PY + 1.8, RZ0 - 0.35, graniteD);
+    k.box(1.5, 0.12, 0.9, 0, PY + 0.56, RZ0 - 0.25, graniteD);
+    k.keepOut.push({ x: 0, z: RZ0 + 0.4, r: 1.0 });
+    k.lathe([[0, 0], [0.26, 0], [0.32, 0.16], [0.3, 0.36], [0.42, 0.56], [0.47, 0.82], [0.41, 1.06], [0.22, 1.22], [0, 1.28]].map(([r, y]) => [r * 1.45, y * 1.55]), 0, PY + 0.62, RZ0 - 0.05, k.flat(0x6a4a2e, 0.75, 0.5), 28);
     k.box(4.6, 0.5, 0.06, 0, PY + 2.6, RZ0 - 1.23, band);
     /* the sunken well of the Room floor and the lip at the point */
     flatShape([[-9, RZ0], [9, RZ0], [9, RZ0 - 21.6], [-9, RZ0 - 21.6]], 0.04, graniteP, PY);
@@ -784,6 +885,9 @@ export const fourfreedoms: RoomDef = {
       return PY;
     };
     shadowDiet(k);
-    return { mounts, spawn: v(0, PY + 3, 25), look: v(0, PY + 1.2, -112), eye: 3, floorY, bounds: [-40, 40, -125, 84], style: st };
+    ffEntrance(k, ctx, trees.map((t) => ({ x: t.x, z: t.z })), PY);
+    /* 2026-11-25 entrance pass: the visitor arrives on the lawn with the Room ahead (niche, head, the blocks and the river beyond),
+       instead of at the stair top with half the view flat grass; the stair and its works are 85 m behind */
+    return { mounts, spawn: v(0, PY + 3, -82), look: v(0, PY + 2.2, -104), eye: 3, floorY, bounds: [-40, 40, -125, 84], style: st };
   },
 };

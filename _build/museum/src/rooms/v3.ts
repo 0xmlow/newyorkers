@@ -1036,6 +1036,20 @@ export const astoriapool: RoomDef = {
 };
 
 /* ---------------- 146 THE TREE AND THE RINK ---------------- */
+/* 2026-11-25 entrance pass: twelve real national flags for the rink parapet, painted on canvas (no files). */
+function rcFlags() {
+  const tri = (a: string, b: string, c: string, vert = true) => (g: CanvasRenderingContext2D, w: number, h: number) => { [a, b, c].forEach((col, i) => { g.fillStyle = col; if (vert) g.fillRect((i * w) / 3, 0, w / 3 + 1, h); else g.fillRect(0, (i * h) / 3, w, h / 3 + 1); }); };
+  const cross = (bg: string, fg: string) => (g: CanvasRenderingContext2D, w: number, h: number) => { g.fillStyle = bg; g.fillRect(0, 0, w, h); g.fillStyle = fg; g.fillRect(w * 0.3, 0, w * 0.13, h); g.fillRect(0, h * 0.42, w, h * 0.16); };
+  const designs: ((g: CanvasRenderingContext2D, w: number, h: number) => void)[] = [
+    (g, w, h) => { for (let i = 0; i < 13; i++) { g.fillStyle = i % 2 ? '#f4f1ea' : '#b22234'; g.fillRect(0, (i * h) / 13, w, h / 13 + 1); } g.fillStyle = '#3c3b6e'; g.fillRect(0, 0, w * 0.4, (h * 7) / 13); g.fillStyle = '#f4f1ea'; for (let r = 0; r < 5; r++) for (let c = 0; c < 6; c++) { g.beginPath(); g.arc(w * 0.035 + c * w * 0.064, h * 0.05 + r * h * 0.1, h * 0.018, 0, 7); g.fill(); } },
+    tri('#0055a4', '#f4f1ea', '#ef4135'), tri('#009246', '#f4f1ea', '#ce2b37'), tri('#169b62', '#f4f1ea', '#ff883e'),
+    tri('#1c1c1c', '#dd0000', '#ffce00', false), tri('#ae1c28', '#f4f1ea', '#21468b', false), tri('#1c1c1c', '#fdda24', '#ef3340'),
+    (g, w, h) => { g.fillStyle = '#f4f1ea'; g.fillRect(0, 0, w, h); g.fillStyle = '#bc002d'; g.beginPath(); g.arc(w / 2, h / 2, h * 0.3, 0, 7); g.fill(); },
+    cross('#006aa7', '#fecc00'), cross('#c8102e', '#f4f1ea'), tri('#ed2939', '#f4f1ea', '#ed2939', false),
+    (g, w, h) => { g.fillStyle = '#ff0000'; g.fillRect(0, 0, w, h); g.fillStyle = '#f4f1ea'; g.fillRect(w * 0.25, 0, w * 0.5, h); g.fillStyle = '#ff0000'; g.beginPath(); g.moveTo(w / 2, h * 0.18); g.lineTo(w * 0.6, h * 0.62); g.lineTo(w / 2, h * 0.56); g.lineTo(w * 0.4, h * 0.62); g.closePath(); g.fill(); g.fillRect(w * 0.49, h * 0.55, w * 0.02, h * 0.22); },
+  ];
+  return designs.map((d) => paintTex(192, 128, (g, w, h) => { d(g, w, h); g.fillStyle = 'rgba(0,0,0,0.12)'; g.fillRect(0, 0, w * 0.03, h); }));
+}
 export const rockcenter: RoomDef = {
   id: 'rockcenter',
   name: 'The tree and the rink',
@@ -1065,6 +1079,9 @@ export const rockcenter: RoomDef = {
     for (const s of [-1, 1]) { const rp = k.box(12, 0.3, 6.95, 0, -1.75, s * 13, granite); rp.rotation.x = -s * RA; for (const sx of [-1, 1]) { const rw = k.box(0.4, 1.2, 6.95, sx * 6.2, -1.15, s * 13, granite); rw.rotation.x = -s * RA; } }
     for (const s of [-1, 1]) { k.box(0.4, 1.0, 20.8, s * 20.2, 0.5, 0, granite); for (const sx of [-1, 1]) k.box(14.4, 1.0, 0.4, sx * 13.2, 0.5, s * 10.2, granite); }
     k.block(19.8, 20.6, -10.4, 10.4); k.block(-20.6, -19.8, -10.4, 10.4);
+    /* 2026-11-25 entrance pass: a bronze rail on the east parapet, where you come in */
+    const RCX = 22.8;
+    { const bronze = k.flat(0x8a6a3a, 0.85, 0.35); k.box(0.1, 0.1, 20.8, 20.2, 1.32, 0, bronze); const at: number[][] = []; for (let z = -10; z <= 10.01; z += 1.25) at.push([20.2, 1.16, z]); w8Boxes(k, 0.06, 0.32, 0.06, bronze, at); }
     const blk = (x0: number, x1: number, z0: number, z1: number) => k.block(Math.min(x0, x1), Math.max(x0, x1), Math.min(z0, z1), Math.max(z0, z1));
     for (const s of [-1, 1]) { blk(-20.6, -6, s * 9.8, s * 10.4); blk(6, 20.6, s * 9.8, s * 10.4); blk(-6.6, -6, s * 10, s * 16.4); blk(6, 6.6, s * 10, s * 16.4); }
     const floorY = (x: number, z: number) => {
@@ -1106,14 +1123,22 @@ export const rockcenter: RoomDef = {
       const poles: [number, number][] = [];
       for (let z = -9; z <= 9; z += 2) { poles.push([-20.9, z]); poles.push([20.9, z]); }
       for (let x = -19; x <= 19; x += 2) { if (Math.abs(x) < 7) continue; poles.push([x, -10.9]); poles.push([x, 10.9]); }
-      const NFl = poles.length, fg = new T.PlaneGeometry(1.5, 1.0); fg.translate(0.75, 0, 0);
-      const flags = k.instances(fg, new T.MeshStandardMaterial({ roughness: 0.95, side: T.DoubleSide }), Array.from({ length: NFl }, () => new T.Matrix4()));
-      flags.frustumCulled = false;
-      const c = new T.Color(), pal = [0x9a1e2a, 0x1e448a, 0x1e6a36, 0xb08a1e, 0x9a9a9a, 0x1c1c1c, 0xb8641e, 0x6a1e6a], rnd = X.mulberry(48);
-      poles.forEach(([x, z], i) => { k.cyl(0.04, 5.6, x, 2.8, z, brass, 0.03, 6); flags.setColorAt(i, c.set(pal[Math.floor(rnd() * pal.length)])); });
-      if (flags.instanceColor) flags.instanceColor.needsUpdate = true;
+      /* 2026-11-25 entrance pass: the head of the rink, where you now come in, is open (no poles at z -1 and 1), and the
+         flags are real flags of the member nations, as the plaza flies them, on a baked ripple, bigger, gilt finials */
+      const ent = poles.filter(([x, z]) => !(x > 20 && Math.abs(z) < 2));
+      poles.length = 0; poles.push(...ent);
+      const fg = new T.PlaneGeometry(1.9, 1.25, 12, 1); fg.translate(0.95, 0, 0);
+      { const pa = fg.attributes.position as T.BufferAttribute; for (let i = 0; i < pa.count; i++) { const x = pa.getX(i); pa.setZ(i, 0.12 * Math.sin(x * 3.1) * (x / 1.9)); } fg.computeVertexNormals(); }
+      const FLAGS = W8_DOM ? rcFlags() : [];
+      const sets = (FLAGS.length ? FLAGS : [null]).map((tex, f) => {
+        const mine = poles.filter((_, i) => i % Math.max(1, FLAGS.length) === f);
+        const mat = tex ? new T.MeshStandardMaterial({ map: tex, roughness: 0.9, side: T.DoubleSide }) : new T.MeshStandardMaterial({ color: 0x9a1e2a, roughness: 0.9, side: T.DoubleSide });
+        const im = k.instances(fg, mat, mine.map(() => new T.Matrix4())); im.frustumCulled = false; im.castShadow = false;
+        return { im, mine };
+      });
+      poles.forEach(([x, z]) => { k.cyl(0.045, 6.0, x, 3.0, z, brass, 0.035, 6); k.sphere(0.09, x, 6.06, z, gilt, 6); });
       const m = new T.Matrix4(), q = new T.Quaternion(), p = new T.Vector3(), up = new T.Vector3(0, 1, 0);
-      const place = (t: number) => { poles.forEach(([x, z], i) => { p.set(x, 5.0, z); q.setFromAxisAngle(up, 0.8 + 0.4 * Math.sin(t * 1.7 + i * 0.9) + 0.15 * Math.sin(t * 4.3 + i)); m.compose(p, q, one); flags.setMatrixAt(i, m); }); flags.instanceMatrix.needsUpdate = true; };
+      const place = (t: number) => { let i = 0; for (const s of sets) { s.mine.forEach(([x, z], j) => { p.set(x, 5.3, z); q.setFromAxisAngle(up, 0.8 + 0.4 * Math.sin(t * 1.7 + i * 0.9) + 0.15 * Math.sin(t * 4.3 + i)); m.compose(p, q, one); s.im.setMatrixAt(j, m); i++; }); s.im.instanceMatrix.needsUpdate = true; } };
       place(0); if (!ctx.reduced) k.ticks.push(place);
     }
     /* Prometheus over the fountain, the red granite wall behind him */
@@ -1122,8 +1147,11 @@ export const rockcenter: RoomDef = {
     k.box(7.6, 0.3, 2.8, -17.6, -2.72, 0, k.flat(0x2b4d66, 0.6, 0.2));
     /* 2026-11-24 wave 8a: Prometheus is a real model now (the rink Prometheus from the movie sets), gilded, flying over
        the fountain inside his ring of the zodiac; the ring carries its twelve signs as gilt studs */
-    { const ring = k.torus(2.6, 0.16, -18.7, -0.2, 0, gilt, 64); ring.rotation.y = PI / 2; for (let j = 0; j < 12; j++) { const a = (j / 12) * PI * 2; k.sphere(0.22, -18.7, -0.2 + Math.sin(a) * 2.6, Math.cos(a) * 2.6, gilt, 8); } k.box(0.5, 1.6, 0.5, -18.9, -2.2, 0, redGran); }
-    w8Place(k, 'rockcenter/nyb_rink_prometheus', { height: 3.4 }, [[-18.4, -1.6, 0, PI / 2]], (h) => { h.traverse((c) => { if (!(c instanceof T.Mesh)) return; const ms = Array.isArray(c.material) ? c.material : [c.material]; if (ms.some((m) => /nyb_/.test(m.name))) c.visible = false; }); w8Tint(h, 0xd8a640, 0.3, 0.92); });
+    /* 2026-11-25 entrance pass: he is the first thing you see now, straight down the rink from where you come in, so he is
+       at his real size (eighteen feet), in a bigger ring with a second gilt band, lit from the rail behind you */
+    { const R = 3.4, cy = 0.6; for (const [r, tb] of [[R, 0.17], [R - 0.38, 0.06]] as [number, number][]) { const ring = k.torus(r, tb, -18.9, cy, 0, gilt, 72); ring.rotation.y = PI / 2; } for (let j = 0; j < 12; j++) { const a = (j / 12) * PI * 2; k.sphere(0.26, -18.9, cy + Math.sin(a) * R, Math.cos(a) * R, gilt, 8); } k.box(0.6, 1.6, 0.6, -18.9, -2.2, 0, redGran); }
+    k.spot(14, 9, 0, -18.4, 0.8, 0, 0xffd89a, 900, 0.12, 0.5, 48);
+    w8Place(k, 'rockcenter/nyb_rink_prometheus', { height: 5.0 }, [[-18.4, -1.6, 0, PI / 2]],(h) => { h.traverse((c) => { if (!(c instanceof T.Mesh)) return; const ms = Array.isArray(c.material) ? c.material : [c.material]; if (ms.some((m) => /nyb_/.test(m.name))) c.visible = false; }); w8Tint(h, 0xd8a640, 0.3, 0.92); });
     w8Sign(k, 'PROMETHEUS  TEACHER IN EVERY ART  BROUGHT THE FIRE  THAT HATH PROVED TO MORTALS  A MEANS TO MIGHTY ENDS', 11.4, 0.34, -19.98, 2.5, 0, PI / 2, '#e9c46a', '', 'W2 Archivo Expanded', false, 0.62);
     k.spot(-12, 2, 0, -18.3, -0.5, 0, 0xffd27a, 500, 0.5, 0.6, 20);
     if (!ctx.reduced) vapour(k, [v(-16.4, -2.7, -0.8), v(-16.4, -2.7, 0.8), v(-15.6, -2.7, 0)], 16, { rise: 2.6, spread: 0.5, size: 0.08, opacity: 0.3, colour: 0xe8f4ff, seed: 9, speed: 0.4, animate: true });
@@ -1141,7 +1169,7 @@ export const rockcenter: RoomDef = {
     w8Place(k, 'rockcenter/ph_fir_tree_01', { box: [15.6, 25.6, 15.6] }, [[TX, 1.0, 0, 0], [TX, 1.0, 0, PI / 2]], (h) => w8Tint(h, 0x2c5a34, 0.9, 0));
     {
       const NL = 2000, rnd = X.mulberry(1933), c = new T.Color(), pal = [0xff3b3b, 0x3bff6a, 0x3b8cff, 0xffd23b, 0xffffff, 0xff8c3b];
-      const lights = k.instances(new T.SphereGeometry(0.11, 5, 4), new T.MeshBasicMaterial({ color: 0xffffff }), Array.from({ length: NL }, () => new T.Matrix4()));
+      const lights = k.instances(new T.OctahedronGeometry(0.12, 0), new T.MeshBasicMaterial({ color: 0xffffff }), Array.from({ length: NL }, () => new T.Matrix4()));   // 2026-11-25: 8 triangles a bulb, not 30
       lights.frustumCulled = false;
       const base = new Int32Array(NL), ph = new Float32Array(NL), m = new T.Matrix4();
       for (let i = 0; i < NL; i++) {
@@ -1173,7 +1201,7 @@ export const rockcenter: RoomDef = {
       k.box(70, 4, 24, 96, 2, 0, lime);
       k.box(24, 0.1, 140, 78, -0.15, 0, k.flat(0x1c1e24, 0, 0.9));
       /* 2026-11-24 wave 8a: six cabs on Fifth, not fourteen; the kit swaps each box for a 14k triangle taxi with shadows */
-      const NCAB = 6;
+      const NCAB = 4;   // 2026-11-25 entrance pass: four (Fifth is behind you now)
       const cabs = k.instances(new T.BoxGeometry(1.6, 1.1, 3.6), k.flat(0xf0c22a, 0.2, 0.5), Array.from({ length: NCAB }, () => new T.Matrix4()));
       const tl = k.instances(new T.BoxGeometry(1.4, 0.2, 0.2), k.glow(0xff3322), Array.from({ length: NCAB }, () => new T.Matrix4()));
       cabs.frustumCulled = tl.frustumCulled = false;
@@ -1206,7 +1234,7 @@ export const rockcenter: RoomDef = {
     void wire;
     /* 2026-11-24 wave 8a: real street lamps (Poly Haven CC0) round the rink, one instanced draw, each with its light */
     { const at: number[][] = []; for (let i = 0; i < 6; i++) for (const s of [-1, 1]) { at.push([-17.5 + i * 7, 0, s * 16.5, s > 0 ? PI : 0]); k.point(-17.5 + i * 7, 4.2, s * 16.3, 0xffd7a0, 40, 12); k.keepOut.push({ x: -17.5 + i * 7, z: s * 16.5, r: 0.5 }); } w8Place(k, 'rockcenter/ph_street_lamp_01', { height: 4.8 }, at); void iron; }
-    for (let i = 0; i < 4; i++) for (const s of [-1, 1]) k.spot(s * 22, 5, -6 + i * 4, 0, -3.4, 0, 0xdfeeff, 85, 0.5, 0.7, 40);
+    for (let i = 0; i < 4; i++) for (const s of [-1, 1]) k.spot(s * 22, 5, -6 + i * 4, 0, -3.4, 0, 0xdfeeff, 60, 0.5, 0.7, 40);   // 2026-11-25: 85 to 60, the ice glared white from the rail
     /* 2026-11-24 wave 8a: built detail on the buildings. 30 Rock's limestone piers running the full height of its east face,
        the gilt screen over its door, the names of the two Channel Gardens buildings cut over their shop fronts, a granite
        marker at the Fifth Avenue end */
@@ -1224,15 +1252,18 @@ export const rockcenter: RoomDef = {
     }
     /* the one illusion: LIGHTS ON laid long down the garden path, in the tree's own colours; it stands up only from the
        spot by the angels where you came in */
-    { const tx = w8Type('LIGHTS ON', ['#ff3b3b', '#3bff6a', '#3b8cff', '#ffd23b', '#ffffff', '#ff8c3b']); if (tx) anamorphTex(k, tx, 30.5, -5.2, 3, 0, PI / 2, 5.4, 3.6, 1.2, 0.9); }
-    k.egg(v(24.6, 0.4, -5.2), { id: 'lights-on', title: 'Two words lying down', text: 'LIGHTS ON is painted long and thin down the path, stretched along your line of sight, so it only stands upright from the spot where you came in, between the angels. A step to the side and it falls flat on the stone. Artists have hidden pictures this way since the Renaissance; the word for it is anamorphosis.', clue: 'Walk back to the angels and read the ground.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 2.4 });
+    /* 2026-11-25 entrance pass: the words moved from the garden path, where they lay below the frame, onto the ice, read
+       from the rail where you come in; skaters cut through them */
+    { const tx = w8Type('LIGHTS ON', ['#ff3b3b', '#3bff6a', '#3b8cff', '#ffd23b', '#ffffff', '#ff8c3b']); if (tx) anamorphTex(k, tx, RCX, 0, 3, -3.44, PI / 2, 16.2, 7.0, 2.4, 0.85); }
+    k.egg(v(20.4, 1.4, -8.6), { id: 'lights-on', title: 'Two words lying down', text: 'LIGHTS ON is painted long and thin across the ice, stretched along your line of sight, so it only stands upright from the rail where you came in. Walk along the rail and it falls flat on the ice. Artists have hidden pictures this way since the Renaissance; the word for it is anamorphosis.', clue: 'Go back to the rail at the head of the rink and read the ice.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
     /* 2026-11-24 wave 8a: the kit's taxis and the cast arrive after the build; once they land, none of them casts a shadow
        (the shadow pass drew every 14k triangle cab a second time). Checked for the first half minute, then dropped. */
     { let until = -1; const off = (t: number) => { if (until < 0) until = t + 30; if (t > until) return; k.scene.traverse((o) => { const me = o as T.Mesh; if (me.isMesh && (o.userData.cab || o.userData.cast || me.material instanceof T.MeshBasicMaterial)) o.castShadow = false; }); }; k.ticks.push((t) => { if (t <= until || until < 0) off(t); }); }
     /* people on the esplanade, in the gardens and on the rink level */
     if (!ctx.reduced) {
       const winter = [0x1c232c, 0xd82a3a, 0x2a2a34, 0xe8e2d4, 0x2a5fb8, 0x3a3a3a, 0x8a4a2a, 0xf0c22a];
-      k.crowd([v(-24, 0, -13), v(24, 0, -13), v(24, 0, 13), v(-24, 0, 13)], 28, { seed: 51, speed: 0.28, spread: 3.4, closed: true, colors: winter });
+      /* 2026-11-25: the plaza walkers keep to the north and south sides; the loop used to walk across the head of the rink, through the entrance view */
+      for (const [s, seed] of [[-1, 51], [1, 55]]) k.crowd([v(-24, 0, s * 13), v(24, 0, s * 13)], 13, { seed, speed: 0.28, spread: 3.0, colors: winter });
       k.crowd([v(22, 0, -5.2), v(66, 0, -5.2)], 10, { seed: 52, speed: 0.4, spread: 2.0, colors: winter });
       k.crowd([v(22, 0, 5.2), v(66, 0, 5.2)], 10, { seed: 53, speed: 0.4, spread: 2.0, colors: winter });
       k.crowd([v(-18.5, -3.5, -8.6), v(18.5, -3.5, -8.6), v(18.5, -3.5, 8.6), v(-18.5, -3.5, 8.6)], 12, { seed: 54, speed: 0.2, spread: 1.2, closed: true, colors: winter });
@@ -1249,6 +1280,9 @@ export const rockcenter: RoomDef = {
     k.egg(v(-24, 1.6, 6), { id: 'spruce', title: 'Sixty nine to a hundred feet', text: 'The tree is usually a Norway spruce between 69 and 100 feet tall, wrapped in about 50,000 multicoloured LEDs. The tallest, in 1999, was a 100 foot spruce from Killingworth, Connecticut. Since 2007 each tree has been milled into lumber for Habitat for Humanity when it comes down.', clue: 'Fifty thousand of something, and none of them the same colour as the one next to it.', source: src }, { r: 3 });
     k.egg(v(0, -2.6, 0), { id: 'rink-1936', title: 'Ice, since 1936', year: '1936', text: 'The skating rink opened in the sunken plaza below the tree in 1936. The first official tree, 50 feet tall, had been lit three years earlier, in 1933, and Rockefeller Center called it a holiday beacon for New Yorkers and visitors alike.', clue: 'The oldest thing on the ice is the ice.', source: src }, { r: 8 });
     k.egg(v(45, 2.4, 0), { id: 'lighting-night', title: 'The Wednesday after Thanksgiving', text: 'The tree is lit in a public ceremony on the last Wednesday of November or the first Wednesday of December, after Thanksgiving, and comes down in the first days of January.', clue: 'Stand between the angels and face the tree. That is where everyone stands on the night.', source: src }, { r: 3 });
-    return { mounts, spawn: v(30.5, 3, -5.2), look: v(TX, 10, 0), eye: 3, floorY, bounds: [-33, 68, -18, 18], style: 'gilt' };
+    /* 2026-11-25 entrance pass: you come in at the rail at the head of the rink, on the axis of the Channel Gardens, with the
+       ice below, the flags either side, Prometheus straight ahead in gold and the tree over him (was the garden path at
+       x 30.5, where the beds and angels hid the rink) */
+    return { mounts, spawn: v(RCX, 3, 0), look: v(-18.4, 0.4, 0), eye: 3, floorY, bounds: [-33, 68, -18, 18], style: 'gilt' };
   },
 };

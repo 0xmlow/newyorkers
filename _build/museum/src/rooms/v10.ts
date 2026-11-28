@@ -925,6 +925,82 @@ export const kehilathjeshurun: RoomDef = {
   },
 };
 
+/* ---------- 2026-11-25 entrance pass (jewishcenter only): what the visitor sees from the door ----------
+   Quiet changes only, as fits a synagogue: a built coffered ceiling with gilt fillets and rosettes, engaged columns and a
+   dark marble dado round the stair opening, two torcheres on marble plinths at the foot of the stair, brass stair rods,
+   bronze sconces, and a leaded laylight over the stair hall whose daylight falls on the treads. No figures, no lettering. */
+function jcEntrance(k: K, p: { FW: number; ZL: number; ZF0: number; ZF1: number; LH: number; SY: number; NST: number; marbleDark: T.Material; gilt: T.Material; brass: T.Material; cream: T.Material; reduced: boolean }) {
+  const { FW, ZL, ZF0, ZF1, LH, SY, NST, marbleDark, gilt, brass, cream } = p;
+  const Z0 = -1.0, IW = FW - 1, zMid = (Z0 + ZL) / 2, zLen = Z0 - ZL;
+  const beamM = k.flat(0xeadcbc, 0, 0.8), panelM = k.flat(0xc4ae80, 0.1, 0.7, { emissive: 0x3a2810, emissiveIntensity: 0.2 });
+  /* the coffered ceiling: beams on a 4.4 by 3 m grid, gilt fillets on every soffit, a cornice round the walls */
+  const xs = [-6.6, -2.2, 2.2, 6.6], zs = [-4, -7];
+  for (const x of xs) { k.box(0.5, 0.45, zLen, x, LH - 0.225, zMid, beamM); for (const d of [-0.23, 0.23]) k.box(0.05, 0.05, zLen, x + d, LH - 0.45, zMid, gilt); }
+  for (const z of zs) { k.box(2 * IW, 0.45, 0.5, 0, LH - 0.225, z, beamM); for (const d of [-0.23, 0.23]) k.box(2 * IW, 0.05, 0.05, 0, LH - 0.45, z + d, gilt); }
+  for (const s of [-1, 1]) { k.box(0.45, 0.5, zLen, s * (IW - 0.2), LH - 0.25, zMid, beamM); k.box(0.12, 0.08, zLen, s * (IW - 0.45), LH - 0.5, zMid, gilt); }
+  for (const z of [Z0 - 0.2, ZL + 0.2]) { k.box(2 * IW, 0.5, 0.45, 0, LH - 0.25, z, beamM); k.box(2 * IW, 0.08, 0.12, 0, LH - 0.5, z + (z > zMid ? -0.25 : 0.25), gilt); }
+  const bx = [[-IW + 0.42, -6.85], [-6.35, -2.45], [-1.95, 1.95], [2.45, 6.35], [6.85, IW - 0.42]], bz = [[Z0 - 0.42, -4.25], [-3.75, -7.25], [-6.75, ZL + 0.42]];
+  const rosette = [[0, 0], [0.07, 0.015], [0.17, 0.05], [0.26, 0.09], [0.24, 0.12], [0, 0.13]];
+  for (const [x0, x1] of bx) for (const [z0, z1] of bz) {
+    const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, w = Math.abs(x1 - x0) - 0.5, d = Math.abs(z1 - z0) - 0.5;
+    k.plane(w, d, cx, LH - 0.01, cz, panelM, 0, PI / 2);
+    k.box(w, 0.05, 0.06, cx, LH - 0.04, cz - d / 2, gilt); k.box(w, 0.05, 0.06, cx, LH - 0.04, cz + d / 2, gilt);
+    k.box(0.06, 0.05, d, cx - w / 2, LH - 0.04, cz, gilt); k.box(0.06, 0.05, d, cx + w / 2, LH - 0.04, cz, gilt);
+    const big = Math.abs(Math.abs(cx) - 4.4) < 0.3 && Math.abs(cz + 5.5) < 0.6, sc = big ? 2.2 : 1;
+    k.lathe(rosette.map(([r, y]) => [r * sc, y * Math.min(sc, 1.5)]), cx, LH - 0.13 * Math.min(sc, 1.5), cz, gilt, 16);
+  }
+  /* the stair opening as a portal: two fluted engaged columns with gilt capitals and a gilt band across */
+  for (const s of [-1, 1]) k.column(s * 3.75, 0, ZL + 0.18, LH - 0.5, 0.24, cream, true, gilt);
+  k.box(8.6, 0.32, 0.36, 0, LH - 0.66, ZL + 0.12, gilt);
+  /* two torcheres on dark marble plinths at the foot of the stair, and their warm light */
+  for (const s of [-1, 1]) { k.box(0.78, 0.14, 0.78, s * 2.72, 0.07, ZL + 0.5, marbleDark); k.keepOut.push({ x: s * 2.72, z: ZL + 0.5, r: 0.5 }); k.point(s * 2.72, 2.3, ZL + 0.7, 0xffd8a8, 10, 7); }
+  w8dPlace(k, 'jewishcenter/torchere', { height: 2.3 }, [[-2.72, 0.14, ZL + 0.5, 0], [2.72, 0.14, ZL + 0.5, 0]], (h) => h.traverse((c) => { if (!(c instanceof T.Mesh)) return; for (const m of (Array.isArray(c.material) ? c.material : [c.material]) as T.MeshStandardMaterial[]) if (m.emissiveIntensity > 0 && m.emissive && m.emissive.getHex()) { m.emissive.setHex(0xffc890); m.emissiveIntensity = Math.min(m.emissiveIntensity, 0.9); } }));
+  k.point(0, 3.4, ZL + 1.4, 0xffe2b8, 12, 9);
+  /* bronze sconces: either side of the portal, and two up the stair walls */
+  const nose = (z: number) => (SY * (ZL - z)) / (ZL - ZF0);
+  w8dPlace(k, 'jewishcenter/nyb_lobby_sconce', { height: 0.55 }, [[-5.15, 2.75, ZL + 0.14, 0], [5.15, 2.75, ZL + 0.14, 0], [-3.07, nose(-13.6) + 2.0, -13.6, PI / 2], [3.07, nose(-13.6) + 2.0, -13.6, -PI / 2]]);
+  for (const s of [-1, 1]) k.point(s * 5.15, 3.0, ZL + 0.5, 0xffdcb0, 5, 5);
+  /* the stair: brass rods at every riser, a dark marble dado along both walls following the flight */
+  { const d = (ZL - ZF0) / NST, rods: T.Matrix4[] = [];
+    for (let i = 0; i < NST; i++) rods.push(new T.Matrix4().makeTranslation(0, (SY * i) / NST + 0.025, ZL - i * d + 0.04));
+    k.instances(new T.CylinderGeometry(0.018, 0.018, 3.4, 8).rotateZ(PI / 2), brass, rods);
+    const len = Math.hypot(ZL - ZF0, SY), ang = Math.atan2(SY, ZL - ZF0), mid = (ZL + ZF0) / 2;
+    for (const s of [-1, 1]) { k.box(0.05, 0.8, len, s * 3.17, nose(mid) + 0.45, mid, marbleDark).rotation.x = ang; k.box(0.08, 0.06, len, s * 3.16, nose(mid) + 0.87, mid, gilt).rotation.x = ang; } }
+  /* the floor: a border of dark marble and brass let into the terrazzo, two plain roundels by the benches */
+  { const inl = (w: number, d: number, x: number, z: number, m: T.Material) => k.box(w, 0.012, d, x, 0.006, z, m);
+    for (const s of [-1, 1]) { inl(0.14, 7.6, s * 10.3, zMid, marbleDark); inl(0.05, 7.1, s * 10.0, zMid, brass);
+      for (const z of [-1.7, -9.3]) inl(8.5, 0.14, s * 6.05, z, marbleDark);
+      for (const z of [-2.0, -9.0]) inl(8.2, 0.05, s * 5.9, z, brass);
+      const ring = k.mesh(new T.RingGeometry(0.75, 0.9, 40), marbleDark, s * 7.9, 0.008, zMid); ring.rotation.x = -PI / 2;
+      const disc = k.mesh(new T.CircleGeometry(0.22, 24), brass, s * 7.9, 0.009, zMid); disc.rotation.x = -PI / 2; } }
+  /* the laylight over the stair hall: leaded pale glass in a gilt frame, and its daylight laid on the treads */
+  const lay = canvasTex(256, 320, (g) => {
+    g.fillStyle = '#2a2018'; g.fillRect(0, 0, 256, 320);
+    const pal = ['#f4ecd6', '#efe4c8', '#f6f0e0', '#e8dcc0', '#f0e8d4'];
+    for (let y = 0; y < 320; y += 32) for (let x = 0; x < 256; x += 32) { const border = x < 32 || x >= 224 || y < 32 || y >= 288; g.fillStyle = border ? (((x + y) / 32) % 2 ? '#d8c48c' : '#c8d4d8') : pal[((x * 7 + y * 3) / 32) % pal.length]; g.fillRect(x + 2, y + 2, 28, 28); }
+    g.strokeStyle = '#2a2018'; g.lineWidth = 5; g.strokeRect(30, 30, 196, 260);
+  });
+  const LW = 5.4, LD = 6.4, LZ = (ZL + ZF0) / 2;
+  { const o = k.mesh(new T.PlaneGeometry(LW, LD), new T.MeshBasicMaterial({ map: lay, color: 0xfff4e0 }), 0, 9.77, LZ); o.rotation.x = PI / 2; }
+  for (const s of [-1, 1]) { k.box(LW + 0.5, 0.22, 0.25, 0, 9.68, LZ + s * (LD / 2 + 0.12), gilt); k.box(0.25, 0.22, LD, s * (LW / 2 + 0.12), 9.68, LZ, gilt); }
+  k.spot(0, 9.5, LZ, 0, nose(LZ), LZ, 0xfff0d8, 80, 0.55, 0.7, 16);
+  if (W8D_DOM) {
+    const d = (ZL - ZF0) / NST, pos: number[] = [], uv: number[] = [], idx: number[] = [], hw = 2.5;
+    for (let i = 0; i < NST; i++) {
+      const y = (SY * (i + 1)) / NST + 0.012, za = ZL - i * d, zb = ZL - (i + 1) * d, va = i / NST, vb = (i + 1) / NST, b = pos.length / 3;
+      pos.push(-hw, y, za, hw, y, za, hw, y, zb, -hw, y, zb); uv.push(0, va, 1, va, 1, vb, 0, vb); idx.push(b, b + 1, b + 2, b, b + 2, b + 3);
+    }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+    const pm = new T.MeshBasicMaterial({ map: lay, color: 0xffe2b0, transparent: true, opacity: 0.42, blending: T.AdditiveBlending, depthWrite: false, toneMapped: false, fog: false });
+    const pool = k.mesh(g, pm, 0, 0, 0, true); pool.renderOrder = 2; pool.userData.noShadow = true;
+    /* the faint shaft of that light hanging in the stair hall */
+    const sh = canvasTex(64, 256, (c) => { const gr = c.createLinearGradient(0, 0, 0, 256); if (gr && gr.addColorStop) { gr.addColorStop(0, 'rgba(255,244,220,0.9)'); gr.addColorStop(1, 'rgba(255,244,220,0)'); c.fillStyle = gr; c.fillRect(0, 0, 64, 256); } c.globalCompositeOperation = 'destination-out'; for (let x = 0; x < 64; x += 8) { c.fillStyle = 'rgba(0,0,0,0.35)'; c.fillRect(x, 0, 3, 256); } });
+    const shm = new T.MeshBasicMaterial({ map: sh, color: 0xfff0d0, transparent: true, opacity: 0.09, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, toneMapped: false, fog: false });
+    const shaft = k.mesh(new T.PlaneGeometry(LW - 0.4, 9.6 - nose(LZ)), shm, 0, (9.6 + nose(LZ)) / 2, LZ - 0.5, true); shaft.userData.noShadow = true; shaft.renderOrder = 3;
+    if (!p.reduced) k.ticks.push((t) => { const b = 0.85 + 0.15 * Math.sin(t * 0.13) * Math.sin(t * 0.07 + 1); pm.opacity = 0.42 * b; shm.opacity = 0.09 * b; });
+  }
+  void ZF1;
+}
 export const jewishcenter: RoomDef = {
   id: 'jewishcenter',
   name: 'The Jewish Center',
@@ -1025,27 +1101,28 @@ export const jewishcenter: RoomDef = {
     k.box(3.2, 0.02, -ZL - 1, 0, 0.01, (ZL - 1) / 2, carpet);
     const LH = 4.8;
     const lobbyC = canvasTex(256, 256, (g) => { g.fillStyle = '#d8c8a4'; g.fillRect(0, 0, 256, 256); g.fillStyle = '#f2e8d4'; g.fillRect(16, 16, 224, 224); g.strokeStyle = '#b8903a'; g.lineWidth = 6; g.strokeRect(40, 40, 176, 176); g.fillStyle = '#b8903a'; g.beginPath(); g.arc(128, 128, 14, 0, PI * 2); g.fill(); }, true);
-    lobbyC.repeat.set(7, 3);
-    k.plane(2 * FW - 1, -ZL - 1, 0, LH, (ZL - 1) / 2, new T.MeshStandardMaterial({ map: lobbyC, roughness: 0.85, emissive: 0xffffff, emissiveMap: lobbyC, emissiveIntensity: 0.12 }), 0, PI / 2);
-    for (const x of [-9, -4.5, 4.5, 9]) k.box(0.22, 0.2, -ZL - 1, x, LH - 0.1, (ZL - 1) / 2, gilt);
-    for (const s of [-1, 1]) k.box(0.1, 0.24, -ZL - 1, s * (FW - 1.05), LH - 0.4, (ZL - 1) / 2, gilt);
+    lobbyC.repeat.set(7, 3); void lobbyC;
+    /* 2026-11-25 entrance pass: the painted ceiling became a built one (see jcEntrance below); the field above the coffers is plain */
+    k.plane(2 * FW - 1, -ZL - 1, 0, LH, (ZL - 1) / 2, k.flat(0xd6c49c, 0, 0.85, { emissive: 0x3a2a14, emissiveIntensity: 0.25 }), 0, PI / 2);
     for (const s of [-1, 1]) k.bench(s * 5.2, -6.2, s > 0 ? -PI / 2 : PI / 2, oak, brass, 2.2);
     for (const s of [-1, 1]) k.box(6.2, LH, 0.05, s * 8.4, LH / 2, -1.02, plaster);
     for (const s of [-1, 1]) {
       const w = k.mesh(holed(-ZL - 1, LH, 1, [{ cx: 0, y0: 0.02, w: 2.6, h: 3.4 }]), plaster, s * (FW - 0.5), 0, (ZL - 1) / 2);
       w.rotation.y = PI / 2;
-      k.box(0.06, 1.0, -ZL - 1, s * (FW - 1.03), 0.5, (ZL - 1) / 2, oak);
+      k.box(0.06, 1.1, -ZL - 1, s * (FW - 1.03), 0.55, (ZL - 1) / 2, marbleDark); k.box(0.1, 0.08, -ZL - 1, s * (FW - 1.05), 1.12, (ZL - 1) / 2, gilt);
     }
     k.mesh(holed(2 * FW, LH, 0.6, [{ cx: 0, y0: 0.02, w: 6.4, h: LH - 0.1, square: true }]), plaster, 0, 0, ZL - 0.3);
-    for (const sx of [-1, 1]) k.box(FW - 3.2, 1.0, 0.06, sx * (FW + 3.2) / 2, 0.5, ZL + 0.03, oak);
+    for (const sx of [-1, 1]) { k.box(FW - 3.2, 1.1, 0.06, sx * (FW + 3.2) / 2, 0.55, ZL + 0.03, marbleDark); k.box(FW - 3.2, 0.08, 0.1, sx * (FW + 3.2) / 2, 1.12, ZL + 0.05, gilt); }
     { const lmk = w8dMark(k); for (const x of [-6.5, 6.5]) { k.torus(0.6, 0.05, x, LH - 0.95, -4.5, brass, 20).rotation.x = PI / 2; k.sphere(0.3, x, LH - 1.1, -4.5, k.glow(0xffe8c0), 12); }
       /* 2026-11-24 (wave 8d): the lobby's two lamps as a real crystal and brass chandelier (from our movie sets), on short rods */
-      const old = w8dSince(k, lmk); for (const x of [-3.6, 3.6]) k.beam(v(x, LH, -4.5), v(x, LH - 0.5, -4.5), 0.02, brass, 4);
-      w8dPlace(k, 'jewishcenter/nyb_lobby_chandelier', { height: 1.5 }, [[-3.6, LH - 2.0, -4.5, 0], [3.6, LH - 2.0, -4.5, PI]], undefined, () => w8dHide(old)); }
-    for (const x of [-6, 6]) k.point(x, 3.6, -4.5, 0xffe4c0, 18, 12);
+      /* 2026-11-25: moved to the middle of their coffers */
+      const old = w8dSince(k, lmk); for (const x of [-4.4, 4.4]) k.beam(v(x, LH, -5.5), v(x, LH - 0.5, -5.5), 0.02, brass, 4);
+      w8dPlace(k, 'jewishcenter/nyb_lobby_chandelier', { height: 1.5 }, [[-4.4, LH - 2.0, -5.5, 0], [4.4, LH - 2.0, -5.5, PI]], undefined, () => w8dHide(old)); }
+    for (const x of [-4.4, 4.4]) k.point(x, 3.6, -5.5, 0xffe4c0, 22, 13);
     k.sign('SOCIAL HALL', 2.4, 0.3, -FW + 1.02, 3.75, -5.5, '#3a2e22', '#e8dcc4', 110, PI / 2);
     k.sign('POOL', 1.4, 0.3, FW - 1.02, 3.75, -5.5, '#1c3a5a', '#e8f0f4', 150, -PI / 2);
     k.sign('SANCTUARY', 2.6, 0.32, 0, 5.5, ZL - 0.62, '#3a2e22', '#e8dcc4', 120);
+    jcEntrance(k, { FW, ZL, ZF0, ZF1, LH, SY, NST: 14, marbleDark, gilt, brass, cream, reduced: ctx.reduced });
 
     /* ---- the grand stair and the sanctuary foyer ---- */
     const NST = 14;

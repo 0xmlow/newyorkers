@@ -193,6 +193,17 @@ function standUp(k: Kit, text: string, fg: string, ex: number, ez: number, eh: n
   anamorphTex(k, tex, ex, ez, eh, floor, yaw, D, W, H);
 }
 const one = new T.Vector3(1, 1, 1), hide = new T.Vector3(0.0001, 0.0001, 0.0001), up = new T.Vector3(0, 1, 0);
+/* 2026-11-25 delacorte entrance pass: one instanced draw of boxes at every [x, y, z]. */
+/* 2026-11-25: a light shaft fades from its lamp to the floor; one gradient on the cone's v, shared by every beam. */
+let dcShaft: T.Texture | null = null;
+function dcShaftTex() {
+  if (!HAS_DOM) return null;
+  if (!dcShaft) dcShaft = paintTex(4, 128, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.35, 'rgba(255,255,255,0.55)'); gr.addColorStop(1, 'rgba(255,255,255,0.18)'); g.fillStyle = gr; g.fillRect(0, 0, w, h); }, [], false);
+  return dcShaft;
+}
+function dcBoxes(k: Kit, w: number, h: number, d: number, m: T.Material, at: number[][]) {
+  const im = k.instances(new T.BoxGeometry(w, h, d), m, at.map(([x, y, z]) => new T.Matrix4().setPosition(x, y, z))); im.castShadow = false; return im;
+}
 /* the New York clock, read in a tick: hours, minutes, seconds in America/New_York. A ?hour= on the
    page (the screenshot tool and the hang of the day use it) overrides the hour and minute so a room
    can be shot at a feeding or on the half hour; the seconds always come from the real clock. */
@@ -233,7 +244,7 @@ export const sealions: RoomDef = {
     const brick = sc(k, SL, 'brick', 1.9, () => X.brick(0x8a4a38, 171), { color: 0xffffff, roughness: 0.85 }, 0x8a4a38), brickD = sc(k, SL, 'brick', 1.9, () => X.brick(0x6a3a2c, 172), { color: 0xd8c0b8, roughness: 0.85 }, 0x6a3a2c),
       lime = sc(k, SL, 'lime', 2.0, () => X.ashlar(0xd2c8ae, 173, 5), { color: 0xfff6e8, roughness: 0.8 }, 0xd2c8ae),
       walk = sc(k, SL, 'walk', 1.9, () => X.pavers(0x9a9488, 174), { color: 0xe0dcd4, roughness: 0.85 }, 0x9a9488), grassM = sc(k, SL, 'grass', 2.0, () => X.grass(0x4a6a38, 175), { color: 0x86c060, roughness: 1 }, 0x4a6a38),
-      basin = k.flat(0x24404a, 0.05, 0.6, { side: T.DoubleSide }), rockM = sc(k, SL, 'rock', 2.4, () => X.ashlar(0x6a6660, 177, 2), { color: 0xc8c2b8, roughness: 0.95 }, 0x6a6660), rockD = sc(k, SL, 'rock', 2.4, () => X.ashlar(0x4a4642, 178, 2), { color: 0x9a948c, roughness: 0.95 }, 0x4a4642),
+      basin = k.flat(0x2c6878, 0.05, 0.6, { side: T.DoubleSide }), rockM = sc(k, SL, 'rock', 2.4, () => X.ashlar(0x6a6660, 177, 2), { color: 0xc8c2b8, roughness: 0.95 }, 0x6a6660), rockD = sc(k, SL, 'rock', 2.4, () => X.ashlar(0x4a4642, 178, 2), { color: 0x9a948c, roughness: 0.95 }, 0x4a4642),
       steel = k.flat(0x8a9098, 0.8, 0.35), iron = k.flat(0x1e2022, 0.6, 0.5), wood = sc(k, SL, 'wood', 1.0, () => X.planks(0x5a3e28, 6, 176), { color: 0xc8b098, roughness: 0.75 }, 0x5a3e28),
       glassM = k.glass(0xcfe6ee, 0.18, 0.08), win = k.flat(0x1a2128, 0.6, 0.18), trim = k.flat(0xe8e2d4, 0, 0.6),
       bronze = k.flat(0x6e5230, 0.85, 0.42), bronzeL = k.flat(0x8a6a3a, 0.85, 0.4), gold = k.flat(0xc8a050, 1, 0.3),
@@ -261,7 +272,7 @@ export const sealions: RoomDef = {
     const PR = 9;
     k.mesh(new T.CylinderGeometry(PR, PR, 2.4, 48, 1, true), basin, 0, -1.1, 0);
     { const g = new T.CircleGeometry(PR, 48); g.rotateX(-PI / 2); k.mesh(g, basin, 0, -2.25, 0); }
-    { const w = k.water({ y: -0.3, color: 0x2a5a6e, w: 18.6, d: 18.6, x: 0, z: 0, amp: 0.35 }); const wm = w.material as T.MeshStandardMaterial; wm.metalness = 0.05; wm.roughness = 0.25; wm.envMapIntensity = 0.25; }
+    { const w = k.water({ y: -0.3, color: 0x2f8494, w: 18.6, d: 18.6, x: 0, z: 0, amp: 0.35 }); const wm = w.material as T.MeshStandardMaterial; wm.metalness = 0.05; wm.roughness = 0.16; wm.envMapIntensity = 0.35; wm.transparent = true; wm.opacity = 0.84; }   // 2026-11-25: aqua, and clear enough to see the swimmers
     /* the rock island: a low pile of boulders the sea lions haul out on */
     for (const [x, z, r, y, m] of [[0, 0, 2.8, -0.9, rockM], [1.4, -1.1, 1.6, -0.3, rockD], [-1.4, 1.0, 1.5, -0.4, rockM], [0.4, 1.8, 1.1, -0.4, rockD], [-0.8, -1.7, 1.2, -0.45, rockM], [2.6, 0.8, 0.9, -0.5, rockD]] as [number, number, number, number, T.Material][]) {
       const g = new T.IcosahedronGeometry(r, 1); g.scale(1, 0.6, 1); k.mesh(g, m, x, y, z);
@@ -429,7 +440,7 @@ export const sealions: RoomDef = {
       k.add(g);
       return { g, tail };
     };
-    const loop = [v(6.2, -0.8, 0.5), v(4.4, -0.2, 4.8), v(-0.5, -0.9, 6.4), v(-5.6, -0.4, 2.4), v(-6.2, -1.0, -3.0), v(-2.2, -0.15, -6.2), v(2.6, 0.5, -2.8), v(1.0, 0.95, 0.0), v(4.2, -0.3, 2.0)];
+    const loop = [v(6.2, -0.8, 0.5), v(4.4, -0.2, 4.8), v(-0.5, -0.9, 6.4), v(-5.6, -0.4, 2.4), v(-6.4, -1.0, -2.6), v(-4.9, -0.2, -4.1), v(-1.7, -0.6, -3.0), v(2.6, 0.5, -2.5), v(1.0, 0.95, 0.0), v(4.2, -0.3, 2.0)];   // 2026-11-25: round the front of the new outcrop at the back
     /* the swimmers are the Blender prop (nose along -z, which k.rider treats as forward); the prop
        loads async, so each rider is attached when its object arrives */
     const sealsOut: { g: T.Group; tail: T.Group }[] = [];
@@ -438,7 +449,7 @@ export const sealions: RoomDef = {
       [1.15, 0.95, 1.05, 0.85].forEach((s, i) => {
         k.prop('sealion_swim', loop[i].x, loop[i].y, loop[i].z, { height: 0.75 * s }).then((o) => { if (o) k.rider(o, curve, 1.3 + (i % 2) * 0.3, i * 9); });
       });
-      vapour(k, [v(4.4, -0.3, 4.8), v(-2.2, -0.3, -6.2)], 14, { rise: 0.9, spread: 0.7, size: 0.07, opacity: 0.35, colour: 0xf0f8ff, seed: 1715, speed: 0.4, animate: true });
+      vapour(k, [v(4.4, -0.3, 4.8), v(-4.9, -0.3, -4.1)], 14, { rise: 0.9, spread: 0.7, size: 0.045, opacity: 0.35, colour: 0xf0f8ff, seed: 1715, speed: 0.4, animate: true });
     } else { k.prop('sealion_swim', 2.4, 0.5, -2.2, { height: 0.8, rotY: 0.8 }); }
     /* one hauled out on the rock, chest up, and one asleep beside it */
     k.prop('sealion', -0.6, 0.55, 1.4, { height: 1.1, rotY: 2.4 });
@@ -516,6 +527,90 @@ export const sealions: RoomDef = {
     k.egg(v(0, 9.4, CZ), { id: 'delacorte-clock', title: 'The clock that plays every half hour', year: '1965', text: 'George T. Delacorte gave the clock after seeing the automaton clocks of Europe; Andrea Spadini made its eight bronze animals, a bear on the tambourine, an elephant on the accordion, a goat on the horn, a hippo on the violin, a kangaroo on the French horn, a penguin on the drums and two monkeys at the bell. It was unveiled in 1965 on the brick and limestone gateway by Fernando Texidor and Edward Coe Embury, and it plays every thirty minutes from eight in the morning until six.', clue: 'Wait under the arch for the hour or the half hour and look up.', source: { name: 'Delacorte Clock, Wikipedia', url: 'https://en.wikipedia.org/wiki/Delacorte_Clock' } }, { r: 3.2 });
     k.egg(v(AX - 0.8, 5.0, 0), { id: 'arsenal-1851', title: 'Older than the park', year: '1851', text: 'Martin E. Thompson designed the Arsenal and it went up between 1847 and 1851 as a storehouse for the arms of the New York State Militia, a symmetrical brick building with half octagonal towers. Only Blockhouse No. 1 of 1814 is older inside the park. It has been a zoo, a police precinct and a weather bureau, it held the American Museum of Natural History\'s collections while that museum was built, and today the Parks Department has its offices here with the Greensward Plan on the third floor.', clue: 'The brick fort on the east side of the garden was here before Central Park was.', source: { name: 'Arsenal (Central Park), Wikipedia', url: 'https://en.wikipedia.org/wiki/Arsenal_(Central_Park)' } }, { r: 3.0 });
     k.egg(v(HX + 0.6, 3.0, 0), { id: 'zoo-feedings', title: 'Half past eleven and half past three', text: 'On the zoo\'s own schedule the sea lions are fed at 11:30 in the morning and 3:30 in the afternoon, and the penguins at 10:40 and 2:30. The penguin house keeps macaroni, king, chinstrap and gentoo penguins. The zoo opens at ten and closes at five, last entry at four.', clue: 'The blue light on the west side of the garden is the coldest room in the park.', source: { name: 'Central Park Zoo, the zoo\'s own site', url: 'https://centralparkzoo.com/' } }, { r: 2.4 });
+
+    /* ---- 2026-11-25 entrance pass: what the first look shows ----
+       A granite outcrop at the back of the pool (Poly Haven CC0 scan, as the zoo's rockwork echoes the park's own
+       boulders) with a waterfall pouring off it into foam and spray; aqua water you can see the swimmers through, light
+       playing on the floor; wisteria over the whole pergola, leaves on top casting dapple and purple racemes hanging; the
+       zoo's banners on the lamps. */
+    k.prop(`${SL}/ph_namaqualand_cliff_01`, 0, -1.1, -5.9, { height: 5.2, rotY: 0 });
+    /* Fifth Avenue's apartment towers over the trees to the north east, where the zoo's sky was empty */
+    k.skyline({ z: -240, x: 70, count: 12, spacing: 10, scale: 1.1, base: 0, seed: 1726, lit: 0.04, rows: 1, tint: 0x9a9284, spires: false });
+    {
+      const wm2 = new T.MeshBasicMaterial({ color: 0xeaf6fb, transparent: true, opacity: 0.82, depthWrite: false, side: T.DoubleSide });
+      const wm3 = new T.MeshBasicMaterial({ color: 0xcfe8f2, transparent: true, opacity: 0.45, depthWrite: false, side: T.DoubleSide });
+      if (HAS_DOM) {
+        const streaks = (seed: number) => { const t = paintTex(128, 256, (g, w, h) => { g.fillStyle = 'rgba(255,255,255,0.32)'; g.fillRect(0, 0, w, h); const r = X.mulberry(seed); for (let i = 0; i < 70; i++) { const x = r() * w, ww = 1 + r() * 5, y = r() * h, len = 30 + r() * 140; g.fillStyle = `rgba(255,255,255,${(0.25 + r() * 0.7).toFixed(2)})`; g.fillRect(x, y, ww, len); if (y + len > h) g.fillRect(x, y - h, ww, len); } }, [], true); t.wrapS = t.wrapT = T.RepeatWrapping; return t; };
+        wm2.map = streaks(1720); wm2.alphaMap = wm2.map; wm3.map = streaks(1721); wm3.alphaMap = wm3.map;
+        if (!ctx.reduced) k.ticks.push((_t, dt) => { const d = Math.min(dt, 0.1); wm2.map!.offset.y += d * 1.3; wm3.map!.offset.y += d * 0.9; });
+      }
+      /* a ribbon down a path in (y, z), x0 to x1 across */
+      const ribbon = (x0: number, x1: number, path: [number, number][], m: T.Material) => {
+        const c = new T.CatmullRomCurve3(path.map(([y, z]) => v(0, y, z))), N = 24, pos: number[] = [], uv: number[] = [], idx: number[] = [];
+        for (let i = 0; i <= N; i++) { const p = c.getPoint(i / N); const wob = 0.06 * Math.sin(i * 1.7); pos.push(x0 + wob, p.y, p.z, x1 - wob, p.y, p.z); uv.push(0, 1 - (i / N) * 2, 1, 1 - (i / N) * 2); if (i < N) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+        const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+        const o = k.mesh(g, m, 0, 0, 0, true); o.castShadow = false; o.userData.noShadow = true; return o;
+      };
+      const fall: [number, number][] = [[3.42, -5.22], [3.3, -4.54], [2.61, -3.98], [1.25, -3.61], [-0.3, -3.4]];
+      ribbon(-0.3, 1.65, fall, wm2); ribbon(-0.55, 1.9, fall.map(([y, z]) => [y + 0.02, z + 0.12] as [number, number]), wm3);
+      ribbon(-2.35, -1.67, [[2.46, -4.29], [2.27, -3.92], [1.28, -3.61], [-0.3, -3.5]], wm3);
+      /* foam where it lands, and spray */
+      if (HAS_DOM) {
+        const ft = paintTex(256, 256, (g, w) => { const r = X.mulberry(1722); for (let i = 0; i < 260; i++) { const a = r() * PI * 2, d = Math.pow(r(), 0.7) * w * 0.46, x = w / 2 + Math.cos(a) * d, y = w / 2 + Math.sin(a) * d, rr = 3 + r() * 12; g.fillStyle = `rgba(255,255,255,${(0.6 * (1 - d / (w * 0.5))).toFixed(2)})`; g.beginPath(); g.arc(x, y, rr, 0, PI * 2); g.fill(); } });
+        const foam = k.mesh(new T.CircleGeometry(1.6, 32).rotateX(-PI / 2), new T.MeshBasicMaterial({ map: ft, transparent: true, depthWrite: false, opacity: 0.9 }), 0.7, -0.22, -3.4, true); foam.castShadow = false; foam.userData.noShadow = true;
+        if (!ctx.reduced) k.ticks.push((t) => { foam.rotation.y = t * 0.25; foam.scale.setScalar(1 + 0.05 * Math.sin(t * 3.1)); });
+        vapour(k, [v(0.7, -0.25, -3.5), v(-2.0, -0.25, -3.6)], 40, { rise: 1.5, spread: 1.2, size: 0.035, opacity: 0.3, colour: 0xf4fbff, seed: 1723, speed: 0.55, animate: !ctx.reduced });
+        /* light from the surface wavering on the pool floor */
+        const ct = paintTex(256, 256, (g, w) => { g.clearRect(0, 0, w, w); const r = X.mulberry(1724); g.strokeStyle = 'rgba(200,250,255,0.55)'; g.lineCap = 'round'; for (let i = 0; i < 46; i++) { g.lineWidth = 1.5 + r() * 3; const x = r() * w, y = r() * w; g.beginPath(); g.moveTo(x, y); g.bezierCurveTo(x + (r() - 0.5) * 120, y + (r() - 0.5) * 120, x + (r() - 0.5) * 120, y + (r() - 0.5) * 120, x + (r() - 0.5) * 90, y + (r() - 0.5) * 90); g.stroke(); } }, [], true);
+        ct.wrapS = ct.wrapT = T.RepeatWrapping; ct.repeat.set(4, 4);
+        const caus = k.mesh(new T.CircleGeometry(PR - 0.05, 48).rotateX(-PI / 2), new T.MeshBasicMaterial({ map: ct, transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0.5 }), 0, -2.2, 0, true); caus.castShadow = false; caus.userData.noShadow = true;
+        if (!ctx.reduced) k.ticks.push((t) => { ct.offset.set(0.03 * Math.sin(t * 0.4), t * 0.02); });
+      }
+    }
+    {
+      /* wisteria over the pergola: leaves on the trellis (they cast the dapple) and racemes hanging under it */
+      const strips: [number, number, number, number][] = [];   // x0, x1, z0, z1
+      for (const s of [-1, 1]) strips.push([s * PX - 1.75, s * PX + 1.75, -PZ - 0.9, PZ + 0.9]);
+      for (const s of [-1, 1]) for (const x of [-13.8, 10.2]) strips.push([x - 0.7, x + 4.4, s * PZ - 1.75, s * PZ + 1.75]);
+      const rn = X.mulberry(1725), e = new T.Euler(), q = new T.Quaternion(), leafT: T.Matrix4[] = [], racT: T.Matrix4[] = [];
+      for (const [x0, x1, z0, z1] of strips) {
+        const area = (x1 - x0) * (z1 - z0);
+        for (let i = 0; i < area * 15; i++) { const x = x0 + rn() * (x1 - x0), z = z0 + rn() * (z1 - z0), sz = 0.8 + rn() * 0.8; e.set(-PI / 2 + (rn() - 0.5) * 1.4, rn() * 6.3, (rn() - 0.5) * 0.8); leafT.push(new T.Matrix4().compose(v(x, 3.9 + rn() * 0.32, z), q.setFromEuler(e), v(sz, sz, sz))); }
+        /* strands hanging off the edges */
+        const edge = (x: number, z: number) => { const n = 3 + Math.floor(rn() * 5); for (let j = 0; j < n; j++) { const sz = 0.7 + rn() * 0.6; e.set((rn() - 0.5) * 0.6, rn() * 6.3, (rn() - 0.5) * 0.6); leafT.push(new T.Matrix4().compose(v(x + (rn() - 0.5) * 0.2, 3.8 - j * 0.13, z + (rn() - 0.5) * 0.2), q.setFromEuler(e), v(sz, sz, sz))); } };
+        const per = 2 * ((x1 - x0) + (z1 - z0)) * 1.6;
+        for (let i = 0; i < per; i++) { const u = rn(); if (rn() < (x1 - x0) / ((x1 - x0) + (z1 - z0))) edge(x0 + u * (x1 - x0), rn() < 0.5 ? z0 : z1); else edge(rn() < 0.5 ? x0 : x1, z0 + u * (z1 - z0)); }
+        for (let i = 0; i < area * 3.2; i++) { const x = x0 + rn() * (x1 - x0), z = z0 + rn() * (z1 - z0), sz = 0.75 + rn() * 0.6; racT.push(new T.Matrix4().compose(v(x, 3.62 - rn() * 0.12, z), q.setFromEuler(e.set((rn() - 0.5) * 0.25, rn() * 6.3, (rn() - 0.5) * 0.25)), v(sz, sz, sz))); }
+      }
+      const lg = new T.PlaneGeometry(0.24, 0.17); lg.translate(0, 0.07, 0);
+      const leaves = k.instances(lg, new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7, side: T.DoubleSide }), leafT); leaves.castShadow = true;
+      const c = new T.Color(); for (let i = 0; i < leafT.length; i++) leaves.setColorAt(i, c.set([0x4a7a30, 0x5e8c38, 0x3c6a28, 0x6e9a40, 0x557f34][i % 5])); if (leaves.instanceColor) leaves.instanceColor.needsUpdate = true;
+      const rg = new T.ConeGeometry(0.075, 0.42, 5); rg.rotateX(PI); rg.translate(0, -0.21, 0);
+      const rac = k.instances(rg, new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.8 }), racT); rac.castShadow = false;
+      for (let i = 0; i < racT.length; i++) rac.setColorAt(i, c.set([0xb49ad8, 0x9a7ac8, 0xc8b4e8, 0x8e6ab8, 0xd8c8f0][i % 5])); if (rac.instanceColor) rac.instanceColor.needsUpdate = true;
+    }
+    if (HAS_DOM) {
+      /* the zoo's banners on the lamps, turned to the gate */
+      const font = 'W2 Archivo Expanded';
+      const banner = (a: boolean) => paintTex(256, 640, (g, w, h) => {
+        g.fillStyle = a ? '#1f4f5e' : '#2a5a34'; g.fillRect(0, 0, w, h);
+        g.strokeStyle = '#efe6cc'; g.lineWidth = 6; g.strokeRect(14, 14, w - 28, h - 28);
+        g.fillStyle = '#efe6cc';
+        if (a) { g.beginPath(); g.ellipse(128, 200, 74, 30, -0.35, 0, PI * 2); g.fill(); g.beginPath(); g.ellipse(196, 150, 24, 19, -0.5, 0, PI * 2); g.fill(); g.beginPath(); g.moveTo(60, 226); g.lineTo(24, 260); g.lineTo(66, 250); g.fill(); g.beginPath(); g.moveTo(130, 220); g.lineTo(112, 262); g.lineTo(150, 226); g.fill(); g.beginPath(); g.arc(214, 92, 13, 0, PI * 2); g.fill(); }
+        else { g.beginPath(); g.arc(128, 180, 74, 0, PI * 2); g.fill(); g.fillStyle = '#2a5a34'; g.beginPath(); g.arc(128, 180, 60, 0, PI * 2); g.fill(); g.fillStyle = '#efe6cc'; g.fillRect(124, 132, 8, 52); g.save(); g.translate(128, 180); g.rotate(1.1); g.fillRect(-4, 0, 8, 40); g.restore(); }
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        const lines = a ? ['SEA', 'LIONS'] : ['ZOO', 'CLOCK'];
+        lines.forEach((t2, i) => { let s = 76; g.font = `800 ${s}px "${font}", Arial, sans-serif`; const tw = g.measureText(t2).width; if (tw > w - 50) { s *= (w - 50) / tw; g.font = `800 ${s}px "${font}", Arial, sans-serif`; } g.fillText(t2, w / 2, 370 + i * 86); });
+        g.font = `700 22px "${font}", Arial, sans-serif`; g.fillText('CENTRAL PARK ZOO', w / 2, h - 60);
+      }, [font]);
+      const bm = [true, false].map((a) => new T.MeshStandardMaterial({ map: banner(a), roughness: 0.8, side: T.DoubleSide }));
+      [[-18, 6], [-18, -6], [18, 6], [18, -6], [-5, 15.4], [5, 15.4]].forEach(([x, z], i) => {
+        const yaw = Math.atan2(0 - x, 19.5 - z), ox = Math.cos(yaw) * 0.42, oz = -Math.sin(yaw) * 0.42, side = x < 0 ? -1 : 1;
+        const bx = x + side * ox, bz = z + side * oz;
+        const b = k.plane(0.6, 1.5, bx, 2.55, bz, bm[i % 2], yaw); b.castShadow = false;
+        for (const y of [3.32, 1.78]) { const r = k.bar(v(x, y, z), v(x + side * ox * 1.75, y, z + side * oz * 1.75), 0.035, 0.035, iron); r.castShadow = false; }
+      });
+    }
 
     shadowDiet(k);
     return { mounts, spawn: v(0, 3, 19.5), look: v(0, 2.6, -24), eye: 3, bounds: [-21.6, 23.6, -38, 27.5], style: st };
@@ -630,7 +725,7 @@ export const delacorte: RoomDef = {
     { const N2 = 10; for (let i = 0; i < N2; i++) k.box(1.4, 0.16, 0.5, 11.2, SY + 0.4 + i * 0.4, SZ1 + 6.5 - i * 0.5, setM); }
     k.box(2.6, 0.6, 1.4, 0, SY + 0.3, SZ0 - 4, setM);
     /* lighting towers either side of the stage, spots on them */
-    const beamM = new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.045, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide });
+    const beamM = new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.045, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, alphaMap: dcShaftTex() });
     const lights: { L: T.SpotLight; beam: T.Mesh; base: T.Vector3; ph: number; hue: number }[] = [];
     for (const s of [-1, 1]) {
       const tx = s * 17, tz = CZ - 6;
@@ -640,7 +735,8 @@ export const delacorte: RoomDef = {
       for (let i = 0; i < 2; i++) {
         const base = v(tx, bottom + 9 + i * 1.6, tz);
         const L = k.spot(base.x, base.y, base.z, 0, SY + 1.4, CZ - 9, 0xfff1d6, 0, 0.26, 0.4, 34);
-        const beam = k.mesh(new T.CylinderGeometry(0.12, 2.6, 22, 12, 1, true).translate(0, -11, 0), beamM, base.x, base.y, base.z, true);
+        /* 2026-11-25: unit length, stretched to its target each frame (a fixed 22 m cone ran through the stage and read as two pink sheets from the house) */
+        const beam = k.mesh(new T.CylinderGeometry(0.1, 0.8, 1, 24, 1, true).translate(0, -0.5, 0), beamM, base.x, base.y, base.z, true);
         lights.push({ L, beam, base, ph: (s + 1) * 1.3 + i * 2.1, hue: (i + (s + 1)) * 0.23 });
       }
     }
@@ -692,7 +788,8 @@ export const delacorte: RoomDef = {
             tgt.set(sweep * 8 + (i % 2 ? 2 : -2), SY + 1.2, SZ0 - 7 + 3 * Math.cos(t * 0.27 + l.ph));
             l.L.target.position.copy(tgt);
             col.setHSL((l.hue + t * 0.012) % 1, 0.55, 0.62); l.L.color.copy(col); (l.beam.material as T.MeshBasicMaterial).color.copy(col);
-            dir.copy(tgt).sub(l.base).normalize();
+            dir.copy(tgt).sub(l.base);
+            l.beam.scale.set(1, dir.length(), 1); dir.normalize();
             l.beam.quaternion.setFromUnitVectors(v(0, -1, 0), dir);
           });
         }
@@ -716,11 +813,12 @@ export const delacorte: RoomDef = {
     k.box(9.6, 0.6, 0.4, -1, VY + 6.2, VZ + 3.5, castleLit);
     k.point(0, VY + 4, VZ + 9, 0xffd0a0, 260, 30, 1.4); k.point(6, VY + 8, VZ + 6, 0xffc890, 140, 22, 1.4);
     /* the moon, and the trees round the pond and behind the bowl */
-    k.sphere(3.2, 28, 62, SZ1 - 110, moonM, 16);
-    k.point(28, 62, SZ1 - 100, 0xd8e0ff, 30, 120, 1);
+    /* 2026-11-25 entrance pass: the moon sits low over the trees left of the castle, inside the entrance view (it was out of frame overhead) */
+    k.sphere(5.4, -30, 30, SZ1 - 110, moonM, 24);
+    k.point(-30, 30, SZ1 - 100, 0xd8e0ff, 30, 120, 1);
     const trnd = X.mulberry(1722);
-    for (let i = 0; i < 26; i++) { const x = -56 + i * 4.5 + (trnd() - 0.5) * 3, z = SZ1 - 30 - trnd() * 22; if (Math.abs(x) < 16 && z > SZ1 - 46) continue; k.tree(x, bottom, z, { h: 9 + trnd() * 6, r: 4 + trnd() * 2, seed: 1723 + i, leaf: 0x1e3020 }); }
-    for (let i = 0; i < 14; i++) { const a = -1.75 + (i / 13) * 3.5, r = 38 + trnd() * 6; if (Math.abs(Math.sin(a) * r) < 14) continue; k.tree(Math.sin(a) * r, 0, CZ + Math.cos(a) * r, { h: 10 + trnd() * 6, r: 4.5 + trnd() * 2, seed: 1750 + i, leaf: 0x1e3020 }); k.keepOut.push({ x: Math.sin(a) * r, z: CZ + Math.cos(a) * r, r: 0.9 }); }
+    for (let i = 0; i < 26; i++) { const x = -56 + i * 4.5 + (trnd() - 0.5) * 3, z = SZ1 - 30 - trnd() * 22; if ((Math.abs(x) < 16 && z > SZ1 - 46) || i % 3 === 1) continue; /* 2026-11-25: every third dropped for the triangle budget */ k.tree(x, bottom, z, { h: 9 + trnd() * 6, r: 4 + trnd() * 2, seed: 1723 + i, leaf: 0x1e3020 }); }
+    for (let i = 0; i < 14; i++) { const a = -1.75 + (i / 13) * 3.5, r = 38 + trnd() * 6; if (Math.abs(Math.sin(a) * r) < 14 || (i % 2 && Math.abs(a) < 1.3)) continue; /* 2026-11-25: half the ring beside the house, for the triangle budget */ k.tree(Math.sin(a) * r, 0, CZ + Math.cos(a) * r, { h: 10 + trnd() * 6, r: 4.5 + trnd() * 2, seed: 1750 + i, leaf: 0x1e3020 }); k.keepOut.push({ x: Math.sin(a) * r, z: CZ + Math.cos(a) * r, r: 0.9 }); }
     k.skyline({ z: SZ1 - 150, count: 16, spacing: 12, seed: 1724, base: bottom, lit: 0.45, warm: true, scale: 1.3 });
     {
       const NF = 240, fl = k.instances(new T.SphereGeometry(0.06, 5, 4), new T.MeshBasicMaterial({ color: 0xd8ff70 }), Array.from({ length: NF }, () => new T.Matrix4()));
@@ -816,8 +914,89 @@ export const delacorte: RoomDef = {
       k.egg(v(1.2, SY + 5.0, SZ1 + 2.6), { id: 'dc-peppers-ghost', title: "Pepper's ghost", year: '1862', text: 'The pale figure on the balcony is only there from the middle of the house. A sheet of glass leans over the stage and catches a lit figure hidden from the audience, so it seems to stand among the players; step to the side aisles and the reflection misses you. John Henry Pepper showed the trick in London in 1862, in a scene from a Charles Dickens story, and theatres used it for ghosts for the rest of the century.', clue: 'Stand in the centre aisle at the top of the bowl and look at the balcony. Then walk to the side.', source: { name: "Pepper's ghost, Wikipedia", url: 'https://en.wikipedia.org/wiki/Pepper%27s_ghost' } }, { r: 1.8 });
     }
 
+    /* ---- 2026-11-25 entrance pass: what you see from the top of the aisle changes. A lighting bridge of black box truss
+       spans tower to tower over the front of the stage with its lamps and their beams; the set is built out into an
+       Italianate piazza (an arcade of five arches in warm stucco, lit doorways, a cornice, two shuttered houses either side);
+       two strings of festoon lamps swag from the towers to the set. ---- */
+    {
+      const trussM = k.flat(0x1c1e22, 0.75, 0.4), TY = bottom + 11.2, TZ = CZ - 6, TL = 32.6, TW = 0.7;
+      /* the four chords and the lattice on every face, one instanced draw */
+      const bars: T.Matrix4[] = [], q = new T.Quaternion(), e = new T.Euler(), sc3 = new T.Vector3();
+      for (const dy of [-TW / 2, TW / 2]) for (const dz of [-TW / 2, TW / 2]) bars.push(new T.Matrix4().compose(v(0, TY + dy, TZ + dz), q.identity(), sc3.set(TL, 1, 1)));
+      const STEP = 0.7, n = Math.floor(TL / STEP), diag = Math.hypot(STEP, TW);
+      for (let i = 0; i < n; i++) {
+        const x = -TL / 2 + (i + 0.5) * STEP, s = i % 2 ? 1 : -1, a = Math.atan2(TW, STEP) * s;
+        for (const dz of [-TW / 2, TW / 2]) bars.push(new T.Matrix4().compose(v(x, TY, TZ + dz), q.setFromEuler(e.set(0, 0, a)), sc3.set(diag, 1, 1)));
+        for (const dy of [-TW / 2, TW / 2]) bars.push(new T.Matrix4().compose(v(x, TY + dy, TZ), q.setFromEuler(e.set(0, -a, 0)), sc3.set(diag, 1, 1)));
+      }
+      const trussI = k.instances(new T.BoxGeometry(1, 0.07, 0.07), trussM, bars); trussI.castShadow = false;
+      /* the lamps hung under it, pointing at the stage */
+      const lampAt: T.Matrix4[] = [], NL = 20, lampG = new T.CylinderGeometry(0.15, 0.13, 0.42, 10); lampG.rotateX(PI / 2 + 0.7);
+      for (let i = 0; i < NL; i++) lampAt.push(new T.Matrix4().setPosition(-TL / 2 + 1.2 + (i * (TL - 2.4)) / (NL - 1), TY - TW / 2 - 0.3, TZ));
+      const lampsI = k.instances(lampG, k.flat(0x101114, 0.6, 0.5), lampAt); lampsI.castShadow = false;
+      /* their beams: additive cones from eight of the lamps onto the stage, slowly drifting, coloured with the show */
+      const bm = new T.MeshBasicMaterial({ color: 0xffe8c8, transparent: true, opacity: 0.05, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, alphaMap: dcShaftTex() });
+      const bg = new T.CylinderGeometry(0.1, 1.2, 1, 24, 1, true); bg.translate(0, -0.5, 0);
+      const beams: { o: T.Mesh; base: T.Vector3; ph: number; m: T.MeshBasicMaterial }[] = [];
+      [1, 3, 6, 8, 11, 13, 16, 18].forEach((li, j) => {
+        const base = v(-TL / 2 + 1.2 + (li * (TL - 2.4)) / (NL - 1), TY - TW / 2 - 0.45, TZ - 0.15);
+        const m = bm.clone(); const o = k.mesh(bg, m, base.x, base.y, base.z, true); beams.push({ o, base, ph: j * 0.8, m });
+      });
+      const cols = [0xffb070, 0x8fb8ff, 0xffe0a0, 0xd890ff, 0xffe0a0, 0x8fb8ff, 0xffb070, 0xfff4e0];
+      const tgt = new T.Vector3(), dir = new T.Vector3(), down = v(0, -1, 0);
+      const aim = (t: number, on: boolean) => beams.forEach((b, j) => {
+        tgt.set(b.base.x * 0.55 + 2.5 * Math.sin(t * 0.21 + b.ph), SY, SZ0 - 6 + 4 * Math.cos(t * 0.17 + b.ph));
+        dir.copy(tgt).sub(b.base); const len = dir.length(); dir.normalize();
+        b.o.quaternion.setFromUnitVectors(down, dir); b.o.scale.set(1, len, 1);
+        b.m.color.setHex(cols[j]); b.m.opacity = on ? 0.09 : 0.04;
+      });
+      aim(0, showOn());
+      if (!ctx.reduced) k.ticks.push((t) => aim(t, showOn()));
+      /* a sign on the truss, facing the house: the festival's own name, lit */
+      k.box(16.4, 1.3, 0.08, 0, TY + 0.02, TZ + TW / 2 + 0.06, trussM);
+      hsign(k, 'FREE SHAKESPEARE IN THE PARK', 16, 1.1, 0, TY + 0.02, TZ + TW / 2 + 0.11, 0, { fg: '#f2e6c8', bg: '#14100c', border: '#c8a050', size: 0.62, lit: true });
+
+      /* the set as an Italianate piazza: an arcade across the back, stucco and stone trim */
+      const stucco = k.flat(0xc8946a, 0, 0.88), trim = k.flat(0xe6d6b8, 0, 0.8), shut = k.flat(0x3a5a4a, 0, 0.8), roof = k.flat(0x8a3e2a, 0, 0.85);
+      const AZ = SZ1 + 0.9, AH = 7.4, AW = 19.4;
+      {
+        const sh = new T.Shape(); sh.moveTo(-AW / 2, 0); sh.lineTo(AW / 2, 0); sh.lineTo(AW / 2, AH); sh.lineTo(-AW / 2, AH); sh.closePath();
+        for (let i = 0; i < 5; i++) { const cx = -7.6 + i * 3.8, r = 1.3, hh = 2.9; const hole = new T.Path(); hole.moveTo(cx - r, 0.0001); hole.lineTo(cx + r, 0.0001); hole.lineTo(cx + r, hh); hole.absarc(cx, hh, r, 0, PI, false); hole.lineTo(cx - r, 0.0001); sh.holes.push(hole); }
+        const g = new T.ExtrudeGeometry(sh, { depth: 0.45, bevelEnabled: false, curveSegments: 10 }); g.translate(0, 0, -0.45);
+        k.mesh(g, stucco, 0, SY, AZ);
+        /* pilasters between the arches, the cornice, a balustrade on top */
+        const pil: number[][] = []; for (let i = 0; i <= 5; i++) pil.push([-9.5 + i * 3.8, SY + AH / 2, AZ + 0.12]);
+        dcBoxes(k, 0.42, AH, 0.3, trim, pil);
+        k.box(AW + 0.8, 0.36, 0.8, 0, SY + AH + 0.18, AZ - 0.1, trim);
+        k.box(AW + 0.4, 0.16, 0.5, 0, SY + 4.6, AZ + 0.08, trim);
+        /* the upper storey: a lit window over every arch, shutters open */
+        for (let i = 0; i < 5; i++) { const cx = -7.6 + i * 3.8; k.box(1.1, 1.6, 0.06, cx, SY + 5.9, AZ + 0.02, warmWin); for (const d of [-0.82, 0.82]) k.box(0.5, 1.7, 0.06, cx + d, SY + 5.9, AZ + 0.04, shut); k.box(1.5, 0.14, 0.3, cx, SY + 5.0, AZ + 0.12, trim); }
+        k.point(0, SY + 4, AZ + 5, 0xffd8a8, 60, 16, 1.6);
+        const bal: number[][] = []; for (let x = -9.4; x <= 9.41; x += 0.4) bal.push([x, SY + AH + 0.62, AZ - 0.1]);
+        dcBoxes(k, 0.14, 0.5, 0.14, trim, bal); k.box(AW + 0.4, 0.12, 0.34, 0, SY + AH + 0.92, AZ - 0.1, trim);
+        /* light through every arch: a warm lit ground behind */
+        k.box(AW, 4.3, 0.1, 0, SY + 2.15, AZ - 1.6, warmWin);
+        k.point(0, SY + 2.4, AZ - 1.0, 0xffc880, 40, 12, 1.6);
+      }
+      /* two houses either side, stepped forward, shutters and a tiled roof */
+      for (const s of [-1, 1]) {
+        const hx = s * 12.4, hz = SZ1 + 3.2;
+        k.box(5, 7.4, 3, hx, SY + 3.7, hz, stucco);
+        const r = k.box(5.6, 0.3, 3.6, hx, SY + 7.55, hz, roof); r.rotation.z = s * 0.12;
+        k.box(5.3, 0.24, 3.3, hx, SY + 3.6, hz + 0.05, trim);
+        for (const [wx, wy] of [[-1.2, 1.9], [1.2, 1.9], [-1.2, 5.4], [1.2, 5.4]]) { k.box(0.8, 1.3, 0.05, hx + wx, SY + wy, hz + 1.53, warmWin); for (const d of [-0.62, 0.62]) k.box(0.42, 1.4, 0.06, hx + wx + d, SY + wy, hz + 1.56, shut); }
+        k.block(hx - 2.6, hx + 2.6, hz - 1.6, hz + 1.6);
+      }
+      /* festoon lamps: from each tower top down to the set's cornice, and a long swag over the front of the stage */
+      const bulbs: T.Matrix4[] = [];
+      const swag = (a: T.Vector3, b: T.Vector3, sag: number, gap = 0.5) => { const L = a.distanceTo(b), nn = Math.max(2, Math.round(L / gap)); for (let i = 0; i <= nn; i++) { const u = i / nn; bulbs.push(new T.Matrix4().setPosition(a.x + (b.x - a.x) * u, a.y + (b.y - a.y) * u - sag * 4 * u * (1 - u), a.z + (b.z - a.z) * u)); } };
+      for (const s of [-1, 1]) { swag(v(s * 16.6, bottom + 11.9, CZ - 6), v(s * 9.6, SY + AH + 0.4, AZ + 0.3), 1.6); swag(v(s * 16.6, bottom + 11.9, CZ - 6), v(s * 12.4, SY + 7.8, SZ1 + 4.8), 1.0); }
+      swag(v(-9.6, SY + AH + 0.4, AZ + 0.3), v(9.6, SY + AH + 0.4, AZ + 0.3), 1.2);
+      const bulbI = k.instances(new T.OctahedronGeometry(0.13, 0), new T.MeshBasicMaterial({ color: 0xffe2a0 }), bulbs); bulbI.castShadow = false;
+    }
+
     /* ---- what the house knows ---- */
-    const dth = { name: 'Delacorte Theater, Wikipedia', url: 'https://en.wikipedia.org/wiki/Delacorte_Theater' };
+    const dth ={ name: 'Delacorte Theater, Wikipedia', url: 'https://en.wikipedia.org/wiki/Delacorte_Theater' };
     const sip = { name: 'Shakespeare in the Park (New York City), Wikipedia', url: 'https://en.wikipedia.org/wiki/Shakespeare_in_the_Park_(New_York_City)' };
     k.egg(v(0, SY + 1.4, SZ0 - 4), { id: 'delacorte-1962', title: 'The Merchant of Venice, June 1962', year: '1962', text: 'The first production here was The Merchant of Venice in June 1962. George T. Delacorte Jr., the president of Dell Publishing, put up the last 150,000 dollars to finish the theatre, and it was named for him and his wife Valerie.', clue: 'Look at the stage from the front row and think of the first summer it was used.', source: dth }, { r: 3.4 });
     k.egg(v(-6.8, 2.2, LZ1 - 0.7), { id: 'papp-moses', title: 'Grass erosion', year: '1959', text: 'Joseph Papp conceived the festival in 1954. In 1959 the parks commissioner Robert Moses demanded that Papp charge for the performances to pay for grass erosion; Papp fought him in court and won, and Moses then had a theatre built for him in the park.', clue: 'The box office window sells nothing. Ask why.', source: sip }, { r: 1.8 });

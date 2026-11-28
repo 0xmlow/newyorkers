@@ -487,7 +487,9 @@ export const bowbridge: RoomDef = {
       post = k.flat(0x2c3a30, 0.5, 0.5), wood = k.flat(0x6a4a32, 0, 0.8), buff = k.pbr('bbHouse', X.brick(0xc8b08a, 165), 0.9), copper = k.flat(0x5d7f6e, 0.3, 0.6),
       glass = k.glass(0xcfe6f2, 0.3, 0.1), easelWood = k.flat(0x8a6a44, 0, 0.7), canvasBack = k.flat(0xe8e2d4, 0, 0.9), plant = k.flat(0x4a6a2e, 0, 0.9), bloom = k.flat(0xc8402a, 0, 0.8);
     /* ---- the Lake and its banks: water everywhere, land laid on top in pieces so none of it sits under the water ---- */
-    { const w = k.water({ y: -1, color: 0x3a5446, w: 760, d: 720, x: 0, z: -200, amp: 0.12 }); const wm = w.material as T.MeshStandardMaterial; wm.metalness = 0.06; wm.roughness = 0.22; wm.envMapIntensity = 0.35; wm.color.setHex(0x34503f); }
+    /* 2026-11-25 entrance pass: the water lets a little through (no depth write), so the bridge's mirror image under it reads
+       as the reflection the bridge is famous for */
+    { const w = k.water({ y: -1, color: 0x3a5446, w: 760, d: 720, x: 0, z: -200, amp: 0.12 }); const wm = w.material as T.MeshStandardMaterial; wm.metalness = 0.06; wm.roughness = 0.22; wm.envMapIntensity = 0.35; wm.color.setHex(0x34503f); wm.transparent = true; wm.opacity = 0.7; wm.depthWrite = false; }
     const land = (x0: number, x1: number, z0: number, z1: number) => k.box(x1 - x0, 1.6, z1 - z0, (x0 + x1) / 2, -0.8, (z0 + z1) / 2, grass);
     land(-400, -13, -40, -18); land(-400, -20, -18, 400); land(13, 400, -40, -18); land(20, 400, -18, 400); land(-20, 20, 4, 400);
     land(-400, -62, -128, -40); land(44, 400, -128, -40); land(-400, 400, -500, -128);
@@ -500,7 +502,7 @@ export const bowbridge: RoomDef = {
       for (let x = -20; x < 20; x += 2.2) if (x < -7 || x > 17) pts.push([x, 4 + rnd() * 0.5]);
       for (let x = -13; x > -62; x -= 2.6) pts.push([x, -40 - rnd() * 0.5]);
       for (let x = 13; x < 44; x += 2.6) pts.push([x, -40 - rnd() * 0.5]);
-      for (let x = -62; x < 44; x += 3.2) pts.push([x, -128 + rnd() * 0.6]);
+      for (let x = -62, n = 0; x < 44; x += 3.2, n++) { const zz = -128 + rnd() * 0.6; if (n % 2 === 0) pts.push([x, zz]); }   /* 2026-11-25: the far shore, a hundred metres off, every other stone */
       const sizes = pts.map(() => 0.6 + rnd() * 0.9);
       const rocks = k.instances(new T.DodecahedronGeometry(1, 0), schist, pts.map(([x, z], i) => { const s = sizes[i]; return new T.Matrix4().compose(v(x, -0.7 + s * 0.3, z), new T.Quaternion().setFromEuler(new T.Euler(rnd() * 3, rnd() * 3, rnd() * 3)), v(s * 1.3, s * 0.7, s)); }));
       const mark = k.objects.length, big: number[][] = [];
@@ -525,6 +527,8 @@ export const bowbridge: RoomDef = {
     const HALF = 13.3, CROWN = 2.0, BZ = -38, HW = 2.1;
     const deckY = (x: number) => (Math.abs(x) < HALF ? CROWN * (1 - (x / HALF) ** 2) : 0);
     const soffit = (x: number) => -0.72 + (CROWN - 0.55 + 0.72) * Math.max(0, 1 - (x / 11.5) ** 2);
+    const bMark = k.objects.length;
+    let ringsI: T.InstancedMesh | null = null;
     for (let i = 0; i < 27; i++) { const x0 = -HALF + i * (2 * HALF / 27), x1 = x0 + 2 * HALF / 27, xm = (x0 + x1) / 2; const o = k.box(x1 - x0 + 0.04, 0.14, HW * 2, xm, deckY(xm) - 0.07, BZ, planks); o.rotation.z = Math.atan2(deckY(x1) - deckY(x0), x1 - x0); }
     {
       /* the two fascia girders: deck line on top, the arch below, the spandrel between */
@@ -543,7 +547,7 @@ export const bowbridge: RoomDef = {
       /* the interlocking circles of the railing, both sides, following the deck */
       const ringPts: T.Vector3[] = [];
       for (const s of [-1, 1]) for (let x = -HALF + 0.3; x <= HALF - 0.3; x += 0.38) ringPts.push(v(x, deckY(x) + 0.42, BZ + s * HW));
-      k.instances(new T.TorusGeometry(0.27, 0.028, 5, 14), iron, ringPts.map((p) => new T.Matrix4().setPosition(p)));
+      ringsI = k.instances(new T.TorusGeometry(0.27, 0.028, 5, 14), iron, ringPts.map((p) => new T.Matrix4().setPosition(p)));
       for (const s of [-1, 1]) for (const dy of [0.12, 0.74]) { const pts: T.Vector3[] = []; for (let i = 0; i <= 30; i++) { const x = -HALF - 0.4 + (i / 30) * (2 * HALF + 0.8); pts.push(v(x, deckY(x) + dy, BZ + s * HW)); } k.curve(pts, dy > 0.5 ? 0.06 : 0.04, iron, 40); }
       /* eight urns: at each end, on the pedestal at the abutment and on the one where the railing flares out */
       const urn = [[0.0, 0], [0.16, 0.02], [0.1, 0.12], [0.14, 0.2], [0.36, 0.42], [0.42, 0.6], [0.44, 0.64], [0.0, 0.64]];
@@ -557,6 +561,28 @@ export const bowbridge: RoomDef = {
       }
       for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const a = v(sx * HALF, 0.74, BZ + sz * HW), b = v(sx * (HALF + 1.6), 0.74, BZ + sz * (HW + 0.9)); k.beam(a, b, 0.05, iron, 6); k.beam(a.clone().setY(0.12), b.clone().setY(0.12), 0.04, iron, 6); }
     }
+    /* ---- 2026-11-25 entrance pass: the bridge's reflection. Every piece of the bridge above the water is copied, mirrored in
+       the water plane (y -1), into one static mesh per material under the surface; the water over it lets 30 percent through.
+       Pieces that go below the water (the abutments) are mirrored as their dry part only. ---- */
+    {
+      const M = new T.Matrix4().makeScale(1, -1, 1).premultiply(new T.Matrix4().makeTranslation(0, -2, 0));
+      const byMat = new Map<T.Material, T.BufferGeometry[]>();
+      for (const o of k.objects.slice(bMark)) {
+        if (!o.geometry || !o.geometry.attributes || !o.geometry.attributes.position) continue;
+        o.updateMatrixWorld(true);
+        let g = o.geometry.clone(); if (g.index) g = g.toNonIndexed();
+        g.applyMatrix4(o.matrixWorld); g.computeBoundingBox(); if (!g.boundingBox || g.boundingBox.min.y < -1.05) continue;
+        for (const name of Object.keys(g.attributes)) if (name !== 'position' && name !== 'normal' && name !== 'uv') g.deleteAttribute(name);
+        if (!g.attributes.uv) g.setAttribute('uv', new T.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+        g.applyMatrix4(M);
+        const pa = g.attributes.position as T.BufferAttribute, na = g.attributes.normal as T.BufferAttribute, ua = g.attributes.uv as T.BufferAttribute;
+        for (let i = 0; i < pa.count; i += 3) for (const at of [pa, na, ua]) { for (let c = 0; c < at.itemSize; c++) { const t = at.getComponent(i + 1, c); at.setComponent(i + 1, c, at.getComponent(i + 2, c)); at.setComponent(i + 2, c, t); } }
+        const mat = o.material as T.Material; if (!byMat.has(mat)) byMat.set(mat, []); byMat.get(mat)!.push(g);
+      }
+      for (const [mat, gs] of byMat) { const g = mergeGeometries(gs); if (g) { const me = k.mesh(g, mat, 0, 0, 0, true); me.castShadow = false; me.receiveShadow = false; me.userData.noShadow = true; } }
+      for (const s of [-1, 1]) { const me = k.box(2.6, 1, HW * 2 + 1.6, s * (HALF + 0.2), -1.5, BZ, granite); me.castShadow = false; }
+      if (ringsI) { const src = ringsI, m = new T.Matrix4(), p = new T.Vector3(); const at: T.Matrix4[] = []; for (let i = 0; i < src.count; i++) { src.getMatrixAt(i, m); p.setFromMatrixPosition(m); at.push(new T.Matrix4().setPosition(p.x, -2 - p.y, p.z)); } const r = k.instances(src.geometry, src.material as T.Material, at); r.castShadow = false; }
+    }
     /* ---- the willows on the banks ---- */
     /* 2026-10-28: the willows were code (a lathe trunk, a squashed icosahedron crown, 480 instanced box strands); they are
        the tree kit's weeping willow now, instanced, with its own fallback if the file fails */
@@ -568,8 +594,8 @@ export const bowbridge: RoomDef = {
       const tree = (x: number, z: number, h: number, r: number) => { k.tree(x, 0, z, { h, r, kind: 'round', seed: Math.round(x * 7 + z), leaf: fall[Math.floor(rnd() * fall.length)] }); k.keepOut.push({ x, z, r: 0.6 }); };
       for (let i = 0; i < 20; i++) tree(30 + rnd() * 50, -40 + rnd() * 52, 8 + rnd() * 5, 3.2 + rnd() * 1.8);
       for (let i = 0; i < 22; i++) tree(-30 - rnd() * 45, -40 + rnd() * 42, 7 + rnd() * 5, 3 + rnd() * 1.8);
-      for (let i = 0; i < 12; i++) tree(-60 + rnd() * 120, 32 + rnd() * 40, 9 + rnd() * 5, 3.4 + rnd() * 2);
-      for (let i = 0; i < 34; i++) { const x = -220 + i * 13 + rnd() * 6, z = -134 - rnd() * 40; k.tree(x, 0, z, { h: 13 + rnd() * 6, r: 5 + rnd() * 2.4, kind: 'round', seed: i + 300, leaf: fall[Math.floor(rnd() * fall.length)] }); }
+      for (let i = 0; i < 12; i++) { const x = -60 + rnd() * 120, z = 32 + rnd() * 40, h = 9 + rnd() * 5, r = 3.4 + rnd() * 2; if (i % 2) tree(x, z, h, r); }   /* 2026-11-25: half the trees behind the boathouse (behind you now) */
+      for (let i = 0; i < 34; i++) { const x = -220 + i * 13 + rnd() * 6, z = -134 - rnd() * 40, h = 13 + rnd() * 6, r = 5 + rnd() * 2.4, leaf = fall[Math.floor(rnd() * fall.length)]; if (i % 3 !== 2) k.tree(x, 0, z, { h, r: r * 1.15, kind: 'round', seed: i + 300, leaf }); }   /* 2026-11-25: two in three on the far shore, a little fuller */
       for (let i = 0; i < 12; i++) { const s = i % 2 ? 1 : -1; k.tree(s * (62 + rnd() * 50), 0, -48 - rnd() * 75, { h: 11 + rnd() * 5, r: 4.4 + rnd() * 2, kind: 'round', seed: i + 400, leaf: fall[Math.floor(rnd() * fall.length)] }); }
     }
     /* ---- Central Park West over the trees: the San Remo's twin temples, the Dakota's roofs, the rest of the wall ---- */
@@ -725,6 +751,9 @@ export const bowbridge: RoomDef = {
       /* Central Park benches along the shore path, facing the water (our cp_bench model) */
       place(k, 'cp_bench', { width: 1.9 }, [[-15, 0, 5.7, PI], [-10, 0, 5.7, PI], [20.5, 0, 5.7, PI], [25.5, 0, 5.7, PI]]);
       for (const x of [-15, -10, 20.5, 25.5]) k.block(x - 1, x + 1, 5.3, 6.1);
+      /* 2026-11-25 entrance pass: Central Park lampposts (our cp_gaslamp model) where the paths reach the bridge, in the entrance view */
+      place(k, 'cp_gaslamp', { height: 4.0 }, [[-17.2, 0, -33.4, 0.6], [17.2, 0, -33.4, -0.6], [-21.6, 0, -24.6, 0]]);
+      for (const [x, z] of [[-17.2, -33.4], [17.2, -33.4], [-21.6, -24.6]]) k.keepOut.push({ x, z, r: 0.5 });
       /* a park sign on two posts by the path */
       for (const dx of [-0.75, 0.75]) k.box(0.1, 1.5, 0.1, -6 + dx, 0.75, 5.9, wood);
       w8Sign(k, 'BOW BRIDGE  ·  THE LAKE  ·  THE RAMBLE', 1.9, 0.42, -6, 1.3, 5.96, 0, '#f2ead8', '#4a3220', 'W2 Archivo Expanded', false, '#d8c8a8', 0.52);
@@ -740,20 +769,31 @@ export const bowbridge: RoomDef = {
        From where you come in the picture lines up with the lake and the bridge and all but disappears; step to one side
        and it is a painting on an easel again. The picture is the scene itself, drawn from the visitor's eye through the
        canvas's own frame every four seconds, so the boats in it move on a little late. ---- */
+    /* 2026-11-25 entrance pass: the canvas moved with the spawn to the west bank and turned to its view; it frames the east
+       end of the bridge and the lake behind, a little right of centre, on a dark easel with a thin frame (the wide white
+       border read as an empty frame in the middle of the old entrance) */
+    const SPAWN = v(-17.5, 3, -19), LOOK = v(1, 0.8, -38);
     {
-      const E = v(0, 3, 8), CX = -0.9, CY = 2.5, CZ = 5.0, CW = 1.8, CH = 1.2;
-      for (const s of [-1, 1]) k.beam(v(CX + s * 0.06, CY + CH / 2 + 0.25, CZ - 0.1), v(CX + s * 0.62, 0, CZ - 0.3), 0.035, easelWood, 5);
-      k.beam(v(CX, CY + CH / 2 + 0.25, CZ - 0.12), v(CX, 0, CZ - 1.1), 0.035, easelWood, 5);
-      k.box(CW + 0.2, 0.06, 0.16, CX, CY - CH / 2 - 0.05, CZ + 0.04, easelWood);
-      k.box(CW + 0.08, CH + 0.08, 0.04, CX, CY, CZ - 0.03, canvasBack);
-      k.keepOut.push({ x: CX, z: CZ - 0.2, r: 0.8 });
+      const E = SPAWN, Y = Math.atan2(-(LOOK.x - E.x), -(LOOK.z - E.z)), OX = 1.25, OY = -0.45, DIST = 3.4, CW = 1.5, CH = 1.0;
+      const R = new T.Matrix4().makeRotationY(Y), fwd = v(0, 0, -1).applyMatrix4(R), right = v(1, 0, 0).applyMatrix4(R);
+      const C = E.clone().addScaledVector(right, OX).addScaledVector(fwd, DIST); C.y = E.y + OY;
+      const CX = C.x, CY = C.y, CZ = C.z;
+      const g = new T.Group(); g.position.copy(C); g.rotation.y = Y; k.add(g);
+      const darkWood = k.flat(0x3a2a1c, 0, 0.7), frameM = k.flat(0x2a1c12, 0.2, 0.5);
+      const leg = (x0: number, z0: number) => { const a = v(x0, -CY, z0), b = v(x0 * 0.12, CH / 2 + 0.25, -0.08), d = b.clone().sub(a), o = new T.Mesh(new T.CylinderGeometry(0.03, 0.035, d.length(), 6), darkWood); o.position.copy(a).add(b).multiplyScalar(0.5); o.quaternion.setFromUnitVectors(v(0, 1, 0), d.normalize()); g.add(o); };
+      leg(-0.6, -0.2); leg(0.6, -0.2); leg(0, -1.0);
+      { const sh = new T.Mesh(new T.BoxGeometry(CW + 0.2, 0.05, 0.14), darkWood); sh.position.set(0, -CH / 2 - 0.05, 0.04); g.add(sh); }
+      for (const [w, h, x, y] of [[CW + 0.06, 0.03, 0, CH / 2 + 0.015], [CW + 0.06, 0.03, 0, -CH / 2 - 0.015], [0.03, CH, -CW / 2 - 0.015, 0], [0.03, CH, CW / 2 + 0.015, 0]]) { const f = new T.Mesh(new T.BoxGeometry(w, h, 0.04), frameM); f.position.set(x, y, -0.01); g.add(f); }
+      { const back = new T.Mesh(new T.BoxGeometry(CW, CH, 0.02), darkWood); back.position.z = -0.03; g.add(back); }
+      g.traverse((o) => { o.castShadow = false; });
+      k.keepOut.push({ x: CX, z: CZ, r: 0.8 });
       if (W8_DOM && k.o.renderer) {
         const hi = k.o.quality === 'high', rt = new T.WebGLRenderTarget(hi ? 768 : 384, hi ? 512 : 256, { type: T.HalfFloatType, colorSpace: T.LinearSRGBColorSpace });
-        const near = CZ - E.z < 0 ? E.z - CZ : CZ - E.z;
-        const cam = new T.PerspectiveCamera(); cam.position.copy(E); cam.updateMatrixWorld();
+        const near = DIST;
+        const cam = new T.PerspectiveCamera(); cam.position.copy(E); cam.rotation.set(0, Y, 0); cam.updateMatrixWorld();
         /* the near plane sits a metre behind the canvas so the easel itself never gets into its own picture */
-        const f = (near + 1) / near; cam.projectionMatrix.makePerspective((CX - CW / 2 - E.x) * f, (CX + CW / 2 - E.x) * f, (CY + CH / 2 - E.y) * f, (CY - CH / 2 - E.y) * f, near + 1, 3000); cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
-        const pic = k.mesh(new T.PlaneGeometry(CW, CH), new T.MeshBasicMaterial({ map: rt.texture, color: 0x000000 }), CX, CY, CZ, true);
+        const f = (near + 1) / near; cam.projectionMatrix.makePerspective((OX - CW / 2) * f, (OX + CW / 2) * f, (OY + CH / 2) * f, (OY - CH / 2) * f, near + 1, 3000); cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+        const pic = new T.Mesh(new T.PlaneGeometry(CW, CH), new T.MeshBasicMaterial({ map: rt.texture, color: 0x000000 })); g.add(pic);
         const r = k.o.renderer; let last = -9, shown = false;
         k.ticks.push((t) => {
           if (t - last < (hi ? 4 : 6) || t < 2.5) return;
@@ -765,7 +805,7 @@ export const bowbridge: RoomDef = {
           if (!shown) { shown = true; (pic.material as T.MeshBasicMaterial).color.set(0xffffff); }
         });
       }
-      k.egg(v(CX, CY, CZ + 0.3), { id: 'bow-magritte', title: 'The painting that is a window', year: '1933', text: 'The canvas on the easel by the path is painted with exactly what stands behind it, so from where you come in it lines up with the lake and the bridge and almost disappears. Step to one side and it is a painting again. René Magritte set up the same puzzle in The Human Condition of 1933: a painting on an easel in front of a window, showing exactly the landscape it hides.', clue: 'Stand where you came in and look for the edge of the picture.', source: { name: 'The Human Condition (Magritte), Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Human_Condition_(Magritte)' } }, { r: 1.2 });
+      k.egg(v(CX, CY + 0.8, CZ), { id: 'bow-magritte', title: 'The painting that is a window', year: '1933', text: 'The canvas on the easel by the path is painted with exactly what stands behind it, so from where you come in it lines up with the lake and the bridge and almost disappears. Step to one side and it is a painting again. René Magritte set up the same puzzle in The Human Condition of 1933: a painting on an easel in front of a window, showing exactly the landscape it hides.', clue: 'Stand where you came in and look for the edge of the picture.', source: { name: 'The Human Condition (Magritte), Wikipedia', url: 'https://en.wikipedia.org/wiki/The_Human_Condition_(Magritte)' } }, { r: 1.2 });
     }
     /* ---- what the Lake knows ---- */
     const src = { name: 'Bow Bridge (Central Park), Wikipedia', url: 'https://en.wikipedia.org/wiki/Bow_Bridge_(Central_Park)' };
@@ -776,6 +816,8 @@ export const bowbridge: RoomDef = {
     k.egg(v(15, 4.2, 10.5), { id: 'loeb-1954', title: 'The boathouse', year: '1954', text: 'The Loeb Boathouse on the eastern shore of the Lake was completed in 1954, paid for by the businessman Carl M. Loeb. It rents rowboats, and it has had a restaurant since 1983.', clue: 'Every boat on the water started at the dock behind you.', source: lake }, { r: 2.2 });
     k.egg(v(22, 100, -430), { id: 'san-remo-1930', title: 'Two temples on Central Park West', year: '1930', text: 'Emery Roth\'s San Remo was completed on September 21, 1930: 27 stories and 400 feet, the earliest apartment building on Central Park West built with twin towers. Each tower is topped by a Corinthian temple patterned after the Choragic Monument of Lysicrates in Athens. It became a city landmark in 1987.', clue: 'Look over the trees to the west for two little Greek temples in the sky.', source: { name: 'The San Remo, Wikipedia', url: 'https://en.wikipedia.org/wiki/The_San_Remo' } }, { r: 18 });
     const floorY = (x: number, z: number) => (z > BZ - HW - 0.5 && z < BZ + HW + 0.5 ? deckY(x) : 0);
-    return { mounts, spawn: v(0, 3, 8), look: v(0, 3.4, BZ), eye: 3, floorY, bounds: [-45, 45, -40, 30], style: 'oak' };
+    /* 2026-11-25 entrance pass: you come in on the west bank by the bridge, the view everyone paints, the arch and its
+       reflection big in front of you (was the boathouse shore, 46 m off, with the canvas in the middle) */
+    return { mounts, spawn: SPAWN, look: LOOK, eye: 3, floorY, bounds: [-45, 45, -40, 30], style: 'oak' };
   },
 };

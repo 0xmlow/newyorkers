@@ -549,6 +549,112 @@ export const greenacre: RoomDef = {
 };
 
 /* ---------------- 130 PALEY PARK ---------------- */
+/* ---------- 2026-11-25 entrance pass (paley only) ----------
+   The honey locusts: one instanced wood mesh (trunk, five limbs, twigs) and one instanced lace of compound leaf cards, high
+   and thin, swaying in the vertex shader; leaves keep clear of the frames on both walls. The water wall gets its sheet: two
+   layers of falling white water sliding at different speeds over the whole face, and the bright lip where it pours over. */
+function ppLocusts(k: Kit, ctx: RoomCtx, grid: [number, number][], F: number) {
+  const rnd = X.mulberry(5301);
+  /* the wood: one template, every tree an instance at its own turn and size */
+  const parts: T.BufferGeometry[] = [];
+  const trunk = new T.CylinderGeometry(0.15, 0.24, 4.6, 9, 4); trunk.translate(0, 2.3, 0);
+  { const pp = trunk.attributes.position; for (let i = 0; i < pp.count; i++) { const y = pp.getY(i); pp.setX(i, pp.getX(i) + Math.sin(y * 1.3) * 0.05); pp.setZ(i, pp.getZ(i) + Math.cos(y * 0.9) * 0.04); } }
+  parts.push(trunk.toNonIndexed());
+  const tips: T.Vector3[] = [];
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * PI * 2 + rnd() * 0.5, y0 = 3.6 + rnd() * 0.8, out = 2.0 + rnd() * 0.9, y1 = 7.4 + rnd() * 1.8;
+    const p0 = v(0, y0, 0), p1 = v(Math.cos(a) * out * 0.45, y0 + (y1 - y0) * 0.45, Math.sin(a) * out * 0.45), p2 = v(Math.cos(a) * out, y1, Math.sin(a) * out);
+    parts.push(new T.TubeGeometry(new T.CatmullRomCurve3([p0, p1, p2]), 10, 0.085, 5).toNonIndexed());
+    for (let j = 0; j < 2; j++) { const b = (j ? 0.5 : -0.5) + (rnd() - 0.5) * 0.4, q = p1.clone().lerp(p2, 0.4 + rnd() * 0.3), t2 = v(Math.cos(a + b) * (out + 0.8), y1 + 0.6 + rnd() * 1.2, Math.sin(a + b) * (out + 0.8)); parts.push(new T.TubeGeometry(new T.CatmullRomCurve3([q, q.clone().lerp(t2, 0.5).add(v(0, 0.3, 0)), t2]), 6, 0.035, 4).toNonIndexed()); tips.push(t2); }
+    tips.push(p2);
+  }
+  const wood = mergeGeometries(parts)!;
+  const barkM = k.pbr('ppLocustBark', X.bark(0x6e655c), 0.45, { roughness: 0.95 });
+  const turns = grid.map(() => rnd() * PI * 2), sizes = grid.map(() => 0.92 + rnd() * 0.16);
+  const wm = k.instances(wood, barkM, grid.map(([x, z], i) => new T.Matrix4().compose(v(x, F, z), new T.Quaternion().setFromAxisAngle(v(0, 1, 0), turns[i]), v(sizes[i], sizes[i], sizes[i]))));
+  wm.castShadow = true; wm.userData.keepShadow = true;
+  for (const [x, z] of grid) k.keepOut.push({ x, z, r: 0.45 });
+  if (typeof document === 'undefined') return;
+  /* the leaves: a card is a twig spray of eight or nine compound leaves, each of tiny paired leaflets, so a card reads as a soft clump */
+  const tex = paintTex(256, 256, (g, w, h) => {
+    g.clearRect(0, 0, w, h);
+    const r2 = X.mulberry(5302);
+    for (let sp = 0; sp < 2; sp++) {
+      const bx = w * (0.38 + sp * 0.24), by = h * (0.92 - sp * 0.08), tw = -0.2 + sp * 0.4;
+      g.strokeStyle = 'rgba(78,70,46,1)'; g.lineWidth = 2.2; g.beginPath(); g.moveTo(bx, by); g.lineTo(bx + Math.sin(tw) * 70, by - 80); g.stroke();
+      const nl = 8 + Math.floor(r2() * 2);
+      for (let n = 0; n < nl; n++) {
+        const ang = -PI / 2 + tw + (n / (nl - 1) - 0.5) * 2.3 + (r2() - 0.5) * 0.2, t0 = 0.3 + r2() * 0.7;
+        const x0 = bx + Math.sin(tw) * 70 * t0, y0 = by - 80 * t0, len = 60 + r2() * 34, ca = Math.cos(ang), sa = Math.sin(ang);
+        g.strokeStyle = 'rgba(96,110,52,1)'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x0 + ca * len, y0 + sa * len); g.stroke();
+        const np = 8 + Math.floor(r2() * 3);
+        for (let i = 1; i <= np; i++) { const t = (i / (np + 0.6)) * len, px = x0 + ca * t, py = y0 + sa * t, sz = 1 - 0.35 * Math.abs(i / np - 0.45);
+          for (const sd of [-1, 1]) { const lx = px - sa * sd * 5.2, ly = py + ca * sd * 5.2, l = 0.8 + r2() * 0.35;
+            g.fillStyle = `rgb(${(132 * l) | 0},${(178 * l) | 0},${(62 * l) | 0})`; g.beginPath(); g.ellipse(lx, ly, 4.6 * sz, 2.1 * sz, ang + sd * 0.9, 0, PI * 2); g.fill(); } }
+        g.fillStyle = 'rgb(140,184,66)'; g.beginPath(); g.ellipse(x0 + ca * (len + 3), y0 + sa * (len + 3), 4.2, 2.0, ang, 0, PI * 2); g.fill();
+      }
+    }
+  });
+  const leafM = new T.MeshStandardMaterial({ map: tex, alphaTest: 0.45, side: T.DoubleSide, roughness: 0.75, color: 0xffffff, emissive: 0x2a3a10, emissiveMap: tex, emissiveIntensity: 0.55 });
+  const uT = { value: 0 };
+  leafM.onBeforeCompile = (sh) => {
+    sh.uniforms.uT = uT;
+    sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n#ifdef USE_INSTANCING\n vec3 ip = vec3(instanceMatrix[3][0], instanceMatrix[3][1], instanceMatrix[3][2]);\n float sw = sin(uT * 1.1 + ip.x * 0.8 + ip.z * 0.6) * 0.05 + sin(uT * 2.7 + ip.y * 1.7 + ip.x) * 0.025;\n transformed.x += sw; transformed.z += sw * 0.6;\n#endif');
+  };
+  leafM.customProgramCacheKey = () => 'ppLocustLeaf';
+  const card = new T.PlaneGeometry(0.9, 0.9), mats: T.Matrix4[] = [], q = new T.Quaternion(), e = new T.Euler(), c = new T.Color();
+  const cols: number[] = [];
+  grid.forEach(([tx, tz], ti) => {
+    let n = 0, guard = 0;
+    while (n < 520 && guard++ < 4000) {
+      const a = rnd() * PI * 2, u = Math.sqrt(rnd()), dy = rnd() * 2 - 1;
+      const r = 3.1 * u * (0.75 + 0.25 * (1 - dy * dy)), y = F + 8.6 + dy * (dy < 0 ? 1.6 : 2.4) * (0.6 + 0.4 * (1 - u)) - u * u * 0.9;
+      const x = tx + Math.cos(a) * r, z = tz + Math.sin(a) * r;
+      if (y < F + 5.4) continue;
+      if (Math.abs(x) > (y < F + 8.0 ? 5.3 : 6.2)) continue;
+      if (z < -14.4 || z > 15.2) continue;
+      q.setFromEuler(e.set(-0.9 + rnd() * 0.9, rnd() * PI * 2, (rnd() - 0.5) * 0.6, 'YXZ'));
+      const s = 0.8 + rnd() * 0.5;
+      mats.push(new T.Matrix4().compose(v(x, y, z), q, v(s, s, s)));
+      cols.push(rnd() < 0.18 ? 0xf0f4c0 : rnd() < 0.5 ? 0xd8ecb0 : 0xe8f4c8);
+      n++;
+    }
+    void ti;
+  });
+  const lm = k.instances(card, leafM, mats);
+  cols.forEach((h, i) => lm.setColorAt(i, c.set(h)));
+  if (lm.instanceColor) lm.instanceColor.needsUpdate = true;
+  /* the leaves neither cast nor take real shadows (their shadow drew whole cards dark); the room's sun dapple does that work */
+  lm.castShadow = lm.receiveShadow = false; lm.userData.noShadow = true; lm.frustumCulled = false;
+  k.ticks.push((t) => { if (lm.receiveShadow || lm.castShadow) lm.castShadow = lm.receiveShadow = false; if (!ctx.reduced) uT.value = t; });
+}
+function ppFalls(k: Kit, ctx: RoomCtx, p: { x: number; z: number; w: number; h: number; base: number }) {
+  if (typeof document === 'undefined') return;
+  const { x, z, w, h, base } = p;
+  const sheetTex = (seed: number, n: number) => {
+    const t = paintTex(256, 512, (g, W, H) => {
+      g.clearRect(0, 0, W, H);
+      g.fillStyle = 'rgba(220,236,244,0.22)'; g.fillRect(0, 0, W, H);
+      const r2 = X.mulberry(seed);
+      for (let i = 0; i < n; i++) {
+        const sx = r2() * W, len = 60 + r2() * 260, sy = r2() * H, wd = 0.8 + r2() * 3.4, a = 0.25 + r2() * 0.7;
+        for (const off of [-H, 0, H]) { const gr = g.createLinearGradient(0, sy + off, 0, sy + off + len); if (gr && gr.addColorStop) { gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.3, `rgba(250,253,255,${a})`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(sx, sy + off, wd, len); } }
+      }
+    });
+    t.wrapS = t.wrapT = T.RepeatWrapping;
+    return t;
+  };
+  const layers = [{ t: sheetTex(5311, 520), sp: 0.55, o: 0.78, dz: 0.445, rep: 3.2 }, { t: sheetTex(5312, 300), sp: 0.85, o: 0.55, dz: 0.452, rep: 2.1 }].map((L) => {
+    L.t.repeat.set(L.rep, 1.15);
+    const m = new T.MeshBasicMaterial({ map: L.t, color: 0xf2f9fc, transparent: true, opacity: L.o, depthWrite: false, side: T.DoubleSide, fog: false });
+    const o = k.mesh(new T.PlaneGeometry(w, h - 0.15), m, x, base + h / 2 - 0.05, z + L.dz, true); o.renderOrder = 1; o.userData.noShadow = true;
+    return { ...L, m };
+  });
+  /* the lip where the water pours over the top, and a cool wash of light up its face */
+  k.box(w, 0.1, 0.14, x, base + h - 0.06, z + 0.47, k.glow(0xf4fbff, 0.95));
+  k.spot(x, base + 0.6, z + 5.5, x, base + h * 0.6, z, 0xe4f2ff, 60, 0.75, 0.8, 16);
+  if (!ctx.reduced) k.ticks.push((_t, dt) => { const d = Math.min(dt, 0.1); for (const L of layers) L.t.offset.y = (L.t.offset.y + d * L.sp) % 1; });
+}
 export const paley: RoomDef = {
   id: 'paley',
   name: 'Seventeen honey locusts',
@@ -598,6 +704,7 @@ export const paley: RoomDef = {
     k.box(0.06, 0.06, 2.2, 6.5, 2.85, 16.3, bronze);
     // the water wall across the whole back
     waterWall(k, ctx, { x: 0, z: -15.4, w: 13.4, h: 6.2, pool: 1.6, base: F });
+    ppFalls(k, ctx, { x: 0, z: -15.4, w: 13.4, h: 6.2, base: F });
     /* 2026-11-24 (wave 7c): the vertical lawns given depth, leaves standing off both walls and clear of every frame */
     const lo = [13, 8.6, 4.2, -0.2, -4.6, -9], hi = [10.8, 6.4, 2, -2.4, -6.8];
     const clear = (y: number, z: number) => (Math.abs(y - (F + 3.3)) < 1.3 && lo.some((m) => Math.abs(z - m) < 1.7)) || (Math.abs(y - (F + 6.0)) < 1.15 && hi.some((m) => Math.abs(z - m) < 1.55));
@@ -627,8 +734,12 @@ export const paley: RoomDef = {
       });
     } else ghostM.opacity = 0.35;
     // seventeen honey locusts on the grid: three files, six ranks, one rank short where the kiosk stands
-    let seed = 20;
-    for (const x of [-4.0, 0, 4.0]) for (const z of [12, 7.5, 3, -1.5, -6, -10.5]) { if (x < -3 && z === 12) continue; locust(k, x, F, z, 13.5, 1.6, seed++, 0xa4c65e); }
+    /* 2026-11-25 entrance pass: the seventeen are real honey locusts now, built for this park: clear trunks to four and a half
+       metres, limbs that open like a vase, and a high lace of tiny paired leaflets that lets the sun through (the kit trees were a
+       mix of species with leaf cards at eye level in front of the water wall) */
+    const grid: [number, number][] = [];
+    for (const x of [-4.0, 0, 4.0]) for (const z of [12, 7.5, 3, -1.5, -6, -10.5]) { if (x < -3 && z === 12) continue; grid.push([x, z]); }
+    ppLocusts(k, ctx, grid, F);
     // the kiosk by the entrance
     const KX = -4.9, KZ = 13.4;
     k.box(3.4, 2.6, 2.6, KX, F + 1.3, KZ, k.flat(0x2a3a34, 0.3, 0.6));
@@ -668,7 +779,8 @@ export const paley: RoomDef = {
       for (let i = 0; i < 5; i++) { const z = 10.8 - i * 4.4; mounts.push({ position: v(s * 6.45, F + 6.0, z), rotation: s < 0 ? PI / 2 : -PI / 2, target: v(s * 3.3, 3, z), width: 2.7, height: 1.9, style: 'black', wash: false }); }
     }
     return {
-      mounts, spawn: v(1.5, 3, 19.8), look: v(0.3, 4.2, -15.4), eye: 3, bounds: [-6.2, 6.2, -13.2, 22], style: 'black',
+      /* 2026-11-25: on the axis between two files of trunks, so the water wall is the first thing seen */
+      mounts, spawn: v(2.0, 3, 19.8), look: v(1.4, 3.9, -15.4), eye: 3, bounds: [-6.2, 6.2, -13.2, 22], style: 'black',
       floorY: (_x, z) => (z <= 15 ? F : z < 16.8 ? F - ((z - 15) / 1.8) * (F - 0.14) : 0.14),
     };
   },
@@ -947,7 +1059,7 @@ export const kings: RoomDef = {
       neon = k.glow(0xff4a3a),
       warm = k.glow(0xffe0b0),
       glassW = k.glass(0xffe0b0, 0.3, 0.1),
-      mirror = k.flat(0x5c646c, 1, 0.12),
+      mirror = k.flat(0x5c646c, 1, 0.12),   // 2026-11-25: darker antique glass; brighter, it read as a white blob at the end of the first view
       walnut = sc(k, 'kingsfoyer', 'walnut', 1.6, () => X.planks(0x4a2c1a, 8, 119), { roughness: 0.45, color: 0xb08a6a }, 0x4a2c1a),
       redMarble = k.pbr('ktRedMarble', X.marble(0x8a2a26, 0x3a1010, 118), 0.4, { roughness: 0.25 }),
       tileP = k.pbr('ktTileP', X.marble(0xe2b4ac, 0xa07070, 120), 0.5, { roughness: 0.3 });
@@ -966,7 +1078,7 @@ export const kings: RoomDef = {
     for (let x = -20; x <= 20; x += 5) k.box(1.2, 18, 0.6, x, 15, FZ + 0.3, terra);
     k.arch(10, 9, 0.8, 0, 9, FZ + 0.4, terra, false, 0.7);
     k.box(9.6, 8.6, 0.1, 0, 13.4, FZ + 0.2, warm); for (const x of [-3.2, 0, 3.2]) k.box(0.3, 8.6, 0.2, x, 13.4, FZ + 0.28, terra); for (const y of [11, 13.8, 16.6]) k.box(9.6, 0.3, 0.2, 0, y, FZ + 0.28, terra); k.point(0, 13, FZ + 3, 0xffd9a0, 30, 16);
-    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], 44.4, 0, 23, FZ + 0.05, terra, 0);
+    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], 44.4, 0, 23, FZ + 0.05, terra, -PI / 2);   // 2026-11-25: at 0 it ran 22 m out over Flatbush and back through the foyer roof
     for (let i = 0; i < 5; i++) { const ch = 'KINGS'[i], y = 22 - i * 2.5; k.box(2.6, 2.4, 1.0, -17, y, FZ + 3.4, dark); k.sign(ch, 2.2, 2.1, -17, y, FZ + 3.92, '#14090a', '#ff5a4a', 170, 0); k.sign(ch, 2.2, 2.1, -17, y, FZ + 2.88, '#14090a', '#ff5a4a', 170, PI); }
     for (const dx of [-1.4, 1.4]) k.mesh(new T.BoxGeometry(0.08, 13, 0.08), neon, -17 + dx, 17, FZ + 3.4);
     k.point(-17, 17, FZ + 6, 0xff5a4a, 50, 24);
@@ -1113,7 +1225,77 @@ export const kings: RoomDef = {
       k.ticks.push(() => { const c = cam(); if (!c) return; for (const g of masks) { tgt.copy(c.position); const a = Math.atan2(tgt.x - g.position.x, tgt.z - g.position.z), want = Math.max(-PI / 2 - 1.1, Math.min(-PI / 2 + 1.1, a)); g.rotation.y += (want - g.rotation.y) * 0.12; g.rotation.x = Math.max(-0.4, Math.min(0.4, -Math.atan2(tgt.y - g.position.y, Math.hypot(tgt.x - g.position.x, tgt.z - g.position.z)))) * 0.6; } });
     }
     k.egg(v(13.4, 9.3, -12), { id: 'hollowface', title: 'The masks that watch you', text: 'A hollow mask seen from inside reads as a face standing out, because the brain expects faces to be convex, and when you walk past it seems to turn and follow you. Psychologists call it the hollow face illusion; Richard Gregory used it to argue that what we see is a best guess.', clue: 'Walk past the arch and keep an eye on the two faces above it.', source: { name: 'Wikipedia, Hollow-Face illusion', url: 'https://en.wikipedia.org/wiki/Hollow-Face_illusion' } }, { r: 1.4 });
-    k.sign('KINGS', 3, 0.7, 0, RISE + 9.4, Z1 + 0.32, 'transparent', '#f0e0b0', 130, 0);
+    k.sign('KINGS', 3, 0.7, 0, RISE + 9.4, Z1 + 0.36, 'transparent', '#f0e0b0', 130, 0);
+    /* ---- 2026-11-25 entrance pass: what the first look shows ----
+       The cream upper walls become Versailles: arched mirrors of gilt framed panes in the bays without works (the Hall of
+       Mirrors the Rapps drew on), crimson silk damask behind the upper works and across the landing wall, a mirror over
+       each side of the stair; the coffers painted blue, ochre and red round their rosettes; brass nosings on every step. */
+    {
+      const damask = HAS_DOM ? (() => {
+        const t = paintTex(256, 256, (g, w) => {
+          g.fillStyle = '#6e111c'; g.fillRect(0, 0, w, w);
+          const motif = (cx: number, cy: number, sc3: number, col: string) => {
+            g.fillStyle = col; g.save(); g.translate(cx, cy); g.scale(sc3, sc3);
+            g.beginPath(); g.moveTo(0, -60); g.bezierCurveTo(26, -40, 34, -10, 0, 8); g.bezierCurveTo(-34, -10, -26, -40, 0, -60); g.fill();
+            for (const sx of [-1, 1]) { g.beginPath(); g.moveTo(0, 6); g.bezierCurveTo(sx * 40, 0, sx * 52, 30, sx * 20, 50); g.bezierCurveTo(sx * 30, 26, sx * 18, 18, 0, 22); g.fill(); }
+            g.beginPath(); g.arc(0, 34, 9, 0, PI * 2); g.fill(); g.fillRect(-3, 40, 6, 22);
+            g.restore();
+          };
+          motif(128, 120, 1.15, '#8e2430'); motif(128, 120, 0.8, '#b0863e');
+          for (const [x, y] of [[0, 0], [256, 0], [0, 256], [256, 256]]) motif(x, y - 8, 0.62, '#8e2430');
+        });
+        t.wrapS = t.wrapT = T.RepeatWrapping; const m = new T.MeshStandardMaterial({ map: t, roughness: 0.55, metalness: 0.08, color: 0xffffff });
+        /* Firefly's woven damask (FIREFLY_QUEUE.md) replaces the painted one when the file exists */
+        texL?.load('assets/museum/tex/kingsfoyer/ff_kings_damask.webp', (ff) => { if (!k.live) { ff.dispose(); return; } ff.colorSpace = T.SRGBColorSpace; ff.wrapS = ff.wrapT = T.RepeatWrapping; ff.anisotropy = 8; m.map = ff; m.needsUpdate = true; }, undefined, () => {});
+        return m;
+      })() : k.flat(0x6e111c, 0.05, 0.6);
+      /* a damask panel w by h, the pattern a metre and a quarter across, framed in gilt bars */
+      const dPanel = (w: number, h: number, x: number, y: number, z: number, rotY: number, frame = true) => {
+        const g = new T.PlaneGeometry(w, h), uv = g.attributes.uv as T.BufferAttribute;
+        for (let i = 0; i < uv.count; i++) uv.setXY(i, (uv.getX(i) * w) / 1.25, (uv.getY(i) * h) / 1.25);
+        const o = k.mesh(g, damask, x, y, z); o.rotation.y = rotY; o.castShadow = false;
+        if (frame) { const f = new T.Group(); f.position.set(x, y, z); f.rotation.y = rotY; for (const [fw, fh, fx, fy] of [[w + 0.24, 0.12, 0, h / 2], [w + 0.24, 0.12, 0, -h / 2], [0.12, h, -w / 2, 0], [0.12, h, w / 2, 0]]) { const b = new T.Mesh(new T.BoxGeometry(fw, fh, 0.08), gilt); b.position.set(fx, fy, 0.03); b.castShadow = false; f.add(b); } k.add(f); }
+      };
+      for (const s of [-1, 1]) for (const z of [-5.25, -16.25]) dPanel(4.3, 6.4, s * 13.67, 10.7, z, s < 0 ? PI / 2 : -PI / 2);
+      for (const s of [-1, 1]) dPanel(12.2, 6.9, s * 13.67, 11.6, -31.4, s < 0 ? PI / 2 : -PI / 2);
+      dPanel(27.2, 10.6, 0, RISE + 5.55, Z1 + 0.31, 0, false);
+      for (const y of [RISE + 0.3, RISE + 10.8]) k.box(27.4, 0.16, 0.1, 0, y, Z1 + 0.35, gilt);
+      /* arched mirrors, each of gilt framed panes, one instanced set: local x along the wall, y up from the sill */
+      const MW = 4, MR = 2, MH = 4;
+      const outline: T.Vector3[] = [v(-MW / 2, 0, 0), v(-MW / 2, MH, 0)];
+      for (let i = 1; i < 24; i++) { const a = PI - (i / 24) * PI; outline.push(v(Math.cos(a) * MR, MH + Math.sin(a) * MR, 0)); }
+      outline.push(v(MW / 2, MH, 0), v(MW / 2, 0, 0));
+      const ms = new T.Shape(); ms.moveTo(-MW / 2, 0); ms.lineTo(MW / 2, 0); ms.lineTo(MW / 2, MH); ms.absarc(0, MH, MR, 0, PI, false); ms.lineTo(-MW / 2, 0);
+      const glassG = new T.ShapeGeometry(ms, 20);
+      const bars: T.BufferGeometry[] = [new T.TubeGeometry(new T.CatmullRomCurve3(outline, false, 'catmullrom', 0.05), 60, 0.13, 6, false), new T.BoxGeometry(MW + 0.5, 0.26, 0.2).translate(0, -0.1, 0.02)];
+      for (const x of [-1, 0, 1]) { const top = MH + Math.sqrt(MR * MR - x * x); bars.push(new T.BoxGeometry(0.05, top, 0.05).translate(x, top / 2, 0.03)); }
+      for (const y of [1, 2, 3, 4]) bars.push(new T.BoxGeometry(MW, 0.05, 0.05).translate(0, y, 0.03));
+      bars.push(new T.SphereGeometry(0.22, 10, 8).translate(0, MH + MR + 0.22, 0.05), new T.ConeGeometry(0.12, 0.5, 8).translate(0, MH + MR + 0.62, 0.05));
+      for (const sx of [-1, 1]) bars.push(new T.TorusGeometry(0.22, 0.06, 6, 14).translate(sx * 0.5, MH + MR + 0.05, 0.05));
+      const frameG = mergeGeometries(bars.map((b) => (b.index ? b.toNonIndexed() : b)).map((b) => { b.deleteAttribute('uv'); return b; }))!;
+      const mT: T.Matrix4[] = [], qm = new T.Quaternion(), upY = new T.Vector3(0, 1, 0);
+      const bay = (s: number, z: number, y0: number) => mT.push(new T.Matrix4().compose(v(s * 13.64, y0, z), qm.setFromAxisAngle(upY, s < 0 ? PI / 2 : -PI / 2), v(1, 1, 1)));
+      bay(-1, 0.25, 7.75); bay(1, 0.25, 7.75); bay(-1, -10.75, 7.75); bay(-1, -21.75, 7.75); bay(1, -21.75, 7.75); bay(-1, -31.4, 8.3); bay(1, -31.4, 8.3);
+      k.instances(glassG, k.flat(0x8a9098, 1, 0.06), mT).castShadow = false;
+      const fr = k.instances(frameG, gilt, mT.map((m) => m.clone().multiply(new T.Matrix4().makeTranslation(0, 0, 0.04)))); fr.castShadow = false;
+      for (const s of [-1, 1]) for (const z of [0.25, -21.75]) k.point(s * 11.6, 11, z, 0xffe0b0, 6, 7);
+      /* painted coffers: a blue field, an ochre octagon, a red rosette ground under each gilt ring */
+      const cofM = HAS_DOM ? new T.MeshStandardMaterial({ roughness: 0.6, map: paintTex(256, 256, (g, w) => {
+        g.fillStyle = '#1c4656'; g.fillRect(0, 0, w, w);
+        g.strokeStyle = '#c8a050'; g.lineWidth = 10; g.strokeRect(8, 8, w - 16, w - 16);
+        g.fillStyle = '#d4b066'; for (const [x, y] of [[0, 0], [w, 0], [0, w], [w, w]]) { g.beginPath(); g.moveTo(x, y); g.lineTo(x + (x ? -64 : 64), y); g.lineTo(x, y + (y ? -64 : 64)); g.fill(); }
+        g.fillStyle = '#7a1e22'; g.beginPath(); for (let i = 0; i < 8; i++) { const a = (i / 8) * PI * 2 + PI / 8; g.lineTo(128 + Math.cos(a) * 92, 128 + Math.sin(a) * 92); } g.fill();
+        g.fillStyle = '#c8a050'; for (let i = 0; i < 12; i++) { const a = (i / 12) * PI * 2; g.beginPath(); g.ellipse(128 + Math.cos(a) * 46, 128 + Math.sin(a) * 46, 24, 9, a, 0, PI * 2); g.fill(); }
+      }) }) : k.flat(0x1c4656, 0, 0.6);
+      const cofT: T.Matrix4[] = [];
+      for (let cx = -10.25; cx <= 11; cx += 3.5) for (let cz = Z0 - 3.75; cz > Z1 + 1; cz -= 3.5) { if (Math.abs(cx) < 4.8 && cz < -11 && cz > -21) continue; cofT.push(new T.Matrix4().makeTranslation(cx, 15.97, cz)); }
+      const cofG = new T.PlaneGeometry(3.0, 3.0); cofG.rotateX(PI / 2);
+      k.instances(cofG, cofM, cofT).castShadow = false;
+      /* brass nosings on every step of the grand stair */
+      const noseT: T.Matrix4[] = [];
+      for (let i = 1; i <= 25; i++) noseT.push(new T.Matrix4().makeTranslation(0, (i / 25) * RISE + 0.02, S0 - (i - 1) * ((S0 - S1) / 25) - 0.02));
+      k.instances(new T.BoxGeometry(28, 0.04, 0.06), gilt, noseT).castShadow = false;
+    }
     k.point(0, RISE + 8.6, Z1 + 2.2, 0xffe6c0, 10, 9);   // 2026-11-24 (wave 7c): was 30 at mirror height, a white blob from the door
     // the crowd at the doors and along the carpet
     k.crowd([v(-22, 0.14, 18.6), v(-8, 0.14, 17.2), v(-1, 0.14, 15), v(0, 0, 11), v(0.5, 0, 4), v(-1, 0, -6), v(1, 0, -16), v(0, 0, -24)], 18, { seed: 47, speed: 0.6, spread: 1.4, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0x8a1a22, 0xd8d0c0, 0x1a2a4a, 0xc9a25a, 0x6a4a8a] });
@@ -1317,7 +1499,7 @@ export const valencia: RoomDef = {
         k.box(0.1, 0.1, 13, s * 15.85, base + 6.95, zc, bronze);
         k.box(0.6, 5.6 + vary, 13, s * 17.5, base + 5.9 + (5.6 + vary) / 2, zc, seg % 2 ? cream : plasterD);
         for (const dz of [-4.2, 0, 4.2]) k.box(0.1, 1.7, 1.1, s * 17.16, base + 8.7, zc + dz, warm);
-        for (const dz of [-4.2, 0, 4.2]) k.box(0.16, 1.9, 1.3, s * 17.14, base + 8.7, zc + dz, ironB);
+        k.box(0.16, 1.9, 1.3, s * 17.14, base + 8.7, zc, ironB);   // the middle window sits behind a work; the outer two get grilles and shutters (entrance pass below)
         const roofY = base + 11.5 + vary;
         const roof = k.box(2.6, 0.26, 13.4, s * 16.9, roofY + 0.5, zc, tile); roof.rotation.z = s * 0.42;
         k.box(0.6, 3, 13, s * 18.2, roofY + 1.6, zc, plasterD);
@@ -1344,7 +1526,7 @@ export const valencia: RoomDef = {
     const pro = k.arch(20, 15, 2, 0, PB, PZ, gilt, false, 0.92); void pro;
     k.box(37, 8, 2, 0, PB + 17 + 4, PZ, plasterD); k.box(37, 0.5, 0.3, 0, PB + 20.5, PZ + 1.1, gilt); for (let x = -15; x <= 15; x += 5) k.box(0.1, 1.2, 0.8, x, PB + 18.6, PZ + 1.05, warmD);
     for (const s of [-1, 1]) { k.box(5.5, 16.9, 0.4, s * 15, PB + 8.45, PZ + 1.2, plasterD); for (let y = 2; y < 15; y += 1.1) k.box(4.6, 0.25, 0.1, s * 15, PB + y, PZ + 1.45, gilt); }
-    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], 37, 0, PB + 17, PZ + 1.0, gilt, 0);
+    k.moulding([[0, 0], [0.9, 0], [1.0, 0.3], [0.6, 0.5], [0.8, 0.8], [0, 1.0]], 37, 0, PB + 17, PZ + 1.0, gilt, -PI / 2);   // 2026-11-25: at 0 it ran 18 m down the house as a dark beam over the seats, the spike in the middle of the first view
     k.box(24, 1.4, 5, 0, PB + 0.3, PZ + 1.5, planks);
     k.rail(0, PZ + 3.9, 30, bronze, 1.0, 'x', 1.5); k.block(-18, 18, PZ + 3.5, PZ + 4.3);
     k.box(30, 10, 4, 0, PB + 1 - 5, PZ + 1.5, dark);
@@ -1402,20 +1584,156 @@ export const valencia: RoomDef = {
     // the sky: the dome above the walls is the real sky, then the twinkling stars and the clouds on the machine
     const starN = 260, starT: T.Matrix4[] = [], rs = X.mulberry(136), starA: number[] = [];
     for (let i = 0; i < starN; i++) { const az = rs() * PI * 2, el = 0.35 + rs() * 1.2, r = 70; const p = v(Math.cos(az) * Math.cos(el) * r, Math.sin(el) * r + 4, Math.sin(az) * Math.cos(el) * r); starA.push(rs() * PI * 2); starT.push(new T.Matrix4().compose(p, new T.Quaternion().setFromRotationMatrix(new T.Matrix4().lookAt(p, v(0, 6, 0), new T.Vector3(0, 1, 0))), new T.Vector3(1, 1, 1))); }
-    const stars = k.instances(new T.PlaneGeometry(0.45, 0.45), new T.MeshBasicMaterial({ color: 0xeaf0ff, transparent: true, opacity: 0.9, depthWrite: false, side: T.DoubleSide }), starT);
+    /* 2026-11-25: soft round stars on the new dark dome (the bare squares showed as square dots) */
+    const starM = new T.MeshBasicMaterial({ color: 0xeaf0ff, transparent: true, opacity: 0.95, depthWrite: false, side: T.DoubleSide });
+    if (HAS_DOM) { starM.map = paintTex(64, 64, (g, w) => { const rg = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); rg.addColorStop(0, 'rgba(255,255,255,1)'); rg.addColorStop(0.16, 'rgba(255,255,255,0.9)'); rg.addColorStop(0.4, 'rgba(200,215,255,0.25)'); rg.addColorStop(1, 'rgba(200,215,255,0)'); g.fillStyle = rg; g.fillRect(0, 0, w, w); }); starM.blending = T.AdditiveBlending; }
+    const stars = k.instances(new T.PlaneGeometry(HAS_DOM ? 1.1 : 0.45, HAS_DOM ? 1.1 : 0.45), starM, starT);
     const cloudN = 9, cloudT: T.Matrix4[] = [], cx: number[] = [], cz: number[] = [];
-    for (let i = 0; i < cloudN; i++) { cx.push(-60 + i * 14 + rs() * 8); cz.push(-70 + rs() * 90); cloudT.push(new T.Matrix4().compose(v(cx[i], 26 + rs() * 10, cz[i]), new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), -PI / 2), new T.Vector3(1 + rs(), 1 + rs(), 1))); }
+    /* 2026-11-25 (entrance pass): the clouds drift inside the plaster dome below, so they stay within about 52 m */
+    for (let i = 0; i < cloudN; i++) { cx.push(-48 + i * 11 + rs() * 6); cz.push(-44 + rs() * 66); cloudT.push(new T.Matrix4().compose(v(cx[i], 25 + rs() * 7, cz[i]), new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), -PI / 2), new T.Vector3(1 + rs(), 1 + rs(), 1))); }
     const clouds = k.instances(new T.PlaneGeometry(26, 14), new T.MeshBasicMaterial({ map: X.pool(), color: 0xc4cfe8, transparent: true, opacity: 0.6, depthWrite: false, side: T.DoubleSide }), cloudT);
     if (!ctx.reduced) {
       const m = new T.Matrix4(), p = new T.Vector3(), q = new T.Quaternion(), sc = new T.Vector3();
       k.ticks.push((t, dt) => {
         for (let i = 0; i < starN; i++) { stars.getMatrixAt(i, m); m.decompose(p, q, sc); const s = 0.7 + 0.5 * Math.max(0, Math.sin(t * 1.7 + starA[i])); sc.set(s, s, 1); m.compose(p, q, sc); stars.setMatrixAt(i, m); }
         stars.instanceMatrix.needsUpdate = true;
-        for (let i = 0; i < cloudN; i++) { clouds.getMatrixAt(i, m); m.decompose(p, q, sc); p.x += 0.6 * Math.min(dt, 0.1); if (p.x > 70) p.x = -70; m.compose(p, q, sc); clouds.setMatrixAt(i, m); }
+        for (let i = 0; i < cloudN; i++) { clouds.getMatrixAt(i, m); m.decompose(p, q, sc); p.x += 0.6 * Math.min(dt, 0.1); if (p.x > 52) p.x = -52; m.compose(p, q, sc); clouds.setMatrixAt(i, m); }
         clouds.instanceMatrix.needsUpdate = true;
       });
     }
     k.point(0, 14, 0, 0x8a9ee0, 16, 40); for (const z of [14, 2, -10]) for (const s of [-1, 1]) k.point(s * 8, 9, z, 0xffd0a0, 22, 18);
+    /* ---- 2026-11-25 entrance pass: what the first look shows ----
+       Eberson's plaster sky as a real dome over the courtyard, night whatever the hour outside (it is indoors; by day the
+       open sky used to show grey over the walls), with a moon and cypresses over the parapets; the proscenium dressed in
+       gilt (archivolts with beads, twisted columns with torches, a crest, a swagged valance with fringe, footlights) and a
+       glazed tile frieze; the houses' windows with iron grilles, shutters and geraniums; bougainvillea up the walls. */
+    {
+      const skyM = new T.MeshBasicMaterial({ side: T.BackSide, fog: false, color: HAS_DOM ? 0xffffff : 0x0a1440 });
+      const SKW = k.o.quality === 'high' ? 2048 : 1024;   // phones paint half size
+      if (HAS_DOM) skyM.map = paintTex(SKW, SKW / 2, (g, w, h) => {
+        const gr = g.createLinearGradient(0, 0, 0, h);
+        for (const [o, c] of [[0, '#030820'], [0.3, '#08164a'], [0.5, '#10226a'], [0.62, '#24327c'], [0.72, '#423c7e'], [0.84, '#6e4c6c'], [1, '#8a5a4e']] as [number, string][]) gr.addColorStop(o, c);
+        g.fillStyle = gr; g.fillRect(0, 0, w, h);
+        const r = X.mulberry(1929);
+        for (let i = 0; i < 320; i++) { const u = r() * w, y = (0.34 + 0.15 * Math.sin((u / w) * PI * 2 + 0.6) + (r() - 0.5) * 0.07) * h, rad = (20 + r() * 46) * (w / 2048), rg = g.createRadialGradient(u, y, 0, u, y, rad); rg.addColorStop(0, 'rgba(176,186,236,0.06)'); rg.addColorStop(1, 'rgba(176,186,236,0)'); g.fillStyle = rg; g.fillRect(u - rad * 1.6, y - rad, rad * 3.2, rad * 2); }
+        /* small stars, widened by 0.56 / sin(theta) so they stay round on the sphere */
+        for (let i = 0; i < 3200; i++) { const f = 0.08 + Math.pow(r(), 0.85) * 0.74, sw = 0.56 / Math.max(0.1, Math.sin(f * 0.56 * PI)), s = Math.max(0.6, (0.8 + r() * 1.6) * (w / 2048)); g.fillStyle = `rgba(236,240,255,${(0.25 + r() * 0.7).toFixed(2)})`; g.fillRect(r() * w, f * h, Math.max(0.7, s * sw), s); }
+      });
+      /* Firefly's painted Eberson sky (FIREFLY_QUEUE.md) replaces the canvas one when the file exists */
+      texL?.load('assets/museum/tex/valencia/ff_valencia_sky.webp', (ff) => { if (!k.live) { ff.dispose(); return; } ff.colorSpace = T.SRGBColorSpace; ff.anisotropy = 8; skyM.map = ff; skyM.needsUpdate = true; }, undefined, () => {});
+      const dome = k.mesh(new T.SphereGeometry(88, 64, 24, 0, PI * 2, 0, PI * 0.56), skyM, 0, -10, 0, true);
+      dome.castShadow = false; dome.receiveShadow = false; dome.userData.noShadow = true;
+      const moonM = new T.MeshBasicMaterial({ color: 0xf6f0dc, fog: false });
+      if (HAS_DOM) moonM.map = paintTex(128, 128, (g, w) => { g.fillStyle = '#fbf6e6'; g.fillRect(0, 0, w, w); const r = X.mulberry(1932); for (let i = 0; i < 14; i++) { g.fillStyle = `rgba(150,150,170,${(0.12 + r() * 0.2).toFixed(2)})`; g.beginPath(); g.arc(20 + r() * 88, 20 + r() * 88, 6 + r() * 20, 0, PI * 2); g.fill(); } });
+      const moon = k.mesh(new T.CircleGeometry(1.7, 32), moonM, 24, 32, -40, true);
+      moon.lookAt(0, 3, 22.5); moon.castShadow = false; moon.userData.noShadow = true;
+      const inside: T.Object3D[] = [dome, moon];
+      if (HAS_DOM) {
+        const ht = paintTex(256, 256, (g, w) => { const rg = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2); rg.addColorStop(0, 'rgba(255,246,220,0.55)'); rg.addColorStop(0.18, 'rgba(220,226,255,0.22)'); rg.addColorStop(1, 'rgba(160,170,255,0)'); g.fillStyle = rg; g.fillRect(0, 0, w, w); });
+        const halo = k.mesh(new T.PlaneGeometry(20, 20), new T.MeshBasicMaterial({ map: ht, transparent: true, depthWrite: false, blending: T.AdditiveBlending, fog: false }), 24.2, 32.1, -40.4, true);
+        halo.lookAt(0, 3, 22.5); halo.castShadow = false; halo.userData.noShadow = true; inside.push(halo);
+      }
+      /* the dome belongs to the auditorium: out in the lobby and on Jamaica Avenue the real sky comes back */
+      k.ticks.push(() => { const c = cam(); if (!c) return; const on = c.position.z < RZ + 0.4; for (const o of inside) o.visible = on; });
+      /* cypresses over the parapets, as Eberson set them against his skies */
+      const cyG = new T.LatheGeometry([[0, 0], [0.5, 0.3], [1.05, 2.5], [1.25, 6], [1.15, 10], [0.85, 13.5], [0.45, 16.5], [0.12, 18.4], [0, 18.8]].map(([a, b]) => new T.Vector2(a, b)), 10);
+      { const pa = cyG.attributes.position as T.BufferAttribute; for (let i = 0; i < pa.count; i++) { const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i), a = Math.atan2(z, x), j = 1 + 0.17 * Math.sin(y * 2.7 + a * 3) + 0.1 * Math.sin(y * 5.3 - a * 5); pa.setX(i, x * j); pa.setZ(i, z * j); } cyG.computeVertexNormals(); }
+      const cyT: T.Matrix4[] = [], cq = new T.Quaternion();
+      for (const s of [-1, 1]) for (const [z, sc2] of [[17, 1.0], [5.5, 1.12], [-7, 0.95], [-17, 1.06]]) cyT.push(new T.Matrix4().compose(v(s * 20.8, 6.5, z), cq.setFromAxisAngle(new T.Vector3(0, 1, 0), z), v(sc2, sc2, sc2)));
+      for (const [x, sc2] of [[-13, 1.12], [-6.5, 1.2], [7.5, 1.16], [13.5, 1.05]]) cyT.push(new T.Matrix4().compose(v(x, PB + 13, -34.5), cq.setFromAxisAngle(new T.Vector3(0, 1, 0), x), v(sc2, sc2, sc2)));
+      const cys = k.instances(cyG, k.flat(0x1e3024, 0, 0.92), cyT); cys.castShadow = false;
+    }
+    {
+      /* the proscenium: three gilt archivolts round the opening, a row of beads on the middle one */
+      const hy = PB + 9.75, ell = (off: number, n: number) => { const p: T.Vector3[] = [v(-(10 + off), PB + 1.05, 0), v(-(10 + off), hy, 0)]; for (let i = 1; i < n; i++) { const a = PI - (i / n) * PI; p.push(v(Math.cos(a) * (10 + off), hy + Math.sin(a) * (5.25 + off), 0)); } p.push(v(10 + off, hy, 0), v(10 + off, PB + 1.05, 0)); return p; };
+      for (const [off, r] of [[0.3, 0.17], [0.85, 0.1], [1.45, 0.22]]) { const o = k.curve(ell(off, 40), r, gilt, 120); o.position.z = PZ + 1.12; o.castShadow = false; }
+      const beadT: T.Matrix4[] = [];
+      for (let i = 0; i <= 64; i++) { const a = PI - (i / 64) * PI; beadT.push(new T.Matrix4().makeTranslation(Math.cos(a) * 11.15, hy + Math.sin(a) * 6.4, PZ + 1.16)); }
+      for (const s of [-1, 1]) for (let y = PB + 1.2; y < hy; y += 0.62) beadT.push(new T.Matrix4().makeTranslation(s * 11.15, y, PZ + 1.16));
+      const beads = k.instances(new T.SphereGeometry(0.13, 8, 6), gilt, beadT); beads.castShadow = false;
+      /* the crest over the opening: a gilt cartouche, a velvet oval with the V, scrolls and three finials */
+      const cy0 = PB + 15.1, cs = new T.Shape();
+      cs.moveTo(-1.1, 0.2); cs.quadraticCurveTo(-1.3, 0.95, -0.85, 1.35); cs.quadraticCurveTo(-0.4, 1.75, 0, 1.6); cs.quadraticCurveTo(0.4, 1.75, 0.85, 1.35); cs.quadraticCurveTo(1.3, 0.95, 1.1, 0.2); cs.quadraticCurveTo(0.5, -0.15, 0, 0); cs.quadraticCurveTo(-0.5, -0.15, -1.1, 0.2);
+      k.mesh(new T.ExtrudeGeometry(cs, { depth: 0.3, bevelEnabled: true, bevelSize: 0.06, bevelThickness: 0.06, bevelSegments: 2, curveSegments: 10 }), gilt, 0, cy0, PZ + 1.1);
+      const oval = k.mesh(new T.CircleGeometry(0.58, 28), velvet, 0, cy0 + 0.82, PZ + 1.48); oval.scale.set(1, 1.25, 1);
+      k.sign('V', 0.8, 0.9, 0, cy0 + 0.82, PZ + 1.5, 'transparent', '#e8c070', 210, 0);
+      for (const s of [-1, 1]) { k.torus(0.32, 0.07, s * 1.45, cy0 + 0.5, PZ + 1.25, gilt, 20); k.torus(0.16, 0.05, s * 1.45, cy0 + 0.5, PZ + 1.3, gilt, 16); }
+      for (const [x, y] of [[0, cy0 + 1.75], [-0.85, cy0 + 1.45], [0.85, cy0 + 1.45]]) { k.mesh(new T.ConeGeometry(0.09, 0.42, 8), gilt, x, y + 0.2, PZ + 1.25); k.sphere(0.08, x, y + 0.45, PZ + 1.25, gilt, 8); }
+      /* Solomonic columns either side, twisted twice, with a torch on each capital */
+      const flame = k.glow(0xffc070);
+      for (const s of [-1, 1]) {
+        const x = s * 11.85, z = PZ + 1.55, y0 = PB + 1.0, y1 = PB + 11.4;
+        k.box(0.8, 1.0, 0.8, x, PB + 0.5, z, gilt); k.cyl(0.22, y1 - y0, x, (y0 + y1) / 2, z, gilt, 0.22, 10);
+        for (const ph of [0, PI]) { const hel: T.Vector3[] = []; for (let i = 0; i <= 64; i++) { const a = ph + i * 0.42, y = y0 + (i / 64) * (y1 - y0); hel.push(v(x + Math.cos(a) * 0.22, y, z + Math.sin(a) * 0.22)); } k.curve(hel, 0.1, gilt, 120).castShadow = false; }
+        k.box(0.72, 0.42, 0.72, x, y1 + 0.2, z, gilt); k.lathe([[0.02, 0], [0.24, 0.05], [0.16, 0.3], [0.3, 0.55], [0.02, 0.6]], x, y1 + 0.4, z, gilt, 12);
+        const fl = k.mesh(new T.ConeGeometry(0.16, 0.55, 8), flame, x, y1 + 1.25, z); fl.castShadow = false;
+        k.point(x, y1 + 1.4, z + 0.6, 0xffb060, 8, 9);
+      }
+      /* the valance: a gilt pelmet and five velvet swags with gold fringe across the top of the opening, tails between */
+      k.box(18.8, 0.34, 0.24, 0, PB + 11.95, PZ + 0.75, gilt);
+      const fringeT: T.Matrix4[] = [], X0 = -9.3, SW = 18.6 / 5;
+      for (let i = 0; i < 5; i++) {
+        const a = X0 + i * SW, b = a + SW, top = PB + 11.85, sag = (u: number) => top - 1.05 * Math.sin(u * PI);
+        const pts: T.Vector3[] = []; for (let j = 0; j <= 10; j++) { const u = j / 10; pts.push(v(a + u * SW, sag(u), PZ + 0.8 + 0.12 * Math.sin(u * PI))); }
+        k.curve(pts, 0.24, velvet, 30).castShadow = false; k.curve(pts.map((p) => v(p.x, p.y + 0.32 + 0.1 * Math.sin(((p.x - a) / SW) * PI), p.z - 0.08)), 0.15, velvet, 30).castShadow = false;
+        for (let j = 1; j < 18; j++) { const u = j / 18; fringeT.push(new T.Matrix4().makeTranslation(a + u * SW, sag(u) - 0.38, PZ + 0.8 + 0.12 * Math.sin(u * PI) + 0.05)); }
+      }
+      for (let i = 0; i <= 5; i++) { const x = X0 + i * SW; k.mesh(new T.ConeGeometry(0.34, 1.9, 8, 1, true), velvet, x, PB + 11.05, PZ + 0.95); k.sphere(0.12, x, PB + 9.95, PZ + 0.95, gilt, 8); k.cyl(0.05, 0.3, x, PB + 9.7, PZ + 0.95, gilt, 0.09, 8); }
+      const fringe = k.instances(new T.CylinderGeometry(0.03, 0.045, 0.34, 5), gilt, fringeT); fringe.castShadow = false;
+      /* footlights along the apron, and light up on the gilt */
+      const flT: T.Matrix4[] = []; for (let x = -11; x <= 11.01; x += 0.55) flT.push(new T.Matrix4().makeTranslation(x, PB + 1.07, PZ + 3.82));
+      const fls = k.instances(new T.BoxGeometry(0.34, 0.12, 0.2), k.glow(0xffd090), flT); fls.castShadow = false;
+      k.box(23, 0.06, 0.06, 0, PB + 1.02, PZ + 3.96, bronze);
+      k.point(0, PB + 2.2, PZ + 3.2, 0xffc890, 30, 12);
+      for (const s of [-1, 1]) k.point(s * 7, PB + 9, PZ + 6.5, 0xffd9a0, 36, 16);
+      /* a glazed tile frieze across the wall over the arch: blue and ochre azulejos */
+      if (HAS_DOM) {
+        const tt = paintTex(512, 128, (g) => {
+          for (let i = 0; i < 4; i++) {
+            const x0 = i * 128; g.fillStyle = '#efe6d0'; g.fillRect(x0, 0, 128, 128);
+            g.strokeStyle = '#1f6e7a'; g.lineWidth = 8; g.strokeRect(x0 + 4, 4, 120, 120);
+            g.fillStyle = '#21438e'; for (let q = 0; q < 4; q++) { g.beginPath(); g.ellipse(x0 + 64 + Math.cos((q * PI) / 2) * 26, 64 + Math.sin((q * PI) / 2) * 26, 24, 15, (q * PI) / 2, 0, PI * 2); g.fill(); }
+            g.fillStyle = '#d49a2a'; g.beginPath(); g.arc(x0 + 64, 64, 15, 0, PI * 2); g.fill();
+            g.fillStyle = '#21438e'; for (const [cx2, cy2] of [[4, 4], [124, 4], [4, 124], [124, 124]]) { g.beginPath(); g.arc(x0 + cx2, cy2, 16, 0, PI * 2); g.fill(); }
+          }
+        });
+        tt.wrapS = T.RepeatWrapping; tt.repeat.set(33 / 1.4 / 4, 1);
+        k.plane(33, 1.4, 0, PB + 21.8, PZ + 1.03, new T.MeshStandardMaterial({ map: tt, roughness: 0.28, metalness: 0 }));
+        for (const y of [PB + 21.05, PB + 22.55]) k.box(33.2, 0.12, 0.12, 0, y, PZ + 1.06, gilt);
+      }
+    }
+    {
+      /* the houses' outer windows: iron grilles, open shutters, a box of geraniums; bougainvillea up the walls between */
+      const sp2 = (w: number, h: number, d: number, x: number, y: number, z: number) => new T.BoxGeometry(w, h, d).translate(x, y, z);
+      const grilleG = mergeGeometries([sp2(0.06, 0.07, 1.3, 0, 0.95, 0), sp2(0.06, 0.07, 1.3, 0, -0.95, 0), sp2(0.06, 1.9, 0.07, 0, 0, 0.65), sp2(0.06, 1.9, 0.07, 0, 0, -0.65), sp2(0.03, 0.03, 1.3, 0, 0.25, 0), ...[-0.39, -0.13, 0.13, 0.39].map((z) => sp2(0.03, 1.84, 0.03, 0, 0, z))])!;
+      const shutG = mergeGeometries([sp2(0.05, 1.8, 0.6, 0, 0, -0.97), sp2(0.05, 1.8, 0.6, 0, 0, 0.97), ...[-0.6, 0, 0.6].flatMap((y) => [sp2(0.07, 0.06, 0.6, 0, y, -0.97), sp2(0.07, 0.06, 0.6, 0, y, 0.97)])])!;
+      const boxG = sp2(0.32, 0.26, 1.42, 0, -1.12, 0);
+      const gT: T.Matrix4[] = [], sT: T.Matrix4[] = [], bT2: T.Matrix4[] = [], flT: T.Matrix4[] = [], leafT: T.Matrix4[] = [];
+      const rn = X.mulberry(1931), e = new T.Euler(), q = new T.Quaternion();
+      for (const s of [-1, 1]) for (let seg = 0; seg < 4; seg++) {
+        const zc = 19.5 - seg * 13, base = ramp(zc) - 0.2, y = base + 8.7;
+        for (const dz of [-4.2, 4.2]) {
+          gT.push(new T.Matrix4().makeTranslation(s * 17.07, y, zc + dz)); sT.push(new T.Matrix4().makeTranslation(s * 17.17, y, zc + dz)); bT2.push(new T.Matrix4().makeTranslation(s * 17.04, y, zc + dz));
+          for (let i = 0; i < 16; i++) flT.push(new T.Matrix4().compose(v(s * (17.04 - (rn() - 0.5) * 0.18), y - 0.95 + rn() * 0.14, zc + dz + (rn() - 0.5) * 1.3), q.setFromEuler(e.set(rn() * 3, rn() * 3, 0)), v(1, 1, 1)));
+        }
+        /* bougainvillea between the windows and the work in the middle, from the balcony up */
+        for (const side of [-1, 1]) for (let i = 0; i < 130; i++) {
+          const yy = base + 6.2 + Math.pow(rn(), 0.8) * 4.6, zz = zc + side * (1.8 + rn() * 1.3), sz = 0.7 + rn() * 0.9;
+          e.set((rn() - 0.5) * 1.2, -s * PI / 2 + (rn() - 0.5) * 1.6, (rn() - 0.5) * 2.4);
+          leafT.push(new T.Matrix4().compose(v(s * (17.18 - 0.02 - rn() * 0.16), yy, zz), q.setFromEuler(e), v(sz, sz, sz)));
+        }
+      }
+      k.instances(grilleG, ironB, gT).castShadow = false;
+      k.instances(shutG, k.flat(0x2c6a72, 0.05, 0.55), sT).castShadow = false;
+      k.instances(boxG, k.flat(0x9a4a2a, 0, 0.8), bT2).castShadow = false;
+      const c = new T.Color(), gera = k.instances(new T.IcosahedronGeometry(0.1, 0), new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.7 }), flT); gera.castShadow = false;
+      for (let i = 0; i < flT.length; i++) gera.setColorAt(i, c.set([0xd82a2a, 0xe8405a, 0x3a6a2a, 0xc01e2e, 0x2f5a24][i % 5]));
+      if (gera.instanceColor) gera.instanceColor.needsUpdate = true;
+      const lg = new T.PlaneGeometry(0.2, 0.17); lg.translate(0, 0.07, 0);
+      const leaves = k.instances(lg, new T.MeshStandardMaterial({ color: 0xffffff, roughness: 0.75, side: T.DoubleSide }), leafT); leaves.castShadow = false;
+      for (let i = 0; i < leafT.length; i++) leaves.setColorAt(i, c.set([0x2f4f24, 0xc8307a, 0x3a5e2a, 0xd8408a, 0x26401e, 0xa02a6a, 0x48702f][i % 7]));
+      if (leaves.instanceColor) leaves.instanceColor.needsUpdate = true;
+    }
     k.crowd([v(-13, 0, 22), v(13, 0, 22)], 10, { seed: 49, speed: 0.4, spread: 1.6, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0x8a1a22, 0xd8d0c0, 0x1a2a4a] });
     // out through the lobby: Jamaica Avenue and the front
     const front = valenciaFront(k, ctx, RZ + 6.3);
