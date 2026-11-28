@@ -249,7 +249,7 @@ export const diachelsea: RoomDef = {
     k.block(GX - IW / 2 - 0.6, GX - IW / 2 + 0.2, GZ - ID / 2, GZ + ID / 2); k.block(GX + IW / 2 - 0.2, GX + IW / 2 + 0.6, GZ - ID / 2, GZ + ID / 2); k.block(GX - IW / 2, GX + IW / 2, GZ - ID / 2 - 0.6, GZ - ID / 2 + 0.2);
     for (let i = 0; i < 6; i++) { const z = GZ + ID / 2 - 5 - i * 10; k.mesh(new T.PlaneGeometry(IW - 2, 8), scrim, GX, 9.2, z).rotation.x = PI / 2; k.point(GX, 8, z, 0xf8f8f4, 30, 20); }
     for (const z of [GZ + 10, GZ - 10]) { k.box(IW - 6, 5, 0.4, GX, 2.5, z, brickW); k.block(GX - IW / 2 + 3, GX + IW / 2 - 3, z - 0.4, z + 0.4); }
-    for (const [x, z, p] of [[GX - 5, GZ + 20, 'noguchi_stone_2'], [GX + 5, GZ, 'noguchi_stone_3'], [GX, GZ - 22, 'noguchi_stone_1']] as const) k.prop(p, x, 0.15, z, { height: 2.6, keepOut: 1.6 });
+    for (const [x, z, p] of [[GX - 5.5, GZ + 14.5, 'noguchi_stone_2' /* entrance pass: moved out of the torqued ellipse's bay */], [GX + 5, GZ, 'noguchi_stone_3'], [GX, GZ - 22, 'noguchi_stone_1']] as const) k.prop(p, x, 0.15, z, { height: 2.6, keepOut: 1.6 });
     eyeMedallion(k, GX, 0.16, GZ + 13, 1.8); /* wave 6a: moved back to clear the floor type at the door */
     k.egg(v(-10.3, 1.9, 22.6), { id: 'diachelsea-7000-oaks', title: 'A stone for every tree', year: '1988', text: 'In 1988 Dia installed five basalt columns, each paired with a tree, outside its first Chelsea building, an extension of Joseph Beuys\'s 7000 Oaks. A 1996 expansion brought the block to 37 pairs, and one more pair was added in the 2021 renovation, making 38. The trees are not all oaks: Callery pear, hackberry, ginkgo, pagoda tree, zelkova, linden, pin oak, sycamore and honeylocust.', clue: 'Look at the dark stone standing beside each street tree.', source: { name: 'Dia Chelsea, Wikipedia', url: 'https://en.wikipedia.org/wiki/Dia_Chelsea' } }, { r: 1.4 });
     k.egg(v(GX, 6.4, GZ + GD / 2 + 1.0), { id: 'diachelsea-alcamo', title: 'The marble works in the middle', year: '2011', text: 'The middle of the three buildings was the Alcamo Marble Works, which Dia bought in June 2011 for $11.5 million and called a strategic purchase. It opened as a gallery in 2012 with Thomas Hirschhorn\'s Timeline: Work in Public Space. It sits between the buildings at 535 and 545 West 22nd Street.', clue: 'Find the middle of the three brick fronts.', source: { name: 'Dia Chelsea, Wikipedia', url: 'https://en.wikipedia.org/wiki/Dia_Chelsea' } }, { r: 1.6 });
@@ -284,19 +284,47 @@ export const diachelsea: RoomDef = {
       many(k, 'diachelsea/ph_boulder_01', { length: 3.6 }, [[GX - 5.2, 0.28, GZ - 1, 0.3]]); k.keepOut.push({ x: GX - 5.2, z: GZ - 1, r: 2.0 });
       k.spot(GX - 5.2, 8.6, GZ + 3, GX - 5.2, 0.8, GZ - 1, 0xfff6ea, 60, 0.45, 0.6, 14);
       hsign(k, 'DIA CHELSEA  ·  WEST 22ND STREET', 8, 0.4, GX, 6.2, GZ + GD / 2 - 0.02, PI, { fg: '#1a1c20', size: 0.5, font: 'W2 JetBrains Mono', lit: false });
-      standUp(k, 'LOOK UP', '#2a2c30', GX, GZ + GD / 2 - 1.6, 3, 0.31, 0, 7, 6, 1.2);
-      k.egg(v(GX, 1.0, GZ + GD / 2 - 5.6), { id: 'diachelsea-look-up', title: 'Words that stand up', text: 'LOOK UP is painted on the poured floor so long and thin that it only reads upright from one spot by the door, an anamorphic picture of the kind painters have made since the Renaissance. It points at the reason the galleries are here: the skylights that the 2021 renovation kept over the single storey rooms.', clue: 'Stand just inside the door and look down the long gallery.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+      standUp(k, 'LOOK UP', '#2a2c30', GX, GZ + GD / 2 - 1.6, 3, 0.31, 0.55, 6, 4.4, 1.2); /* entrance pass: turned to the left of the ellipse */
+      k.egg(v(GX - 3.2, 1.0, GZ + GD / 2 - 6.4), { id: 'diachelsea-look-up', title: 'Words that stand up', text: 'LOOK UP is painted on the poured floor so long and thin that it only reads upright from one spot by the door, an anamorphic picture of the kind painters have made since the Renaissance. It points at the reason the galleries are here: the skylights that the 2021 renovation kept over the single storey rooms.', clue: 'Stand just inside the door and look down the long gallery.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
+    }
+    /* ---- 2026-11-28 (entrance pass): the first view is an installation ----
+       A torqued ellipse in weathering steel stands in the first bay, the kind of work the egg by the door remembers
+       (Serra's Torqued Ellipses opened Dia's building here in 1997): two equal ellipses, the top one turned against the
+       bottom, joined by straight lines, so the wall leans out on one side and in on the other. Built as that ruled
+       surface, a plate 5 cm thick with a slot to look in, in a scanned rust (Poly Haven rust_coarse_01, CC0). Daylight
+       falls from the first two skylights in soft shafts. The visitor now arrives inside the door. */
+    {
+      const corten = sc(k, 'diachelsea', 'corten', 2.0, () => X.steel(0x6a3a22, false, 357), { roughness: 0.9, metalness: 0.25, color: 0xd8c0b0, side: T.DoubleSide }, 0x5a3a28);
+      const EX = GX, EZ = -1.6, A = 3.0, B = 2.2, EH = 4.0, TW = 0.75, TH = 0.05, GAP = 0.32, G0 = 1.95, N = 140, R = 4;
+      const P = (t: number, f: number, inset: number) => { const bx = (A - inset) * Math.cos(t), bz = (B - inset) * Math.sin(t), c = Math.cos(TW), s = Math.sin(TW); return [bx + (bx * c - bz * s - bx) * f, f * EH, bz + (bx * s + bz * c - bz) * f]; };
+      const pos: number[] = [], uv: number[] = [], idx: number[] = [], span = PI * 2 - GAP, per = PI * (3 * (A + B) - Math.sqrt((3 * A + B) * (A + 3 * B)));
+      const sheet = (inset: number) => { const o = pos.length / 3; for (let i = 0; i <= N; i++) { const t = G0 + GAP / 2 + (span * i) / N; for (let j = 0; j <= R; j++) { pos.push(...P(t, j / R, inset)); uv.push(((per * i) / N) * 0.5, (EH * j) / R * 0.5); } } for (let i = 0; i < N; i++) for (let j = 0; j < R; j++) { const a = o + i * (R + 1) + j, b = a + R + 1; idx.push(a, b, a + 1, b, b + 1, a + 1); } };
+      sheet(0); sheet(TH);
+      { const o = pos.length / 3; for (let i = 0; i <= N; i++) { const t = G0 + GAP / 2 + (span * i) / N; pos.push(...P(t, 1, 0), ...P(t, 1, TH)); uv.push(i * 0.02, 0, i * 0.02, 0.03); } for (let i = 0; i < N; i++) { const a = o + i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); } }
+      for (const t of [G0 + GAP / 2, G0 + GAP / 2 + span]) { const o = pos.length / 3; pos.push(...P(t, 0, 0), ...P(t, 0, TH), ...P(t, 1, 0), ...P(t, 1, TH)); uv.push(0, 0, 0.03, 0, 0, 2, 0.03, 2); idx.push(o, o + 1, o + 2, o + 1, o + 3, o + 2); }
+      const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+      k.mesh(g, corten, EX, 0.3, EZ, true);
+      k.keepOut.push({ x: EX, z: EZ, r: 3.2 });
+      k.spot(GX + 4, 8.8, 5, EX, 1.6, EZ, 0xfff2e0, 70, 0.5, 0.7, 18);
+      k.spot(GX - 5, 8.8, -7, EX, 2.0, EZ, 0xf4f6ff, 40, 0.5, 0.7, 16);
+      if (HAS_DOM) {
+        const ray = paintTex(256, 512, (c, w, h) => { for (let x = 0; x < w; x += 2) { const a = 0.35 + 0.65 * Math.abs(Math.sin(x * 0.11) * Math.sin(x * 0.037 + 1)), edge = Math.min(1, x / 40, (w - x) / 40); const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, `rgba(255,248,236,${0.9 * a * edge})`); gr.addColorStop(0.55, `rgba(255,248,236,${0.32 * a * edge})`); gr.addColorStop(1, 'rgba(255,248,236,0)'); c.fillStyle = gr; c.fillRect(x, 0, 2, h); } });
+        const shaft = new T.MeshBasicMaterial({ map: ray, transparent: true, opacity: 0.12, blending: T.AdditiveBlending, depthWrite: false, side: T.DoubleSide, fog: false });
+        for (const [z, x, w] of [[GZ + ID / 2 - 5, GX - 2, 12], [GZ + ID / 2 - 15, GX + 1.5, 14], [GZ + ID / 2 - 8.5, GX + 5, 6]] as const) { const o = k.mesh(new T.PlaneGeometry(w, 8.8), shaft, x, 4.75, z, true); o.rotation.x = -0.28; o.renderOrder = 3; o.castShadow = false; o.userData.noShadow = true; }
+      }
     }
     donorWall(k, GX, 4.4, GZ - ID / 2 + 0.36, 0, 9, true);
     k.crowd([v(GX - 8, 0.15, GZ + 24), v(GX + 6, 0.15, GZ + 6), v(GX - 6, 0.15, GZ - 8), v(GX + 4, 0.15, GZ - 24)], 12, { seed: 142, speed: 0.3, spread: 2, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da] });
     k.censusWall({ x: GX + IW / 2 - 0.36, y: 4.4, z: GZ - 18, rotY: -PI / 2, cols: 30, rows: 6, tile: 0.5, gap: 0.05, start: ctx.wallStart(1100, 180), pieces: ctx.all, backing: dark });
     // the works: few and large, on the long walls and both faces of the two cross walls
     const mounts: Mount[] = [];
-    for (let i = 0; i < 4; i++) { const z = GZ + 22 - i * 14; mounts.push({ position: v(GX - IW / 2 + 0.38, 3.4, z), rotation: PI / 2, target: v(GX, 2.6, z), width: 6.4, height: 3.6, style: 'none', wash: true }); }
-    for (let i = 0; i < 2; i++) { const z = GZ + 20 - i * 14 - 6; mounts.push({ position: v(GX + IW / 2 - 0.38, 3.4, z), rotation: -PI / 2, target: v(GX, 2.6, z), width: 6.4, height: 3.6, style: 'none', wash: true }); }
-    for (const z of [GZ + 10, GZ - 10]) for (const s of [-1, 1]) mounts.push({ position: v(GX, 2.8, z + s * 0.22), rotation: s > 0 ? 0 : PI, target: v(GX, 2.6, z + s * 8), width: 5.6, height: 3.2, style: 'none', wash: true });
+    for (let i = 0; i < 4; i++) { const z = GZ + 22 - i * 14; mounts.push({ position: v(GX - IW / 2 + 0.38, 3.4, z), rotation: PI / 2, target: v(i ? GX : GX - 4.5, 2.6, z), width: 6.4, height: 3.6, style: 'none', wash: true }); }
+    for (let i = 0; i < 2; i++) { const z = GZ + 20 - i * 14 - 6; mounts.push({ position: v(GX + IW / 2 - 0.38, 3.4, z), rotation: -PI / 2, target: v(i ? GX : GX + 4.5, 2.6, z), width: 6.4, height: 3.6, style: 'none', wash: true }); }
+    for (const z of [GZ + 10, GZ - 10]) for (const s of [-1, 1]) mounts.push({ position: v(GX, 2.8, z + s * 0.22), rotation: s > 0 ? 0 : PI, target: v(GX, 2.6, z + s * (z === GZ + 10 && s > 0 ? 4.4 : 8)), width: 5.6, height: 3.2, style: 'none', wash: true });
     for (const x of [-6, 6]) mounts.push({ position: v(GX + x, 3.4, GZ - ID / 2 + 0.38), rotation: 0, target: v(GX + x, 2.6, GZ - ID / 2 + 5), width: 5, height: 3, style: 'none', wash: true });
-    return { mounts, spawn: v(-6, 3, 26), look: v(GX, 5.5, GZ + GD / 2), eye: 3, bounds: [GX - IW / 2 + 0.8, 10, GZ - ID / 2 + 1, 30], style: 'none' };
+    /* entrance pass (2026-11-28): the visitor used to arrive on the sidewalk facing the brick fronts through the street trees;
+       now they arrive just inside the door, the long daylit gallery ahead and the torqued ellipse in its first bay */
+    return { mounts, spawn: v(GX - 3.4, 3, 8.8), look: v(GX + 2.5, 3.0, -30), eye: 3, bounds: [GX - IW / 2 + 0.8, 10, GZ - ID / 2 + 1, 30], style: 'none' };
   },
 };
 
@@ -314,7 +342,7 @@ export const chelseablock: RoomDef = {
     k.sky({ top: 0x1a2446, horizon: 0x6a5a70, ground: 0x14141a, fog: 0.0024, stars: 200, env: 0.7 });
     k.hemi(0xd8e0ff, 0x1a1418, 0.55);
     /* 2026-11-24 (wave 6a): scanned CC0 surfaces (Poly Haven, 1k): white plaster for the cubes, garage floor concrete, painted brick */
-    const white = sc(k, 'chelseablock', 'white', 2.0, () => X.plaster(0xf6f6f4, 180), { roughness: 0.9, color: 0xfafaf8 }, 0xf0f0ee), floorC = sc(k, 'chelseablock', 'floor', 3.0, () => X.concrete(0xb8b4ac, 181), { roughness: 0.4, color: 0xd0ccc4 }, 0xb8b4ac),
+    const white = sc(k, 'chelseablock', 'white', 2.0, () => X.plaster(0xf6f6f4, 180), { roughness: 0.9, color: 0xfafaf8, emissive: 0x34342f /* entrance pass: the cubes read grey from the street */ }, 0xf0f0ee), floorC = sc(k, 'chelseablock', 'floor', 3.0, () => X.concrete(0xb8b4ac, 181), { roughness: 0.4, color: 0xd0ccc4 }, 0xb8b4ac),
       brick = sc(k, 'chelseablock', 'brick', 2.4, () => X.brick(0x6a4a3a, 318), { roughness: 0.85, color: 0xb89080 }, 0x6a4a3a), glass = k.glass(0xdcecf6, 0.14, 0.04), dark = k.flat(0x1a1c20, 0.5, 0.6), steel = k.flat(0x8c98a4, 0.9, 0.3), tube = k.glow(0xf0f4ff), wood = k.pbr('cbDesk', X.planks(0xe8e0d0, 4, 319, 0.1), 1.0);
     street(k, { w: 16, len: 160, z: 0, x: 0 });
     blockFront(k, { x: 12, z0: 80, count: 14, face: -1, seed: 320, h: [10, 16] });
@@ -325,14 +353,17 @@ export const chelseablock: RoomDef = {
     const mounts: Mount[] = [];
     galleries.forEach(([z, w, d, name], gi) => {
       const x = -8 - d / 2;
-      k.box(d + 1.2, 7, w + 1.2, x, 3.5, z, brick);
+      /* entrance pass (2026-11-28): the shell was one solid brick box whose street face covered the rolled up door, the
+         GALLERY sign and the reception vinyl; now it is built as back, sides, roof and a lintel over the open door */
+      k.box(0.6, 7, w + 1.2, x - d / 2 - 0.3, 3.5, z, brick); for (const s of [-1, 1]) k.box(d + 1.2, 7, 0.6, x, 3.5, z + s * (w / 2 + 0.3), brick);
+      k.box(d + 0.45, 0.4, w + 1.2, x - 0.375, 6.8, z, brick); k.box(0.3, 0.4, w - 6, -8, 6.8, z, brick);
       k.box(d, 0.3, w, x, 0.15, z, floorC);
       for (const s of [-1, 1]) { k.box(d, 6, 0.3, x, 3, z + s * (w / 2 - 0.15), white); k.block(x - d / 2, x + d / 2, z + s * (w / 2 - 0.6), z + s * (w / 2 + 0.6)); }
       k.box(0.3, 6, w, x - d / 2 + 0.15, 3, z, white); k.block(x - d / 2 - 0.6, x - d / 2 + 0.6, z - w / 2, z + w / 2);
       k.box(d, 0.4, w, x, 6, z, dark);
       for (let i = -d / 2 + 3; i < d / 2; i += 4) for (let j = -w / 2 + 3; j < w / 2; j += 4) { k.box(1.2, 0.08, 0.1, x + i, 5.85, z + j, tube); if ((i + j) % 8 === 0) k.point(x + i, 5.2, z + j, 0xf0f4ff, 10, 8); }
       k.box(0.3, 7, 3, -8, 3.5, z - w / 2 + 1.5, brick); k.box(0.3, 7, 3, -8, 3.5, z + w / 2 - 1.5, brick);
-      k.box(w - 6, 0.6, 0.3, -8, 6.3, z, steel); for (let i = 0; i < 8; i++) k.box(w - 6, 0.06, 0.04, -8, 6.0 - i * 0.04, z, dark);
+      /* entrance pass: the roll up header and its slats ran along x, ten metres out across the sidewalk; now along the door */ k.box(0.3, 0.6, w - 6, -8, 6.3, z, steel); for (let i = 0; i < 8; i++) k.box(0.04, 0.06, w - 6, -7.84, 6.0 - i * 0.04, z, dark);
       k.block(-8.6, -7.4, z - w / 2, z - w / 2 + 3); k.block(-8.6, -7.4, z + w / 2 - 3, z + w / 2);
       k.sign(name, w - 6, 0.6, -7.84, 6.7, z, '#f6f6f4', '#0d0d0d', 60, PI / 2);
       many(k, 'chelseablock/ph_metal_office_desk', { width: 2.2 }, [[x - d / 2 + 2, 0.3, z - w / 2 + 2, PI / 2]], (o) => tint(o, 0xf2f0ea, 0.5, 0.2)); /* wave 6a: the front desk is a real desk */ k.keepOut.push({ x: x - d / 2 + 2, z: z - w / 2 + 2, r: 1.5 });
@@ -341,7 +372,7 @@ export const chelseablock: RoomDef = {
       if (gi === 1) k.egg(v(x, 4.4, z), { id: 'chelseablock-gagosian-1999', title: 'A hangar for one sculpture', year: '1999', text: 'In September 1999 Gagosian moved from SoHo to West 24th Street, into a 25,000 square foot space designed by Richard Gluckman. That November Richard Serra showed his monumental sculpture Switch there, the kind of work only a room this size could hold. Gluckman also designed a second Gagosian on West 21st Street in 2006.', clue: 'Stand in the middle of the second white cube.', source: { name: 'Gagosian, Wikipedia', url: 'https://en.wikipedia.org/wiki/Gagosian_Gallery' } }, { r: 1.6 });
       if (gi === 2) k.egg(v(x - d / 2 + 2, 1.5, z - w / 2 + 2), { id: 'chelseablock-pioneers', title: 'Two pioneers on the block', year: '1987', text: 'When the Dia Center for the Arts opened on West 22nd Street in October 1987 it was the first art museum in Chelsea. Through the 1980s and early 1990s Dia and the Kitchen were the only arts institutions in the neighborhood, before the SoHo dealers followed them west.', clue: 'Find the front desk in the third gallery.', source: { name: 'Dia Chelsea, Wikipedia', url: 'https://en.wikipedia.org/wiki/Dia_Chelsea' } }, { r: 1.4 });
       const n = Math.floor((d - 4) / 4.4);
-      for (const s of [-1, 1]) for (let i = 0; i < n; i++) { const wx = x - d / 2 + 3 + i * ((d - 4) / n) + 1; mounts.push({ position: v(wx, 3.0, z + s * (w / 2 - 0.32)), rotation: s > 0 ? PI : 0, target: v(wx, 2.6, z), width: 3.6, height: 2.4, style: gi === 1 ? 'none' : 'white', wash: true }); }
+      for (const s of [-1, 1]) for (let i = 0; i < n; i++) { const wx = x - d / 2 + 3 + i * ((d - 4) / n) + 1; mounts.push({ position: v(wx, 3.0, z + s * (w / 2 - 0.32)), rotation: s > 0 ? PI : 0, target: v(wx, 2.6, gi ? z : z + s * 3.4) /* entrance pass: the first cube's middle is the mobile's */, width: 3.6, height: 2.4, style: gi === 1 ? 'none' : 'white', wash: true }); }
       mounts.push({ position: v(x - d / 2 + 0.32, 3.0, z), rotation: PI / 2 /* wave 6a: was turned to face the wall */, target: v(x, 2.6, z), width: Math.min(6, w - 4), height: 3.2, style: 'none', wash: true });
       k.crowd([v(x - d / 2 + 3, 0.15, z - w / 2 + 3), v(x + d / 2 - 3, 0.15, z), v(x - d / 2 + 3, 0.15, z + w / 2 - 3)], 10, { seed: 143 + gi, speed: 0.25, spread: 1.6, animate: !ctx.reduced, colors: [0x151517, 0x24262c, 0xe6e2da, 0x8a3a3a, 0x0d0d0d] });
     });
@@ -381,6 +412,24 @@ export const chelseablock: RoomDef = {
       standUp(k, 'OPEN LATE', '#111214', -9.6, 8, 3, 0.31, PI / 2, 7, 6, 1.2);
       k.egg(v(-14, 1.0, 8), { id: 'chelseablock-open-late', title: 'Letters on the floor', text: 'OPEN LATE is painted on the concrete stretched so long that it only stands up straight from the doorway of the second gallery. The trick is anamorphosis: a picture drawn for one viewpoint, distorted from every other.', clue: 'Stand in the doorway of the second gallery and look at the floor.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
     }
+    /* ---- 2026-11-28 (entrance pass): the first view is the opening ----
+       The visitor arrives across the street from GALLERY ONE. Its cube is the hero: a large hanging mobile turning slowly
+       in the middle (the museum's own mobile model), two ceiling tracks of gallery spots (the museum's track_light model)
+       raking the walls, the end wall lit, light from the door spilling across the sidewalk and the road, the show title in vinyl
+       on the pier. Side wall works in this cube are now seen from beside their wall. */
+    {
+      const G1 = galleries[0], gz = G1[0], gw = G1[1], gd = G1[2], gx = -8 - gd / 2;
+      k.prop('mobile', gx + 3.5, 1.8, gz, { height: 4.0, keepOut: 2.0 }).then((o) => { if (o && !ctx.reduced) k.ticks.push((t) => { o.rotation.y = t * 0.07; }); });
+      k.spot(-9.5, 5.6, gz, gx + 3.5, 3.6, gz, 0xfff4e4, 70, 0.4, 0.6, 16);
+      const rail = k.flat(0x1a1a1c, 0.6, 0.4);
+      for (const s of [-1, 1]) { k.box(gd - 2, 0.06, 0.08, gx, 5.74, gz + s * 3.2, rail); for (let i = 0; i < 5; i++) k.prop('track_light', gx - gd / 2 + 3 + i * 4.2, 5.2, gz + s * 3.2, { height: 0.5, rotY: s > 0 ? 0 : PI }); }
+      k.spot(gx + 2, 5.6, gz, gx - gd / 2 + 0.3, 3.0, gz, 0xfffaf0, 90, 0.45, 0.5, 20);
+      const spill = new T.MeshBasicMaterial({ map: HAS_DOM ? X.pool() : null, color: 0xfff0d8, transparent: true, opacity: 0.5, blending: T.AdditiveBlending, depthWrite: false });
+      { const o = k.mesh(new T.PlaneGeometry(16, 13), spill, -4.6, 0.03, gz, true); o.rotation.x = -PI / 2; o.renderOrder = 2; }
+      k.point(-6.2, 3.4, gz, 0xfff2dc, 18, 14); for (const s of [-1, 1]) k.point(gx - 2, 4.6, gz + s * 3.5, 0xfbfaf6, 55, 18); k.point(gx - 7, 4.6, gz, 0xfbfaf6, 45, 16);
+      // the steel canopy over the rolled door and the show title in vinyl on the brick
+      hsign(k, 'NEW YORKERS  ·  THROUGH JANUARY', 2.6, 0.5, -7.83, 4.6, gz - gw / 2 + 1.5, PI / 2, { fg: '#0d0d0d', size: 0.5, font: 'W2 Archivo Expanded', lit: false });
+    }
     eyeMonument(k, -6, 0, -46, PI, 4.2);
     // the High Line crosses 24th Street mid block on its steel bridge, planted on top
     k.box(48, 1.2, 8, -4, 8.2, -53, dark); k.box(48, 0.5, 0.5, -4, 9.0, -57, steel); k.box(48, 0.5, 0.5, -4, 9.0, -49, steel);
@@ -394,7 +443,9 @@ export const chelseablock: RoomDef = {
     k.censusWall({ x: 7.66, y: 3.2, z: 0, rotY: -PI / 2, cols: 40, rows: 4, tile: 0.55, gap: 0.05, start: ctx.wallStart(5800, 160), pieces: ctx.all, backing: dark });
     k.box(0.3, 5, 24, 7.9, 2.5, 0, dark);
     for (let i = 0; i < 3; i++) { const z = 56 - i * 56; k.box(0.3, 3.2, 4.6, 7.8, 2.2, z, dark); mounts.push({ position: v(7.62, 2.3, z), rotation: -PI / 2, target: v(0, 2.5, z), width: 4.2, height: 2.5, style: 'black', wash: false }); }
-    return { mounts, spawn: v(2, 3, 62), look: v(-10, 4, 0), eye: 3, bounds: [-34, 7, -70, 70], style: 'white' };
+    /* entrance pass (2026-11-28): the visitor used to arrive mid street looking down the block at a brick side wall;
+       now they arrive across the street from the first gallery, looking straight into the lit cube */
+    return { mounts, spawn: v(5.6, 3, 30.5), look: v(-22, 2.9, 37.6), eye: 3, bounds: [-34, 7, -70, 70], style: 'white' };
   },
 };
 

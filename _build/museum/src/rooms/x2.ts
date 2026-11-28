@@ -207,7 +207,9 @@ export const laundry: RoomDef = {
     /* 2026-11-24 (wave 6d): scanned CC0 surfaces (Poly Haven): the diagonal beige floor tile every laundromat has, long white
        wall tile below, painted plaster above and over the drop ceiling, red brick outside */
     const floorT = sc(k, 'laundry', 'interior_tiles', 1.3, () => X.terrazzo(0xb9b4a6, 401), { roughness: 0.42, color: 0xf0e8da }, 0x9a8e7e),
-      wall = sc(k, 'laundry', 'painted_plaster_wall', 2.4, () => X.plaster(0xcfe0d6, 402), { roughness: 0.9, color: 0xd6ece0 }, 0x8a9a92),
+      /* 2026-11-28 entrance pass: the walls over the machines are the aqua every Queens laundromat paints them, lit from within a little
+         so they read under the tubes instead of going grey */
+      wall = sc(k, 'laundry', 'painted_plaster_wall', 2.4, () => X.plaster(0x8fd2c6, 402), { roughness: 0.85, color: 0x9ee0d4, emissive: 0x1e4a44, emissiveIntensity: 0.55 }, 0x5a8a84),
       dado = sc(k, 'laundry', 'long_white_tiles', 1.1, () => X.subwayTile(0xdad5c4, 0x6a6a62), { roughness: 0.28, color: 0xf6f2e8 }, 0xc8c4b8),
       ceil = sc(k, 'laundry', 'painted_plaster_wall', 1.6, () => X.plaster(0xf2f1ec, 404), { roughness: 0.95, color: 0xffffff, emissive: 0x8a9098, emissiveIntensity: 0.4 }, 0xc8c8c4),
       brick = sc(k, 'laundry', 'red_brick_03', 1.6, () => X.brick(0x8a5a48, 405), { color: 0xd8b8a8 }, 0x6a4a3e),
@@ -297,11 +299,26 @@ export const laundry: RoomDef = {
       for (const y of ys) { ports.push({ m, y }); const at = (dz: number) => new T.Matrix4().compose(off(m, 0, y, m.d + dz), m.q, v(1, 1, 1)); drums.push(at(0.012)); glassM.push(at(0.055)); rings.push(at(0.05)); }
       panels.push(new T.Matrix4().compose(off(m, 0, m.tall ? 0.93 : 0.47, m.d + 0.01), m.q, v(1, 1, 1)));
     }
-    k.instances(new T.BoxGeometry(1, 1, 1), enamel, bodies);
-    k.instances(new T.CircleGeometry(0.25, 18), drum, drums);
+    /* 2026-11-28 entrance pass: stainless machine bodies, and the drums that are running lit warm inside, so the two rows read from the door */
+    k.instances(new T.BoxGeometry(1, 1, 1), k.flat(0xd2d8dc, 0.7, 0.26), bodies);
+    const drumIm = k.instances(new T.CircleGeometry(0.25, 18), k.flat(0xffffff, 0.3, 0.55), drums);
+    { const c = new T.Color(); ports.forEach((p, i) => drumIm.setColorAt(i, c.set(p.m.run > 0 ? 0xc8a874 : 0x24272b))); if (drumIm.instanceColor) drumIm.instanceColor.needsUpdate = true; }
     k.instances(new T.CircleGeometry(0.255, 18), glass, glassM);
     k.instances(new T.TorusGeometry(0.265, 0.035, 8, 26), chrome, rings);
-    k.instances(new T.BoxGeometry(0.6, 0.08, 0.02), dark, panels);
+    /* 2026-11-28 entrance pass: every machine wears its lit control strip, a red price readout and four buttons, washers $4.50 and dryers 25 cents */
+    if (HAS_DOM) {
+      const strip = (price: string, label: string) => new T.MeshBasicMaterial({ map: paintTex(512, 128, (g) => {
+        g.fillStyle = '#0b0d10'; g.fillRect(0, 0, 512, 128); g.fillStyle = '#1c2026'; g.fillRect(6, 6, 500, 116);
+        g.fillStyle = '#220606'; g.fillRect(20, 22, 196, 84); g.fillStyle = '#ff3a2a'; g.shadowColor = '#ff2a1a'; g.shadowBlur = 14;
+        g.font = '700 64px "W2 JetBrains Mono", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(price, 118, 66); g.shadowBlur = 0;
+        g.fillStyle = '#e8ecee'; g.font = '700 26px "W2 Archivo Expanded", Arial, sans-serif'; g.textAlign = 'left'; g.fillText(label, 236, 36);
+        ['#f2f2ee', '#2a6ad8', '#e0402a', '#3aa05a'].forEach((col, i) => { g.fillStyle = col; g.beginPath(); g.arc(256 + i * 62, 88, 20, 0, PI * 2); g.fill(); });
+      }, ['W2 JetBrains Mono', 'W2 Archivo Expanded']) });
+      const tallP: T.Matrix4[] = [], lowP: T.Matrix4[] = [];
+      machines.forEach((m) => (m.tall ? tallP : lowP).push(new T.Matrix4().compose(off(m, 0, m.tall ? 0.93 : 0.47, m.d + 0.012), m.q, v(1, 1, 1))));
+      k.instances(new T.PlaneGeometry(0.68, 0.17), strip('25¢', 'DRY'), tallP);
+      k.instances(new T.PlaneGeometry(0.68, 0.17), strip('$4.50', 'WASH'), lowP);
+    } else k.instances(new T.BoxGeometry(0.6, 0.08, 0.02), dark, panels);
     const coins: T.Matrix4[] = []; for (const m of machines) coins.push(new T.Matrix4().compose(off(m, 0.24, m.tall ? 0.78 : 0.33, m.d + 0.02), m.q, v(1, 1, 1)));
     k.instances(new T.BoxGeometry(0.12, 0.09, 0.03), chrome, coins);
     k.block(SX + W - 1.0, SX + W, -D / 2, D / 2);
@@ -449,13 +466,37 @@ export const laundry: RoomDef = {
       // Firefly plate queued: a backlit detergent ad over the change machine (a dim panel until it lands)
       fireflyPlate(k, 'assets/museum/tex/laundry/ff_lau_lightbox.webp', 1.4, 0.8, SX + 1.0, 3.7, -D / 2 + 0.17, 0, k.glow(0x9ab0c8, 0.9), true);
     }
+    /* ---- 2026-11-28 entrance pass: what the visitor sees first from the door ----
+       Two double faced signs hung on chains over the side aisles in the shop's red and yellow, a red and yellow band along the top of
+       both dryer rows that draws the eye to the back, and the folding tables piled with finished laundry. */
+    {
+      const yel = k.flat(0xf4cf3c, 0, 0.5, { emissive: 0x5a4a10, emissiveIntensity: 0.4 }), redB = k.flat(0xb41d1d, 0, 0.5, { emissive: 0x3a0808, emissiveIntensity: 0.4 });
+      for (const s of [-1, 1]) { const zf = s * (D / 2 - 0.6 - 0.425); k.box(22.3, 0.16, 0.06, SX + 13.65, 2.1, zf, yel); k.box(22.3, 0.06, 0.07, SX + 13.65, 1.99, zf, redB); }
+      for (const [z, text] of [[-5, 'LAVANDERIA'], [5, 'OPEN 24 HOURS']] as const) {
+        if (HAS_DOM) twoFaced(k, X.signText(text, 1024, 256, '#f4cf3c', '#b41d1d', 120, { border: true }), 2.6, 0.65, SX + 9.5, 3.8, z, -PI / 2);
+        for (const dz of [-1.1, 1.1]) k.box(0.02, 0.45, 0.02, SX + 9.5, 4.35, z + dz, chrome);
+      }
+      const folded: T.Matrix4[] = [], foldCol: number[] = [], fr = X.mulberry(417), towel = [0xf4f0e8, 0x2a4aa8, 0xd23a2a, 0xe6b23a, 0x3a8a4a, 0xd88ab0, 0x1a1a1e, 0x8ac8e8];
+      for (const x of [SX + 9, SX + 17]) for (const [dx, z] of [[-0.24, -2.1], [0.2, -2.05], [-0.22, 0.05], [0.22, 0.45], [-0.15, 0.95]]) {
+        const n = 3 + Math.floor(fr() * 4);
+        for (let i = 0; i < n; i++) { folded.push(mat(x + dx + (fr() - 0.5) * 0.03, 0.97 + i * 0.075, z + (fr() - 0.5) * 0.03, (fr() - 0.5) * 0.12)); foldCol.push(towel[Math.floor(fr() * towel.length)]); }
+      }
+      const fold = k.instances(new T.BoxGeometry(0.36, 0.07, 0.3), k.flat(0xffffff, 0, 0.9), folded);
+      { const c = new T.Color(); foldCol.forEach((h, i) => fold.setColorAt(i, c.set(h))); }
+      const heap: T.Matrix4[] = [];
+      for (let i = 0; i < 7; i++) heap.push(mat(SX + 17 + (fr() - 0.5) * 0.5, 0.99 + fr() * 0.08, 1.6 + (fr() - 0.5) * 0.7, fr() * PI, 1.2, 0.38, 0.9));
+      const heapM = k.instances(new T.IcosahedronGeometry(0.2, 1), k.flat(0xffffff, 0, 0.95), heap);
+      { const c = new T.Color(); heap.forEach((_, i) => heapM.setColorAt(i, c.set(towel[(i * 3) % towel.length]))); }
+    }
     // the hang: enamel panels above the dryers and the washers, the community board over the window, the census as the notice wall
     const mounts: Mount[] = [];
     for (const s of [-1, 1]) for (let i = 0; i < 6; i++) { const x = SX + 3.5 + i * 4.0; mounts.push(M(x, 3.35, s * (D / 2 - 0.2), x, s * 3.0, 3.4, 1.9, 'enamel', true)); }
     for (const z of [-6.2, 6.2]) mounts.push(M(SX + W - 0.2, 3.3, z, SX + W - 5, z, 3.6, 2.0, 'enamel', true));
     for (const z of [-7.2, -2.4, 2.4, 7.2]) mounts.push(M(SX + 0.2, 3.9, z, SX + 5.5, z, Math.abs(z) > 5 ? 2.8 : 3.0, 1.3, 'enamel', false));
     k.censusWall({ x: SX + W - 0.2, y: 3.3, z: 0, rotY: -PI / 2, cols: 12, rows: 3, tile: 0.5, gap: 0.05, start: ctx.wallStart(6200, 36), pieces: ctx.all, backing: dark });
-    return { mounts, spawn: v(4.0, 2.8, 0), look: v(SX + W, 3.2, 0), eye: 2.8, bounds: [-12.4, SX + W - 0.5, -50, 50], style: 'enamel' };
+    /* 2026-11-28 entrance pass: the visitor arrives just inside the door, where SPIN CYCLE stands up, looking down the aisle between the
+       two rows of lit machines; the el and the avenue are one turn behind */
+    return { mounts, spawn: v(SX + 1.2, 2.8, 0), look: v(SX + W, -3.4, 0), eye: 2.8, bounds: [-12.4, SX + W - 0.5, -50, 50], style: 'enamel' };
   },
 };
 
@@ -561,6 +602,8 @@ export const taxi: RoomDef = {
     const parkedCabs: { old: T.Object3D[]; w0: number; x: number; y: number; z: number; ry: number; lamp: T.Mesh }[] = [];
     const park = (x: number, z: number, ry: number, y = 0) => { const mark = k.objects.length, w0 = wheels.length; const lamp = cabStatic(k, x, y, z, ry, cabYellow, glassDark, dark, new T.MeshBasicMaterial({ color: 0xfff0c0 })); const old = standIn(k, mark); old.forEach((o) => { o.userData.cab = true; }); /* not the kit's cab swap's to take */ parkedCabs.push({ old, w0, x, y, z, ry, lamp }); for (const [dx, dz] of [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]]) { const p = v(dx, 0.32 + y, dz).applyAxisAngle(v(0, 1, 0), ry).add(v(x, 0, z)); wheels.push(mat(p.x, p.y, p.z, ry, 1, 1, 1, 0, PI / 2)); } k.keepOut.push({ x, z, r: 2.6 }); return lamp; };
     const parked = [park(bays[1].x - Math.cos(bays[1].th) * 3.4, bays[1].z - Math.sin(bays[1].th) * 3.4, PI / 2 - bays[1].th), park(bays[3].x - 3.4, bays[3].z, PI / 2), park(bays[5].x - Math.cos(bays[5].th) * 3.4, bays[5].z - Math.sin(bays[5].th) * 3.4, PI / 2 - bays[5].th), park(20, 26, 0.1), park(24, 26, -0.1)];
+    /* 2026-11-28 entrance pass: a cab nosed into every bay of the fan, so the first look from the door is seven yellow cabs under seven numbers */
+    for (const i of [0, 2, 4, 6]) parked.push(park(bays[i].x - Math.cos(bays[i].th) * 3.4, bays[i].z - Math.sin(bays[i].th) * 3.4, PI / 2 - bays[i].th));
     const LX = 24, LZ = -15;
     for (const s of [-1, 1]) { k.box(0.5, 4.6, 0.6, LX, 2.3, LZ + s * 1.55, red); k.box(0.8, 0.08, 0.9, LX, 0.04, LZ + s * 1.55, dark); }
     k.box(0.5, 0.3, 3.7, LX, 4.5, LZ, red);
@@ -646,7 +689,7 @@ export const taxi: RoomDef = {
     mover.add(new T.InstancedMesh(new T.CylinderGeometry(0.32, 0.32, 0.22, 12), rubber, 4));
     { const wm = mover.children[mover.children.length - 1] as T.InstancedMesh; [[-0.8, 1.5], [0.8, 1.5], [-0.8, -1.5], [0.8, -1.5]].forEach(([dx, dz], i) => wm.setMatrixAt(i, mat(dx, 0.32, dz, 0, 1, 1, 1, 0, PI / 2))); wm.instanceMatrix.needsUpdate = true; }
     k.add(mover);
-    k.rider(mover, k.spline([v(-2, 0, 78), v(-2, 0, 30), v(3, 0, 19), v(9, 0, 14.5), v(16, 0, 13), v(28, 0, 12), v(41, 0, 7), v(44, 0, -4), v(37, 0, -9), v(26, 0, -5), v(19, 0, 5), v(15, 0, 10.4), v(9, 0, 11.5), v(2, 0, 24), v(-5, 0, 44), v(-5, 0, 96), v(-1, 0, 104), v(-2, 0, 96)], true), 6.5);
+    k.rider(mover, k.spline([v(-2, 0, 78), v(-2, 0, 30), v(3, 0, 19), v(9, 0, 14.5), v(16, 0, 13), v(28, 0, 12), v(39.5, 0, 7.5), v(41.5, 0, -2), v(37, 0, -9), v(26, 0, -5), v(19, 0, 5), v(15, 0, 10.4), v(9, 0, 11.5), v(2, 0, 24), v(-5, 0, 44), v(-5, 0, 96), v(-1, 0, 104), v(-2, 0, 96)], true), 6.5);
     const lamps = [mover.userData.lamp as T.Mesh, ...parked];
     if (!ctx.reduced) k.ticks.push((t) => lamps.forEach((l, i) => { (l.material as T.MeshBasicMaterial).color.set(Math.sin(t * 2.4 + i * 1.9) > 0.2 ? 0xfff0c0 : 0x6a5a30); }));
     // the medallion on the hood of the cab in bay four
@@ -697,13 +740,57 @@ export const taxi: RoomDef = {
     k.egg(v(QX - 6, deckY + 14, -148), { id: 'queensboro', title: 'The Queensboro Bridge', year: '1901 to 1908', room: 'queensboro', text: 'Begun in 1901 and completed in 1908, with Henry Hornbostel as architect, the bridge crosses the East River by way of Roosevelt Island to 59th and 60th Streets in Manhattan. The city designated it a landmark on April 16, 1974.', clue: 'Upriver, steel lace strides over the water on stone legs.', source: { name: 'NYC Landmarks Preservation Commission', url: 'https://s-media.nyc.gov/agencies/lpc/lp/0828.pdf' } }, { r: 7 });
     const mounts: Mount[] = [];
     bays.forEach((b) => mounts.push(M(b.x - Math.cos(b.th) * 0.2, 3.35, b.z - Math.sin(b.th) * 0.2, b.x - Math.cos(b.th) * 7, b.z - Math.sin(b.th) * 7, 5.0, 2.7, 'steel', true)));
-    for (const x of [17.5, 24, 30.5, 37]) mounts.push(M(x, 3.5, GD / 2 - 0.24, x, GD / 2 - 6, 4.6, 2.6, 'steel', true));
-    for (const x of [30, 36.5]) mounts.push(M(x, 3.5, -GD / 2 + 0.24, x, -GD / 2 + 6, 4.6, 2.6, 'steel', true));
+    /* 2026-11-28: the two end works stand four metres off their wall, clear of the cabs now parked in bays 1 and 7 */
+    for (const x of [17.5, 24, 30.5, 37]) mounts.push(M(x, 3.5, GD / 2 - 0.24, x, GD / 2 - (x > 36 ? 4 : 6), 4.6, 2.6, 'steel', true));
+    for (const x of [30, 36.5]) mounts.push(M(x, 3.5, -GD / 2 + 0.24, x, -GD / 2 + (x > 36 ? 4 : 6), 4.6, 2.6, 'steel', true));
     for (const z of [-6, 6]) mounts.push(M(GX + 0.28, 3.0, z, GX + 6, z, 4.6, 2.4, 'steel', true));
     for (const z of [-18.6, 18.6]) mounts.push(M(GX + 0.28, 3.5, z, GX + (z < 0 ? 7.8 : 6), z, 5.6, 2.8, 'steel', true));
     mounts.push(M(GX + 0.28, 6.3, 0, GX + 8, 0, 5.6, 2.0, 'steel', true));
     mounts.push(M(BX, 5.2, -GD / 2 + 0.24, BX, -GD / 2 + 8.2, 4.0, 2.2, 'steel', true));
-    return { mounts, spawn: v(-9.5, 3, 0), look: v(GX + 18, 4.2, 0), eye: 3, bounds: [-13.4, GX + GW - 0.6, -70, 70], style: 'steel' };
+    /* ---- 2026-11-28 entrance pass: what the visitor sees first from the middle door ----
+       The dispatch board hung from the roof over the fan, its rows changing as cabs go out and come in, and the low five o'clock
+       sun laid on the floor through the open doors. */
+    {
+      const BDX = 35.5, BDY = 5.3;
+      k.box(0.2, 2.0, 6.1, BDX + 0.12, BDY, 0, dark);
+      for (const z of [-2.6, 2.6]) k.box(0.05, H - BDY - 1.0, 0.05, BDX + 0.12, (H + BDY + 1.0) / 2, z, steelL);
+      if (HAS_DOM) {
+        const fleet = ['4K12', '7J31', '2H88', '5A07', '9C45', '3T19', '6M52', '8P23', '1D66', '4R90', '7B14', '2X38'];
+        const rows: [string, number, string, string][] = [];
+        let n = 0, mins = 1;
+        const nextRow = (): [string, number, string, string] => { const out = n % 3 !== 1; const r: [string, number, string, string] = [fleet[n % fleet.length], 1 + ((n * 3) % 7), out ? 'OUT' : 'IN', `5:${String(mins).padStart(2, '0')}`]; n++; mins = (mins + 1 + (n % 2)) % 60; return r; };
+        for (let i = 0; i < 5; i++) rows.push(nextRow());
+        const paint = (g: CanvasRenderingContext2D) => {
+          g.fillStyle = '#0a0b0c'; g.fillRect(0, 0, 1024, 320);
+          g.fillStyle = '#f2c230'; g.fillRect(0, 0, 1024, 58);
+          g.fillStyle = '#141416'; g.font = '800 34px "W2 Archivo Expanded", Arial, sans-serif'; g.textBaseline = 'middle'; g.textAlign = 'left'; g.fillText('DISPATCH', 28, 31);
+          g.textAlign = 'right'; g.fillText('SHIFT 5:00', 996, 31);
+          g.font = '700 38px "W2 JetBrains Mono", monospace';
+          rows.forEach(([cab, bay, st, tm], i) => {
+            const y = 88 + i * 50;
+            g.fillStyle = i % 2 ? '#101214' : '#0d0f10'; g.fillRect(0, y - 25, 1024, 50);
+            g.textAlign = 'left'; g.fillStyle = '#ffd25a'; g.fillText(`CAB ${cab}`, 28, y); g.fillText(`BAY ${bay}`, 400, y);
+            g.fillStyle = st === 'OUT' ? '#5ae07a' : '#ff8a3a'; g.fillText(st, 640, y);
+            g.textAlign = 'right'; g.fillStyle = '#ffd25a'; g.fillText(tm, 996, y);
+          });
+        };
+        const tex = paintTex(1024, 320, paint, ['W2 JetBrains Mono', 'W2 Archivo Expanded']);
+        const face = k.mesh(new T.PlaneGeometry(5.8, 1.8), new T.MeshBasicMaterial({ map: tex }), BDX, BDY, 0, true); face.rotation.y = -PI / 2;
+        if (!ctx.reduced) { let last = 0; k.ticks.push((t) => { if (t - last < 3.2) return; last = t; rows.shift(); rows.push(nextRow()); const g = (tex.image as HTMLCanvasElement).getContext('2d')!; paint(g); tex.needsUpdate = true; }); }
+      }
+      k.point(BDX - 2.5, BDY - 0.4, 0, 0xffc060, 10, 8);
+      // the low sun on the floor: a warm pool through each open door, fading into the garage
+      if (HAS_DOM) {
+        const sunT = paintTex(256, 64, (g) => { const gr = g.createLinearGradient(0, 0, 256, 0); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.55, 'rgba(255,255,255,0.45)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 256, 64); const e = g.createLinearGradient(0, 0, 0, 64); e.addColorStop(0, 'rgba(0,0,0,1)'); e.addColorStop(0.15, 'rgba(0,0,0,0)'); e.addColorStop(0.85, 'rgba(0,0,0,0)'); e.addColorStop(1, 'rgba(0,0,0,1)'); g.globalCompositeOperation = 'destination-out'; g.fillStyle = e; g.fillRect(0, 0, 256, 64); });
+        const sunM = new T.MeshBasicMaterial({ map: sunT, color: 0xffa050, transparent: true, opacity: 0.7, depthWrite: false, blending: T.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -1 });
+        const quad = (pts: T.Vector3[]) => { const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pts.flatMap((p) => [p.x, p.y, p.z]), 3)); g.setAttribute('uv', new T.Float32BufferAttribute([0, 0, 0, 1, 1, 1, 1, 0], 2)); g.setIndex([0, 2, 1, 0, 3, 2]); g.computeVertexNormals(); return g; };
+        for (const zc of [0, 12]) k.mesh(quad([v(GX + 0.3, 0.03, zc - 3.1), v(GX + 0.3, 0.03, zc + 3.1), v(GX + 11, 0.03, zc + 4.2), v(GX + 11, 0.03, zc - 2.0)]), sunM, 0, 0, 0, true);
+        // haze in the north door: a slanted sheet of lit dust from the lintel to the floor
+        const hazeM = new T.MeshBasicMaterial({ map: sunT, color: 0xffb070, transparent: true, opacity: 0.22, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide });
+        k.mesh(quad([v(GX + 0.3, 5.1, 8.9), v(GX + 0.3, 5.1, 15.1), v(GX + 11, 0.05, 16.2), v(GX + 11, 0.05, 10.0)]), hazeM, 0, 0, 0, true);
+      }
+    }
+    return { mounts, spawn: v(GX + 1.5, 3, 0), look: v(GX + GW, -5.2, 0), eye: 3, bounds: [-13.4, GX + GW - 0.6, -70, 70], style: 'steel' };
   },
 };
 
@@ -796,30 +883,40 @@ export const flowercold: RoomDef = {
     for (const z of [-4.5, 4.5]) { k.box(2.6, 1.0, 1.6, SX + W - 1.6, H - 0.5, z, white); for (const dx of [-0.65, 0.65]) { const g = new T.Group(); g.position.set(SX + W - 2.42, H - 0.5, z + dx); g.rotation.y = -PI / 2; for (let b = 0; b < 5; b++) { const bl = new T.Mesh(new T.BoxGeometry(0.1, 0.42, 0.02), steel); bl.position.y = 0.2; const pv = new T.Group(); pv.rotation.z = (b * PI * 2) / 5; pv.add(bl); g.add(pv); } k.add(g); fans.push(g); } }
     if (!ctx.reduced) k.ticks.push((t) => fans.forEach((g, i) => { g.rotation.z = t * (7 + i); }));
     // flowers: buckets on the floor islands and the wall racks, tulips and roses instanced by the hundred
-    const buckets: T.Matrix4[] = [], stems: T.Matrix4[] = [], tulips: T.Matrix4[] = [], roses: T.Matrix4[] = [];
-    const tcols: number[] = [], rcols: number[] = [], rnd = X.mulberry(451);
+    const buckets: T.Matrix4[] = [], stems: T.Matrix4[] = [], tulips: T.Matrix4[] = [], roses: T.Matrix4[] = [], greens: T.Matrix4[] = [], bigs: T.Matrix4[] = [];
+    const tcols: number[] = [], rcols: number[] = [], gcols: number[] = [], bcols: number[] = [], rnd = X.mulberry(451);
     const tulipCols = [0xe0222a, 0xf2b52a, 0xf4f0e8, 0xf06aa0, 0xff6a2a, 0x7a2aa0], roseCols = [0xb8101e, 0xf4d2dc, 0xf4f0e8, 0xf08a2a, 0xe63a7a, 0xf2e26a];
     let bi = 0;
-    const bucket = (x: number, y: number, z: number, n: number) => {
+    /* 2026-11-28 entrance pass: fuller bunches, each in a collar of leaves, and the big heads (peonies, hydrangeas) for the colour blocks
+       the wholesalers stack by the door. `kind` and `col` pick a block; without them a bucket alternates tulips and roses as before. */
+    type Kind = 'tulip' | 'rose' | 'big';
+    const bucket = (x: number, y: number, z: number, n: number, kind?: Kind, col?: number) => {
       buckets.push(mat(x, y + 0.21, z));
-      const tulip = bi++ % 2 === 0, col = tulip ? tulipCols[Math.floor(rnd() * tulipCols.length)] : roseCols[Math.floor(rnd() * roseCols.length)];
+      const kd: Kind = kind ?? (bi % 2 === 0 ? 'tulip' : 'rose'); bi++;
+      const c = col ?? (kd === 'tulip' ? tulipCols[Math.floor(rnd() * tulipCols.length)] : roseCols[Math.floor(rnd() * roseCols.length)]);
+      greens.push(mat(x, y + 0.6, z, rnd() * PI, 1, 0.55, 1)); gcols.push(rnd() > 0.5 ? 0x2f6a34 : 0x4a7a3a);
       for (let i = 0; i < n; i++) {
-        const a = rnd() * PI * 2, r = rnd() * 0.11, h = 0.5 + rnd() * 0.16, lean = (rnd() - 0.5) * 0.25;
+        const a = rnd() * PI * 2, r = rnd() * 0.12, h = 0.5 + rnd() * 0.16, lean = (rnd() - 0.5) * 0.3;
         const sx = x + Math.cos(a) * r, sz = z + Math.sin(a) * r;
         stems.push(mat(sx, y + 0.3 + h / 2, sz, 0, 1, h / 0.55, 1, lean, lean * 0.7));
-        const top = mat(sx + lean * 0.3, y + 0.3 + h, sz + lean * 0.2, rnd() * PI * 2);
-        if (tulip) { tulips.push(top); tcols.push(col); } else { roses.push(top); rcols.push(col); }
+        const s = kd === 'big' ? 1 : 1.25, top = mat(sx + lean * 0.3, y + 0.3 + h, sz + lean * 0.2, rnd() * PI * 2, s, s, s);
+        if (kd === 'tulip') { tulips.push(top); tcols.push(c); } else if (kd === 'rose') { roses.push(top); rcols.push(c); } else { bigs.push(top); bcols.push(c); }
       }
     };
+    /* the colour blocks of the four floor islands, nearest first: [kind, colour] for the first three rows across, then the last two */
+    const blocks: [Kind, number, Kind, number][] = [[ 'rose', 0xc0101e, 'big', 0xf4f2ee], ['big', 0xf49ab8, 'tulip', 0xff7a2a], ['tulip', 0xf2c22a, 'tulip', 0x8a3ab8], ['rose', 0xf4f0e8, 'rose', 0xe63a7a]];
     const islands = [[SX + 7, SX + 10], [SX + 12, SX + 15], [SX + 17, SX + 20], [SX + 22, SX + 25]];
-    for (const [x0, x1] of islands) { k.box(x1 - x0 + 0.2, 0.22, 2.6, (x0 + x1) / 2, 0.11, 0, k.pbr('fcPallet', X.planks(0x8a7a60, 3, 452), 1.2)); k.block(x0 - 0.1, x1 + 0.1, -1.3, 1.3); for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) bucket(x0 + 0.3 + i * 0.6, 0.22, -0.9 + j * 0.6, 7); }
+    islands.forEach(([x0, x1], ii) => { k.box(x1 - x0 + 0.2, 0.22, 2.6, (x0 + x1) / 2, 0.11, 0, k.pbr('fcPallet', X.planks(0x8a7a60, 3, 452), 1.2)); k.block(x0 - 0.1, x1 + 0.1, -1.3, 1.3); const [ka, ca, kb, cb] = blocks[ii]; for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) { const kd = i < 3 ? ka : kb; bucket(x0 + 0.3 + i * 0.6, 0.22, -0.9 + j * 0.6, kd === 'big' ? 5 : 12, kd, i < 3 ? ca : cb); } });
     const posts: T.Matrix4[] = [];
     for (const s of [-1, 1]) {
       const zr = s * (D / 2 - 0.7);
       for (const y of [0.05, 1.05, 2.05]) k.box(W - 4, 0.04, 1.0, SX + W / 2, y, zr, wire);
       for (let x = SX + 2; x <= SX + W - 2; x += 2) for (const dz of [-0.45, 0.45]) posts.push(mat(x, 1.25, zr + dz));
       k.block(SX + 1.8, SX + W - 1.8, s > 0 ? zr - 0.6 : zr - 0.7, s > 0 ? zr + 0.7 : zr + 0.6);
-      for (const y of [0.07, 1.07]) for (let x = SX + 2.4; x <= SX + W - 2.4; x += 0.6) bucket(x, y, zr + (y > 0.5 ? 0.1 : -0.1), 5);
+      /* runs of four buckets in one colour along the racks, the way the stock is shelved */
+      for (const y of [0.07, 1.07]) { let run = 0; for (let x = SX + 2.4; x <= SX + W - 2.4; x += 0.6) { const r4 = Math.floor(run++ / 4) + (y > 0.5 ? 3 : 0) + (s > 0 ? 7 : 0), kd: Kind = r4 % 5 === 4 ? 'big' : r4 % 2 ? 'rose' : 'tulip'; bucket(x, y, zr + (y > 0.5 ? 0.1 : -0.1), kd === 'big' ? 4 : 8, kd, kd === 'big' ? [0xf4f2ee, 0xb8c8f0, 0xf49ab8][r4 % 3] : kd === 'rose' ? roseCols[r4 % roseCols.length] : tulipCols[r4 % tulipCols.length]); } }
+      /* the cold light: a frost strip under the front lip of each shelf */
+      for (const y of [1.02, 2.02]) k.box(W - 4.2, 0.03, 0.04, SX + W / 2, y - 0.05, s * (D / 2 - 1.22), frost);
     }
     k.instances(new T.BoxGeometry(0.05, 2.4, 0.05), steel, posts);
     for (const [x, z] of [[-9.6, 12], [-9.6, 12.7], [-9.6, 13.4], [-9.6, 42], [-9.6, 42.7], [9.4, -6], [9.4, -6.7], [9.4, -7.4], [9.4, 5.2], [9.4, 5.9], [9.4, -21], [9.4, -21.7], [-9.6, -28], [-9.6, -28.7]]) bucket(x, 0.28, z, 6);
@@ -832,6 +929,8 @@ export const flowercold: RoomDef = {
     const tulipMesh = k.instances(tulipG, headM, tulips), roseMesh = k.instances(new T.IcosahedronGeometry(0.055, 0), headM, roses);
     const cc = new T.Color();
     tcols.forEach((c, i) => tulipMesh.setColorAt(i, cc.set(c))); rcols.forEach((c, i) => roseMesh.setColorAt(i, cc.set(c)));
+    const greenMesh = k.instances(new T.IcosahedronGeometry(0.13, 1), k.flat(0xffffff, 0, 0.85), greens), bigMesh = k.instances(new T.IcosahedronGeometry(0.1, 1), headM, bigs);
+    gcols.forEach((c, i) => greenMesh.setColorAt(i, cc.set(c))); bcols.forEach((c, i) => bigMesh.setColorAt(i, cc.set(c)));
     // the fins: white panels floating over the aisle crossings, hung on rods, a work on each face
     const rods: T.Matrix4[] = [];
     const finsX = [SX + 6, SX + 11, SX + 16, SX + 21, SX + 26];
@@ -848,7 +947,7 @@ export const flowercold: RoomDef = {
     const tf = new T.Mesh(new T.BoxGeometry(0.55, 1.25, 0.04), steel); tf.position.set(0, 0.75, -0.2); tf.rotation.x = -0.35; truck.add(tf);
     const tb = new T.Mesh(new T.BoxGeometry(0.55, 0.03, 0.5), steel); tb.position.set(0, 0.12, 0.05); truck.add(tb);
     for (const dx of [-0.3, 0.3]) { const w = new T.Mesh(new T.CylinderGeometry(0.14, 0.14, 0.05, 10), rubber); w.rotation.z = PI / 2; w.position.set(dx, 0.14, -0.15); truck.add(w); }
-    for (let i = 0; i < 3; i++) { const b = new T.Mesh(new T.CylinderGeometry(0.16, 0.13, 0.42, 10), bucketM); b.position.set(-0.17 + (i % 2) * 0.34, 0.35 + Math.floor(i / 2) * 0.45, 0.1); truck.add(b); const f = new T.Mesh(new T.ConeGeometry(0.2, 0.36, 8), k.flat([0xe0222a, 0xf4d2dc, 0xf2b52a][i], 0, 0.8)); f.position.set(b.position.x, b.position.y + 0.5, 0.1); truck.add(f); }
+    for (let i = 0; i < 3; i++) { const b = new T.Mesh(new T.CylinderGeometry(0.16, 0.13, 0.42, 10), bucketM); b.position.set(-0.17 + (i % 2) * 0.34, 0.35 + Math.floor(i / 2) * 0.45, 0.1); truck.add(b); const fc = [0xe0222a, 0xf4d2dc, 0xf2b52a][i], fr = X.mulberry(460 + i); const f = merged([[new T.IcosahedronGeometry(0.12, 1), stemM, 0, 0.0, 0], ...Array.from({ length: 12 }, (): Part => [new T.IcosahedronGeometry(0.07, 0), k.flat(fc, 0, 0.75, { emissive: fc, emissiveIntensity: 0.1 }), (fr() - 0.5) * 0.26, 0.1 + fr() * 0.14, (fr() - 0.5) * 0.26])]); f.position.set(b.position.x, b.position.y + 0.36, 0.1); truck.add(f); }
     k.add(truck);
     k.rider(truck, k.spline([v(SX + 4, 0, -3.6), v(SX + 27, 0, -3.6), v(SX + 28.5, 0, 0), v(SX + 27, 0, 3.6), v(SX + 4, 0, 3.6), v(SX + 3, 0, 0)], true), 0.75);
     k.crowd([v(SX + 3, 0, 3.4), v(SX + 14, 0, 3.6), v(SX + 26, 0, 3.4)], 2, { seed: 453, speed: 0.25, spread: 0.4, animate: !ctx.reduced, colors: [0x24262c, 0x1f5a3a] });
@@ -915,7 +1014,8 @@ export const flowercold: RoomDef = {
       for (const [x, ry] of [[SX - 0.22, -PI / 2], [SX + 0.22, PI / 2]] as const) { k.box(0.06, 0.34, 0.84, x - Math.sign(ry) * 0.01, 4.45, -1.4, dark); hsign(k, '34°F', 0.74, 0.26, x + Math.sign(ry) * 0.025, 4.45, -1.4, ry, { fg: '#ff4a3a', font: 'W2 JetBrains Mono', size: 0.9 }); }
       hsign(k, 'KEEP DOOR CLOSED', 2.2, 0.3, SX + 0.2, 3.55, 0, PI / 2, { fg: '#0d0d0d', bg: '#f2c230', size: 0.6, lit: false });
       // one trick: KEEP COLD painted flat on the wet floor stands up as a sign from inside the curtain
-      if (HAS_DOM) anamorphTex(k, floorType('KEEP COLD', '#dff4ff', 1024, 256, 'W2 Archivo Expanded', '#1f5a3a'), SX + 1.0, 0, 2.8, 0, -PI / 2, 3, 3.4, 1.0, 0.85);
+      /* 2026-11-28 entrance pass: laid a little further out and taller so it stands in the first view, its far edge short of the first pallet */
+      if (HAS_DOM) anamorphTex(k, floorType('KEEP COLD', '#dff4ff', 1024, 256, 'W2 Archivo Expanded', '#1f5a3a'), SX + 1.0, 0, 2.8, 0, -PI / 2, 3.6, 3.6, 1.15, 0.9);
       k.egg(v(SX + 4.6, 0.3, 0), { id: 'flowercold-keep-cold', title: 'Letters that stand up', text: 'KEEP COLD is painted flat on the floor and stretched along it, so from one spot just inside the strip curtain it seems to stand upright. The trick is anamorphosis; the best known painted example is the stretched skull in Holbein\'s The Ambassadors of 1533.', clue: 'Step through the curtain and look down the aisle.', source: { name: 'Anamorphosis, Wikipedia', url: 'https://en.wikipedia.org/wiki/Anamorphosis' } }, { r: 1.4 });
       // Firefly plate queued: a seed catalogue wall of flowers on the panel inside the door (steel panel until it lands)
       fireflyPlate(k, 'assets/museum/tex/flowercold/ff_fc_catalogue.webp', 4.4, 2.2, SX + 0.18, 3.6, -4.9, PI / 2, panel);
@@ -933,7 +1033,11 @@ export const flowercold: RoomDef = {
     for (const z of [-5, 5]) mounts.push(M(SX + W - 0.2, 3.7, z, SX + W - 5, z, 3.6, 2.2, 'steel', true));
     k.censusWall({ x: SX + W - 0.2, y: 4.0, z: 0, rotY: -PI / 2, cols: 10, rows: 3, tile: 0.5, gap: 0.05, start: ctx.wallStart(6600, 30), pieces: ctx.all, backing: dark });
     k.sign('ORDERS  ·  TULIPS 120  ·  ROSES 300  ·  PEONIES SOLD OUT', 5.2, 0.4, SX + W - 0.2, 5.5, 0, 'transparent', '#dff4ff', 64, -PI / 2);
-    return { mounts, spawn: v(1.5, 2.8, 0), look: v(SX + W, 3.2, 0), eye: 2.8, bounds: [-12.4, SX + W - 0.5, -50, 50], style: 'white' };
+    /* ---- 2026-11-28 entrance pass: the visitor arrives just through the strip curtain, where KEEP COLD stands up, with the colour blocks
+       of the first island at their feet and the racks running away under frost light; 28th Street is one turn behind */
+    k.point(SX + 8.5, 2.6, 0, 0xe4f2ff, 14, 8);
+    k.point(SX + 3.5, 3.2, 0, 0xd8ecff, 10, 7);
+    return { mounts, spawn: v(SX + 1.0, 2.8, 0), look: v(SX + W, -3.4, 0), eye: 2.8, bounds: [-12.4, SX + W - 0.5, -50, 50], style: 'white' };
   },
 };
 
